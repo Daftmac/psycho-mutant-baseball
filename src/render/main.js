@@ -251,10 +251,11 @@ const controlsEl = document.getElementById('controls');
 const postgameEl = document.getElementById('postgame');
 const loadingEl = document.getElementById('loading');
 
-let appState = 'menu'; // 'menu' | 'teamselect' | 'fieldselect' | 'playing' | 'postgame'
+let appState = 'menu'; // 'menu' | 'teamselect' | 'fieldselect' | 'options' | 'playing' | 'postgame'
 let game = null;
 let playerTeam = null; // 'home' | 'away' — chosen at team select, flavors postgame
 let menuT = Math.random() * 100; // beauty-orbit clock
+let podiumShot = false; // camera parked on the floating podium (team select, MVP)
 
 function reloadTo(query) {
   // authentic loading beat: cut to black, reload with new params
@@ -305,6 +306,7 @@ function hidePreview() {
   podiumLight.visible = false;
   batter.visible = true;
   bat.visible = true;
+  podiumShot = false;
 }
 
 let pendingMode = 'match'; // 'match' | 'derby' — what the select flow launches
@@ -390,6 +392,7 @@ function openTeamSelect(mode = pendingMode) {
   // subject sits left-of-center; the DOM roster panel owns the right half
   camera.position.set(PODIUM_POS.x + 4.4, PODIUM_POS.y + 3.4, PODIUM_POS.z + 7.2);
   camera.lookAt(PODIUM_POS.x + 1.9, PODIUM_POS.y + 2.5, PODIUM_POS.z);
+  podiumShot = true;
   teamSelect.show(pendingMode);
 }
 
@@ -424,32 +427,107 @@ function startMatch() {
   camera.lookAt(0, 2.5, -40);
 }
 
+function teamAgg(teamKey) {
+  const agg = { hits: 0, homers: 0 };
+  for (const p of ROSTERS[teamKey].players) {
+    const st = game.state.playerStats[p.name];
+    if (st) { agg.hits += st.hits; agg.homers += st.homers; }
+  }
+  return agg;
+}
+
+function findMvp() {
+  let best = null;
+  for (const [teamKey, ros] of Object.entries(ROSTERS)) {
+    for (const p of ros.players) {
+      const st = game.state.playerStats[p.name];
+      if (st && st.ab > 0 && (!best || st.score > best.st.score)) best = { p, st, teamName: ros.name };
+    }
+  }
+  return best;
+}
+
 function showPostgame() {
   appState = 'postgame';
   const headlineEl = postgameEl.querySelector('.headline');
+  const boxEl = postgameEl.querySelector('#pg-box');
+  const mvpEl = postgameEl.querySelector('#pg-mvp');
+  const btnsEl = postgameEl.querySelector('#pg-buttons');
+  boxEl.innerHTML = '';
+  mvpEl.innerHTML = '';
+
+  // rematch / lobby buttons (both modes)
+  btnsEl.innerHTML = '';
+  const mkBtn = (label, fn) => {
+    const b = document.createElement('div');
+    b.className = 'pg-btn';
+    b.textContent = label;
+    b.addEventListener('click', (e) => { e.stopPropagation(); fn(); });
+    btnsEl.appendChild(b);
+  };
+  mkBtn('REMATCH', startMatch);
+  mkBtn('BACK TO THE LOBBY', toMenu);
+
   if (game.mode === 'derby') {
     const d = game.state.derby;
     headlineEl.textContent = `${d.homers} HOMER${d.homers === 1 ? '' : 'S'} — LONGEST ${d.longest} GRAVES`;
     headlineEl.className = 'headline' + (d.homers === 0 ? ' lose' : '');
     postgameEl.querySelector('.final').textContent =
       `${game.currentBatter().name} did ${d.totalGraves} total graves of damage`;
+    postgameEl.classList.remove('side');
     postgameEl.classList.remove('hidden');
     controlsEl.classList.add('hidden');
+    hud.classList.add('hidden');
     return;
   }
+
+  // ---- full ceremony: headline, box score, MVP on the podium ----
+  const s = game.state;
   if (playerTeam) {
-    const s = game.state.score;
-    const mine = s[playerTeam], theirs = s[playerTeam === 'home' ? 'away' : 'home'];
+    const mine = s.score[playerTeam], theirs = s.score[playerTeam === 'home' ? 'away' : 'home'];
     headlineEl.textContent = mine > theirs ? 'VICTORY RISES FROM THE DIRT'
       : mine < theirs ? 'DEFEAT — THE WORMS FEAST TONIGHT'
       : 'A TIE. NOBODY REJOICES';
     headlineEl.className = 'headline' + (mine < theirs ? ' lose' : '');
   } else {
-    headlineEl.textContent = '';
+    headlineEl.textContent = 'FINAL';
+    headlineEl.className = 'headline';
   }
-  postgameEl.querySelector('.final').textContent = game.state.lastPlay?.text ?? 'FINAL';
+  postgameEl.querySelector('.final').textContent = s.lastPlay?.text ?? '';
+
+  const abbr = (teamKey) => ROSTERS[teamKey].name.split(' ').pop().slice(0, 6).toUpperCase();
+  const cells = (teamKey) => {
+    let row = `<td class="tm">${abbr(teamKey)}</td>`;
+    for (let i = 0; i < C.INNINGS; i++) row += `<td>${s.lineScore[teamKey][i] ?? 0}</td>`;
+    return row + `<td class="tot">${s.score[teamKey]}</td><td>${teamAgg(teamKey).hits}</td>`;
+  };
+  let head = '<th></th>';
+  for (let i = 1; i <= C.INNINGS; i++) head += `<th>${i}</th>`;
+  boxEl.innerHTML = `<table class="bs"><tr>${head}<th>R</th><th>H</th></tr>` +
+    `<tr>${cells('away')}</tr><tr>${cells('home')}</tr></table>`;
+
+  const mvp = findMvp();
+  if (mvp) {
+    mvpEl.innerHTML = `MVP MUTANT: <span class="who">${mvp.p.name.toUpperCase()}</span>` +
+      ` (${mvp.teamName.split(' ').pop()}) — ${mvp.st.hits}-${mvp.st.ab}` +
+      (mvp.st.homers ? `, ${mvp.st.homers} HR` : '');
+    // MVP takes the podium against the void
+    batter.visible = false;
+    bat.visible = false;
+    podium.visible = true;
+    podiumLight.visible = true;
+    showMutantPreview(mvp.p);
+    camera.position.set(PODIUM_POS.x + 4.4, PODIUM_POS.y + 3.4, PODIUM_POS.z + 7.2);
+    camera.lookAt(PODIUM_POS.x + 1.9, PODIUM_POS.y + 2.5, PODIUM_POS.z);
+    podiumShot = true;
+    postgameEl.classList.add('side');
+  } else {
+    postgameEl.classList.remove('side');
+  }
+
   postgameEl.classList.remove('hidden');
   controlsEl.classList.add('hidden');
+  hud.classList.add('hidden');
 }
 
 function toMenu() {
@@ -471,10 +549,9 @@ function toMenu() {
 
 addEventListener('keydown', (e) => {
   if (e.defaultPrevented) return;
-  if (appState === 'postgame' && e.code === 'Enter') { e.preventDefault(); toMenu(); }
-});
-addEventListener('pointerdown', () => {
-  if (appState === 'postgame') toMenu();
+  if (appState !== 'postgame') return;
+  if (e.code === 'Enter') { e.preventDefault(); toMenu(); }
+  else if (e.code === 'KeyR') { e.preventDefault(); startMatch(); }
 });
 
 // move the bat by pointing at the hitting plane over the plate
@@ -638,8 +715,8 @@ function frame(now) {
     else menuT += 1 / C.TICKS_PER_SEC;
     acc -= STEP_MS;
   }
-  if (appState === 'teamselect') {
-    // static podium shot; the highlighted mutant turns slowly on the slab
+  if (podiumShot) {
+    // static podium shot; the mutant turns slowly on the slab
     if (previewMutant) previewMutant.rotation.y += 0.012;
   } else if (appState !== 'playing') {
     // lobby beauty orbit: slow drift around the diamond, landmark in the fog

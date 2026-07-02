@@ -116,6 +116,28 @@
     #postgame .headline { font-size: 34px; font-weight: bold; letter-spacing: 4px; color: #9fe870;
       text-shadow: 3px 3px 0 #3a145e, 6px 6px 0 #000; }
     #postgame .headline.lose { color: #ff6a5e; text-shadow: 3px 3px 0 #5e1414, 6px 6px 0 #000; }
+    #postgame.side {
+      inset: auto 0 0 auto; top: 0; width: 52vw; min-width: 400px;
+      background: linear-gradient(270deg, rgba(4,1,8,0.85) 70%, transparent 100%);
+    }
+    #postgame.side .headline { font-size: 26px; }
+    table.bs { border-collapse: collapse; margin: 0 auto; font-family: 'Courier New', monospace; }
+    table.bs th, table.bs td {
+      border: 2px solid #3a3350; padding: 3px 12px; font-size: 15px;
+      color: #b8b0cc; text-shadow: 1px 1px 0 #000; text-align: center;
+    }
+    table.bs th { color: #776f8a; font-size: 12px; }
+    table.bs td.tm { color: #9fe870; font-weight: bold; }
+    table.bs td.tot { color: #ffd24a; font-weight: bold; }
+    #pg-mvp { font-size: 15px; color: #c77dff; text-shadow: 2px 2px 0 #000; letter-spacing: 1px; }
+    #pg-mvp .who { color: #ffd24a; font-weight: bold; }
+    #pg-buttons { display: flex; gap: 22px; justify-content: center; }
+    .pg-btn {
+      border: 2px solid #3a3350; background: rgba(10,6,18,0.8); padding: 6px 18px;
+      font-size: 15px; letter-spacing: 2px; color: #b8b0cc; cursor: pointer;
+      text-shadow: 1px 1px 0 #000;
+    }
+    .pg-btn:hover { border-color: #ffd24a; color: #ffd24a; }
     #options {
       position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center;
       justify-content: center; gap: 24px; font-family: 'Courier New', monospace; text-align: center;
@@ -154,7 +176,10 @@
   <div id="postgame" class="hidden">
     <div class="headline"></div>
     <div class="final"></div>
-    <div class="prompt">PRESS ENTER — BACK TO THE LOBBY</div>
+    <div id="pg-box"></div>
+    <div id="pg-mvp"></div>
+    <div id="pg-buttons"></div>
+    <div class="prompt">R — REMATCH • ENTER — LOBBY</div>
   </div>
   <div id="loading" class="hidden">EXHUMING<span>...</span></div>
   <script type="module" src="/src/render/main.js"></script>

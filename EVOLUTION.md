@@ -27,9 +27,11 @@ unchecked items — never build them mid-increment.
       picked at Game construction), picture sizes (480/640/320 internal res),
       HAUNTED TV CRT overlay (CSS scanlines + vignette), controls reference,
       localStorage persistence. New src/render/options.js.
-- [ ] **A5. Post-game ceremony.** Box score by inning, team stat lines, "MVP
-      Mutant" (best hitScore aggregate) with a slow rotating portrait against
-      the field's landmark, rematch / derby / menu buttons.
+- [x] **A5. Post-game ceremony.** ✅ Shipped: line score + per-player stats
+      tracked in core (with new harness invariants: line score sums to final,
+      ABs credited), box-score table by inning with R/H, MVP mutant chosen by
+      hitScore aggregate and rotated on the spotlit podium, REMATCH / LOBBY
+      buttons plus R/Enter keys. Derby jump from postgame deferred (menu has it).
 
 ## Phase B — Presentation & cameras (The Show's broadcast grammar)
 - [ ] **B1. Camera suite.** Named cameras with cuts, not lerps: BATTING (now),

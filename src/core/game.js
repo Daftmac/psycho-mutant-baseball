@@ -44,6 +44,8 @@ export class Game {
       swing: null,                  // { atT, aimX, aimY } — set on swing input
       lastPlay: null,               // { text, kind, hitScore } for HUD/renderer
       stats: { pitches: 0, swings: 0, hits: 0, homers: 0, strikeouts: 0, walks: 0, chaosProcs: 0 },
+      lineScore: { away: [], home: [] },  // runs per inning (index = inning-1)
+      playerStats: {},                    // name -> { ab, hits, homers, score } for the box score/MVP
       errors: [],
     };
     if (mode === 'derby') {
@@ -278,8 +280,14 @@ export class Game {
     this._endPitch('foul ball', 'foul');
   }
 
+  _credit(name, { ab = 0, hit = 0, homer = 0, score = 0 }) {
+    const st = this.state.playerStats[name] ?? (this.state.playerStats[name] = { ab: 0, hits: 0, homers: 0, score: 0 });
+    st.ab += ab; st.hits += hit; st.homers += homer; st.score += score;
+  }
+
   _out(text, hitScore) {
     const s = this.state;
+    this._credit(this.currentBatter().name, { ab: 1, score: hitScore });
     s.outs++;
     this._nextBatter();
     if (s.outs >= 3) return this._endHalf(text);
@@ -290,6 +298,7 @@ export class Game {
   _advance(n, text, hitScore, walk = false) {
     const s = this.state;
     const team = this.battingTeam();
+    if (!walk) this._credit(this.currentBatter().name, { ab: 1, hit: 1, homer: n >= 4 ? 1 : 0, score: hitScore });
     let runs = 0;
     if (walk) {
       // force logic: batter to 1st, runners advance only if forced
@@ -309,6 +318,10 @@ export class Game {
       else s.bases[n - 1] = true;
     }
     s.score[team] += runs;
+    if (runs) {
+      const ls = s.lineScore[team];
+      ls[s.inning - 1] = (ls[s.inning - 1] ?? 0) + runs;
+    }
     this._nextBatter();
     this._endPitch(runs ? `${text} — ${runs} run${runs > 1 ? 's' : ''} score!` : text, n >= 4 ? 'homer' : 'hit', hitScore);
   }

@@ -74,4 +74,10 @@ if (report.pitches < 20) fail('suspiciously few pitches — inning logic likely 
 if (report.avgUpdateMs > 0.5) fail('update loop too slow headless (>0.5ms/tick)');
 const totalRuns = s.score.home + s.score.away;
 if (totalRuns > 60) fail(`absurd run total (${totalRuns}) — balance regression`);
+const lsSum = (t) => s.lineScore[t].reduce((a, b) => a + (b || 0), 0);
+if (lsSum('away') !== s.score.away || lsSum('home') !== s.score.home) {
+  fail(`line score (${lsSum('away')}-${lsSum('home')}) does not sum to final (${s.score.away}-${s.score.home})`);
+}
+const abTotal = Object.values(s.playerStats).reduce((a, p) => a + p.ab, 0);
+if (abTotal < 18) fail(`suspiciously few at-bats credited (${abTotal})`);
 console.log('OK');

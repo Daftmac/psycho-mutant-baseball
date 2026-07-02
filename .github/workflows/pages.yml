@@ -1,7 +1,7 @@
+# Manual-only: the game ships via Netlify now; GitHub Pages was flaky.
+# Trigger from the Actions tab if the Pages route is ever wanted again.
 name: deploy-pages
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:

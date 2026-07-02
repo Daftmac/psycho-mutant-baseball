@@ -148,6 +148,12 @@
     .opt-row.sel { color: #ffd24a; }
     #opt-controls { font-size: 13px; color: #9a8fb8; text-shadow: 1px 1px 0 #000; line-height: 1.7; }
     #opt-controls .ctl-title { color: #9fe870; font-weight: bold; letter-spacing: 2px; margin-bottom: 2px; }
+    #replay-tag {
+      position: fixed; top: 14px; left: 18px; z-index: 60;
+      font-family: 'Courier New', monospace; font-size: 17px; font-weight: bold;
+      letter-spacing: 3px; color: #ff4444; text-shadow: 2px 2px 0 #000;
+      animation: promptBlink 0.9s step-end infinite;
+    }
     #crt {
       position: fixed; inset: 0; pointer-events: none; z-index: 50;
       background: repeating-linear-gradient(0deg,
@@ -182,6 +188,7 @@
     <div class="prompt">R — REMATCH • ENTER — LOBBY</div>
   </div>
   <div id="loading" class="hidden">EXHUMING<span>...</span></div>
+  <div id="replay-tag" class="hidden">◉ REPLAY</div>
   <script type="module" src="/src/render/main.js"></script>
 </body>
 </html>

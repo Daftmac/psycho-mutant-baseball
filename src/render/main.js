@@ -426,6 +426,7 @@ function startMatch() {
   camera.position.set(0, 7.5, 14);
   camera.lookAt(0, 2.5, -40);
   camMode = 'none'; // force a fresh cut on the first frame
+  resetReplay();
 }
 
 function teamAgg(teamKey) {
@@ -535,6 +536,7 @@ function toMenu() {
   game = null;
   appState = 'menu';
   pendingMode = 'match';
+  resetReplay();
   ball.visible = false;
   zone.visible = false;
   reticle.visible = false;
@@ -619,6 +621,62 @@ function positionBall() {
   }
   ball.visible = s.phase === 'windup';
   if (s.phase === 'windup') ball.position.set(0.8, 3.2, -D + 0.5); // in pitcher's claw
+}
+
+// ---------- instant replay (renderer-only) ----------
+// A preallocated ring buffer records ball + bat transforms every sim tick.
+// Homers and inning-enders replay once from the cinematic cam while the sim
+// holds its breath; a REPLAY tag + forced scanlines sell the broadcast bit.
+const REPLAY_TICKS = 240; // ~4s of history
+const REPLAY_STRIDE = 10; // ballXYZ, ballVis, batPosXYZ, batRotXYZ
+const replayBuf = new Float32Array(REPLAY_TICKS * REPLAY_STRIDE);
+let replayWrite = 0;
+let replayArmed = null; // { from } — set when a replay-worthy play happens
+let replay = null;      // { from, to, i } — active playback
+let lastSeenPlay = -1;
+const replayTag = document.getElementById('replay-tag');
+const crtEl = document.getElementById('crt');
+
+function recordFrame() {
+  const o = (replayWrite % REPLAY_TICKS) * REPLAY_STRIDE;
+  replayBuf[o] = ball.position.x;
+  replayBuf[o + 1] = ball.position.y;
+  replayBuf[o + 2] = ball.position.z;
+  replayBuf[o + 3] = ball.visible ? 1 : 0;
+  replayBuf[o + 4] = bat.position.x;
+  replayBuf[o + 5] = bat.position.y;
+  replayBuf[o + 6] = bat.position.z;
+  replayBuf[o + 7] = bat.rotation.x;
+  replayBuf[o + 8] = bat.rotation.y;
+  replayBuf[o + 9] = bat.rotation.z;
+  replayWrite++;
+}
+
+function resetReplay() {
+  replayWrite = 0;
+  replayArmed = null;
+  replay = null;
+  lastSeenPlay = -1;
+  replayTag.classList.add('hidden');
+  crtEl.classList.toggle('hidden', options.crt !== 'on');
+}
+
+function playReplayStep() {
+  const b = replayBuf;
+  const o = ((replay.from + replay.i) % REPLAY_TICKS) * REPLAY_STRIDE;
+  ball.position.set(b[o], b[o + 1], b[o + 2]);
+  ball.visible = b[o + 3] > 0.5;
+  bat.position.set(b[o + 4], b[o + 5], b[o + 6]);
+  bat.rotation.set(b[o + 7], b[o + 8], b[o + 9]);
+  camera.position.set(9, 1.6, -12); // low cinematic angle
+  camera.lookAt(ball.position);
+  replay.i++;
+  if (replay.from + replay.i >= replay.to) {
+    replay = null;
+    replayTag.classList.add('hidden');
+    crtEl.classList.toggle('hidden', options.crt !== 'on');
+    camMode = 'none'; // force a clean cut back to live
+  }
 }
 
 // ---------- broadcast camera suite (renderer-only) ----------
@@ -732,6 +790,21 @@ function stepGame() {
   game.update(input);
   if (game.state.phase === 'gameover') return showPostgame();
 
+  // arm/launch instant replays
+  const lp = game.state.lastPlay;
+  if (lp && lp.tick !== lastSeenPlay) {
+    lastSeenPlay = lp.tick;
+    if ((lp.kind === 'homer' || lp.kind === 'sideout') && replayWrite > 100) {
+      replayArmed = { from: Math.max(0, replayWrite - 80) }; // a beat before contact
+    }
+  }
+  if (replayArmed && game.state.phase === 'resolve' && game.state.phaseTicks <= 2) {
+    replay = { from: Math.max(replayArmed.from, replayWrite - REPLAY_TICKS + 1), to: replayWrite, i: 0 };
+    replayArmed = null;
+    replayTag.classList.remove('hidden');
+    crtEl.classList.remove('hidden'); // scanline shimmer while we relive it
+  }
+
   updateBat();
 
   // pitcher windup wobble
@@ -752,17 +825,25 @@ function stepGame() {
   reticle.scale.setScalar(closing ? 1 + Math.sin(game.tick * 0.6) * 0.12 : 1);
 
   positionBall();
+  recordFrame();
+}
+
+function advanceOneTick() {
+  if (replay) playReplayStep();                 // the sim holds its breath
+  else if (appState === 'playing' && game) stepGame();
+  else menuT += 1 / C.TICKS_PER_SEC;
 }
 
 function frame(now) {
   acc += Math.min(now - last, 1000); // clamp long gaps (tab switches)
   last = now;
   while (acc >= STEP_MS) {
-    if (appState === 'playing' && game) stepGame();
-    else menuT += 1 / C.TICKS_PER_SEC;
+    advanceOneTick();
     acc -= STEP_MS;
   }
-  if (appState === 'playing' && game) {
+  if (replay) {
+    // playback owns the camera
+  } else if (appState === 'playing' && game) {
     updateCamera();
   } else if (podiumShot) {
     // static podium shot; the mutant turns slowly on the slab
@@ -797,3 +878,6 @@ Object.defineProperty(window, '__game', { get: () => game });
 window.__startMatch = startMatch; // debug: skip the menu
 window.__cam = camera;
 window.__camMode = () => camMode;
+window.__advance = (n = 1) => { for (let i = 0; i < n; i++) advanceOneTick(); }; // synchronous stepping
+window.__swing = (x, y) => { aim.x = x; aim.y = y; swingQueued = true; };
+window.__replayActive = () => !!replay;

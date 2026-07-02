@@ -39,9 +39,12 @@ unchecked items — never build them mid-increment.
       BATTING just before release), BALL-CHASE (swoops after hits/outs),
       HOMER-CAM (low angle tracking the blast), BEAUTY (slow pan on side
       retired). All five verified via forced-state camera-mode probes.
-- [ ] **B2. Instant replay.** Ring-buffer the last ~4s of ball + actor
-      transforms; on homers and inning-ending outs, replay once from HOMER-CAM
-      or BALL-CHASE with a "REPLAY" corner tag and scanline shimmer.
+- [x] **B2. Instant replay.** ✅ Shipped: preallocated Float32Array ring buffer
+      (240 ticks of ball+bat transforms, zero per-tick allocation), replays
+      homers and side-retiring plays once from a low cinematic cam while the
+      sim pauses; blinking ◉ REPLAY tag + forced scanline shimmer, CRT state
+      restored per options after. Also added synchronous debug stepping
+      (__advance/__swing) that makes headless browser verification reliable.
 - [ ] **B3. Announcer ticker.** Text play-by-play with personality — a bottom
       ticker in the HUD. Per-field flavor lines (the Undergut announcer is
       clearly holding his nose). Event-driven from lastPlay, pure renderer.

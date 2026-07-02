@@ -233,6 +233,13 @@ unchecked items — never build them mid-increment.
       hunched umpire behind the plate — offset so the batting camera looks
       over them broadcast-style without ever blocking the zone.
 
+- [x] **F12. Field-select grid + closer mound.** ✅ Stadium select rebuilt as a
+      4-column card grid (palette strips, gold-framed selection, 2D arrow nav)
+      with a featured caption: name, tagline, HOME OF THE <team>. The mound
+      moved visually to 62% of plate->second (real proportions) with the
+      pitch's rendered flight z-compressed to match — sim untouched, ball
+      reads closer and calmer.
+
 ## Parking lot (ideas noticed, not yet scheduled)
 - Signature abilities for the 60 new mutants (C.ABILITIES only covers the
   original twelve)

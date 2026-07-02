@@ -99,40 +99,52 @@ export function createTeamSelect({ rosters, onConfirm, onBack, onBrowse }) {
 
 export function createFieldSelect({ fields, onConfirm, onBack }) {
   const root = document.getElementById('fieldselect');
+  const COLS = 4;
   let visible = false;
   let idx = 0;
 
   root.innerHTML =
     `<div class="screen-title">CHOOSE YOUR KILLING FIELD</div>` +
-    `<div id="fs-cards"></div>` +
-    `<div class="screen-hint">◄► BROWSE • ENTER CONFIRM • ESC BACK</div>`;
+    `<div id="fs-grid"></div>` +
+    `<div id="fs-caption"><div class="fs-name"></div><div class="fs-tag"></div><div class="fs-home"></div></div>` +
+    `<div class="screen-hint">◄►▲▼ BROWSE • ENTER CONFIRM • ESC BACK</div>`;
 
-  const cardsEl = root.querySelector('#fs-cards');
+  const gridEl = root.querySelector('#fs-grid');
+  const capName = root.querySelector('.fs-name');
+  const capTag = root.querySelector('.fs-tag');
+  const capHome = root.querySelector('.fs-home');
+
   const cardEls = fields.map((f, i) => {
     const el = document.createElement('div');
     el.className = 'fcard';
     const chips = Object.values(f.palette).slice(0, 6)
       .map((c) => `<span class="chip" style="background:${c}"></span>`).join('');
-    el.innerHTML =
-      `<div class="nm">${f.name.toUpperCase()}</div>` +
-      `<div class="gk">${f.tagline ?? ''}</div>` +
-      `<div class="chips">${chips}</div>`;
-    el.addEventListener('click', () => {
+    el.innerHTML = `<div class="nm">${f.name.toUpperCase()}</div><div class="chips">${chips}</div>`;
+    el.addEventListener('mouseenter', () => { idx = i; render(); });
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
       if (idx === i) return onConfirm(fields[idx].key);
       idx = i; render();
     });
-    cardsEl.appendChild(el);
+    gridEl.appendChild(el);
     return el;
   });
 
   function render() {
     cardEls.forEach((el, i) => { el.className = 'fcard' + (i === idx ? ' sel' : ''); });
+    const f = fields[idx];
+    capName.textContent = f.name.toUpperCase();
+    capTag.textContent = f.tagline ?? '';
+    capHome.textContent = f.home ? `HOME OF THE ${f.home.toUpperCase()}` : 'NO TEAM CALLS THIS HOME';
   }
 
   function onKey(e) {
     if (!visible || e.defaultPrevented) return; // consumed by another screen this frame
-    if (e.code === 'ArrowLeft') { idx = (idx + fields.length - 1) % fields.length; render(); }
-    else if (e.code === 'ArrowRight') { idx = (idx + 1) % fields.length; render(); }
+    const n = fields.length;
+    if (e.code === 'ArrowLeft') { idx = (idx + n - 1) % n; render(); }
+    else if (e.code === 'ArrowRight') { idx = (idx + 1) % n; render(); }
+    else if (e.code === 'ArrowUp') { idx = (idx - COLS + n) % n; render(); }
+    else if (e.code === 'ArrowDown') { idx = (idx + COLS) % n; render(); }
     else if (e.code === 'Enter') onConfirm(fields[idx].key);
     else if (e.code === 'Escape') onBack();
     else return;

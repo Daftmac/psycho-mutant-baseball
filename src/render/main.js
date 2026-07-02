@@ -181,7 +181,12 @@ function spawnProp(spec) {
 }
 
 // ---------- the diamond (built-in on every field) ----------
-const D = C.FIELD_SCALE; // mound->plate distance
+const D = C.FIELD_SCALE; // the sim's mound->plate distance (pitch physics)
+// Visually the mound sits closer to the plate (real mounds are well inside
+// the base square); the pitch's rendered z is compressed to match, so the
+// sim is untouched and the ball just reads closer and calmer.
+const MOUND_Z = D * 0.62;
+const PITCH_Z_RATIO = MOUND_Z / D;
 {
   const ground = new THREE.Mesh(new THREE.CircleGeometry(300 * PROP_SCALE, 24), mat(pal('grass')));
   ground.rotation.x = -Math.PI / 2;
@@ -200,9 +205,9 @@ const D = C.FIELD_SCALE; // mound->plate distance
 
   // infield skin: the clay arc sweeps first -> behind second -> third, and
   // stops well short of home (real skins don't run behind the plate)
-  const skin = new THREE.Mesh(new THREE.CircleGeometry(D * 0.82, 24), clayMat);
+  const skin = new THREE.Mesh(new THREE.CircleGeometry(D * 0.72, 24), clayMat);
   skin.rotation.x = -Math.PI / 2;
-  skin.position.set(0, 0.03, -D);
+  skin.position.set(0, 0.03, -MOUND_Z - 8); // centered just behind the mound
   scene.add(skin);
 
   // dirt basepaths: explicit strips along all four sides of the square
@@ -251,7 +256,7 @@ const D = C.FIELD_SCALE; // mound->plate distance
 
   // the mound: actually raised, with its own clay crown
   const mound = new THREE.Mesh(new THREE.CylinderGeometry(6.5, 9, 1.4, 12), clayMat);
-  mound.position.set(0, 0.7, -D);
+  mound.position.set(0, 0.7, -MOUND_Z);
   scene.add(mound);
 
   // foul lines
@@ -376,7 +381,7 @@ bat.rotation.set(0.55, 0, 0.3);
 scene.add(bat);
 
 const pitcher = makeMutant({ skin: 0x8a6fb0, headScale: 1.5 }); // bulbous purple dome
-pitcher.position.set(0, 1.4, -D); // up on the mound
+pitcher.position.set(0, 1.4, -MOUND_Z); // up on the mound
 scene.add(pitcher);
 
 const ball = new THREE.Mesh(new THREE.SphereGeometry(0.45, 8, 6), new THREE.MeshBasicMaterial({ color: 0xeeeae0 }));
@@ -725,7 +730,8 @@ let fieldSelectMode = 'lobby'; // 'lobby' (browse from menu) | 'match' (pre-game
 const fieldSelect = createFieldSelect({
   fields: unlockedFieldNames().map((key) => {
     const f = FIELDS[`../../fields/${key}.json`].default;
-    return { key, name: f.name ?? key, tagline: f.tagline ?? '', palette: f.palette };
+    const homeTeam = Object.values(ROSTERS).find((r) => r.field === key);
+    return { key, name: f.name ?? key, tagline: f.tagline ?? '', palette: f.palette, home: homeTeam?.name ?? null };
   }),
   onConfirm: (key) => {
     if (fieldSelectMode === 'match') {
@@ -1037,7 +1043,7 @@ function positionBall() {
   const s = game.state;
   if (s.phase === 'pitch' && s.pitch) {
     hitFly = null;
-    ball.position.set(s.pitch.pos.x, s.pitch.pos.y, s.pitch.pos.z);
+    ball.position.set(s.pitch.pos.x, s.pitch.pos.y, s.pitch.pos.z * PITCH_Z_RATIO);
     ball.visible = true;
     return;
   }
@@ -1134,7 +1140,7 @@ function positionBall() {
     return;
   }
   ball.visible = s.phase === 'windup';
-  if (s.phase === 'windup') ball.position.set(0.8, 3.2, -D + 0.5); // in pitcher's claw
+  if (s.phase === 'windup') ball.position.set(0.8, 4.4, -MOUND_Z + 0.5); // in pitcher's claw, up on the hill
 }
 
 // ---------- instant replay (renderer-only) ----------
@@ -1219,7 +1225,7 @@ function updateCamera() {
     if (camMode === 'batting') camera.position.set(0.9, 4.7, 13.5); // catcher's-eye low
     else if (camMode === 'iso') camera.position.set(D * 0.72, D * 0.55, D * 0.30); // tabletop 3/4 view
 
-    else if (camMode === 'duel') camera.position.set(6.5, 8.5, -D - 18); // CF broadcast cam
+    else if (camMode === 'duel') camera.position.set(6.5, 8.5, -MOUND_Z - 42); // CF broadcast cam
     else if (camMode === 'homer') camera.position.set(9, 1.3, -10);
     // chase starts wherever the last cut left it and swoops from there
   }

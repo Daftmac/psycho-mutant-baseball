@@ -688,7 +688,9 @@ addEventListener('keydown', (e) => {
   if (e.code === 'Space') { queueSwing('contact'); e.preventDefault(); }
   else if (e.code === 'KeyX') { queueSwing('power'); e.preventDefault(); }
   else if (e.code === 'KeyB') { queueSwing('bunt'); e.preventDefault(); }
+  else if (e.code === 'KeyS') { stealQueued = true; e.preventDefault(); }
 });
+let stealQueued = false;
 addEventListener('pointerdown', (e) => {
   if (appState !== 'playing') return;
   if (pitchCall) {
@@ -1081,10 +1083,12 @@ function stepGame() {
     input = game.autoBatterInput();
     if (pendingPitchPlan) { input.pitch = pendingPitchPlan; pendingPitchPlan = null; }
     swingQueued = false;
+    stealQueued = false; // you can't send the other team's runners
   } else {
-    input = { swing: swingQueued, swingType: swingTypeQueued, aimX: aim.x, aimY: aim.y };
+    input = { swing: swingQueued, swingType: swingTypeQueued, aimX: aim.x, aimY: aim.y, steal: stealQueued };
     if (swingQueued && game.state.phase === 'pitch' && !game.state.swing) swingAnim = SWING_TICKS;
     swingQueued = false;
+    stealQueued = false;
   }
   game.update(input);
   if (game.state.phase === 'pitch' && pitchPlanSent) {

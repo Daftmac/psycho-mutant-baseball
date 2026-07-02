@@ -83,9 +83,11 @@ unchecked items — never build them mid-increment.
       power cut (hitScore x1.22, timing window x0.68), B = bunt (huge window,
       resolves as a sacrifice with runners on and <2 outs — runners advance,
       third scores — else an easy out). C.SWING_TYPES tunable.
-- [ ] **C4. Baserunning.** Speed stat; force-advance logic upgraded to real
-      runner decisions (auto with prompts on 50/50 balls: SEND / HOLD flash).
-      Steals as a pre-pitch gamble.
+- [x] **C4. Baserunning.** ✅ Shipped: speed stat on all 12 mutants (Rad-Rat
+      Rickey .95, Old Gasper .15), bases hold real runner refs, fast runners
+      stretch third into home on hits (C.RUN), and S during the windup sends
+      the lead runner — swipe a bag, steal home, or get gunned down (booth
+      lines included). SEND/HOLD prompts deferred; auto-decisions by speed.
 - [ ] **C5. Mutant chaos abilities (roadmap #3).** One signature ability each,
       proc'd off the chaos stat: Wormfather summons a worm that trips fielders,
       Split Twins get two swing windows, Old Gasper's homers set the moon on

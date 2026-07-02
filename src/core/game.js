@@ -37,7 +37,7 @@ export class Game {
       outs: 0,
       balls: 0,
       strikes: 0,
-      bases: [false, false, false], // 1st, 2nd, 3rd
+      bases: [null, null, null],    // 1st, 2nd, 3rd — runner refs { name, speed } or null
       score: { home: 0, away: 0 },
       batterIndex: { home: 0, away: 0 },
       pitch: null,                  // { type, t, flightTicks, target, pos, ... } — see _throwPitch
@@ -76,6 +76,7 @@ export class Game {
 
     if (s.phase === 'windup') {
       if (input.pitch) this._pitchPlan = input.pitch;
+      if (input.steal && this.mode !== 'derby') return this._attemptSteal();
       if (--s.phaseTicks <= 0) this._throwPitch();
       return;
     }
@@ -299,10 +300,11 @@ export class Game {
     if (s.bases.some(Boolean) && s.outs < 2) {
       let runs = 0;
       for (let i = 2; i >= 0; i--) {
-        if (!s.bases[i]) continue;
-        s.bases[i] = false;
+        const runner = s.bases[i];
+        if (!runner) continue;
+        s.bases[i] = null;
         if (i === 2) runs++;
-        else s.bases[i + 1] = true;
+        else s.bases[i + 1] = runner;
       }
       if (runs) {
         const team = this.battingTeam();
@@ -388,27 +390,33 @@ export class Game {
   }
 
   // advance runners by n bases (4 = HR). walk = force advance only.
+  // Runners are refs with speed: the quick ones stretch for the extra base.
   _advance(n, text, hitScore, walk = false) {
     const s = this.state;
     const team = this.battingTeam();
-    if (!walk) this._credit(this.currentBatter().name, { ab: 1, hit: 1, homer: n >= 4 ? 1 : 0, score: hitScore });
+    const batter = this.currentBatter();
+    if (!walk) this._credit(batter.name, { ab: 1, hit: 1, homer: n >= 4 ? 1 : 0, score: hitScore });
+    const ref = { name: batter.name, speed: batter.speed ?? 0.5 };
     let runs = 0;
     if (walk) {
       // force logic: batter to 1st, runners advance only if forced
       if (s.bases[0] && s.bases[1] && s.bases[2]) runs++;
-      else if (s.bases[0] && s.bases[1]) s.bases[2] = true;
-      else if (s.bases[0]) s.bases[1] = true;
-      s.bases[0] = true;
+      if (s.bases[0] && s.bases[1]) s.bases[2] = s.bases[1];
+      if (s.bases[0]) s.bases[1] = s.bases[0];
+      s.bases[0] = ref;
     } else {
       for (let i = 2; i >= 0; i--) {
-        if (!s.bases[i]) continue;
-        s.bases[i] = false;
-        const dest = i + n;
+        const runner = s.bases[i];
+        if (!runner) continue;
+        s.bases[i] = null;
+        let dest = i + n;
+        // a runner arriving at third may stretch home on fast legs
+        if (dest === 2 && n < 4 && this.rng() < (runner.speed ?? 0.5) * C.RUN.EXTRA_BASE_PROB) dest = 3;
         if (dest >= 3) runs++;
-        else s.bases[dest] = true;
+        else s.bases[dest] = runner;
       }
       if (n >= 4) runs++;
-      else s.bases[n - 1] = true;
+      else s.bases[n - 1] = ref;
     }
     s.score[team] += runs;
     if (runs) {
@@ -427,12 +435,37 @@ export class Game {
     s.strikes = 0;
   }
 
+  // The pre-pitch gamble: lead runner breaks for the next station.
+  _attemptSteal() {
+    const s = this.state;
+    let lead = -1;
+    for (let i = 2; i >= 0; i--) { if (s.bases[i]) { lead = i; break; } }
+    if (lead < 0) return; // nobody to send
+    const runner = s.bases[lead];
+    s.bases[lead] = null;
+    const R = C.RUN;
+    if (this.rng() < R.STEAL_BASE + (runner.speed ?? 0.5) * R.STEAL_SPEED) {
+      if (lead === 2) {
+        const team = this.battingTeam();
+        s.score[team]++;
+        const ls = s.lineScore[team];
+        ls[s.inning - 1] = (ls[s.inning - 1] ?? 0) + 1;
+        return this._endPitch(`${runner.name} STEALS HOME! Absolute lunacy!`, 'steal');
+      }
+      s.bases[lead + 1] = runner;
+      return this._endPitch(`${runner.name} swipes ${lead === 0 ? 'second' : 'third'}!`, 'steal');
+    }
+    s.outs++;
+    if (s.outs >= 3) return this._endHalf(`${runner.name} is gunned down stealing`);
+    return this._endPitch(`${runner.name} is gunned down stealing — ${s.outs} out`, 'caught');
+  }
+
   _endHalf(text) {
     const s = this.state;
     s.outs = 0;
     s.balls = 0;
     s.strikes = 0;
-    s.bases = [false, false, false];
+    s.bases = [null, null, null];
     if (s.half === 'top') s.half = 'bottom';
     else { s.half = 'top'; s.inning++; }
     this._endPitch(`${text} — side retired`, 'sideout');

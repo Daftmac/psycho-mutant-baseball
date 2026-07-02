@@ -68,6 +68,13 @@ export const C = {
   FOUL_THRESHOLD: 0.45,       // contact quality below this (but above whiff) = foul
   WHIFF_THRESHOLD: 0.25,      // contact quality below this = swinging strike
 
+  // baserunning: fast mutants stretch for extra bases and steal
+  RUN: {
+    EXTRA_BASE_PROB: 0.55,    // x runner speed: chance to take the extra base on a hit
+    STEAL_BASE: 0.18,         // steal success floor...
+    STEAL_SPEED: 0.6,         // ...plus this x runner speed
+  },
+
   // fielding layer (match mode): outs can be booted, gap hits can be robbed
   FIELDING: {
     ERROR_CHANCE: 0.055,      // clean out booted into a single (x fielding-team chaos)
@@ -114,23 +121,23 @@ export const ROSTERS = {
   home: {
     name: 'Gravemound Ghouls',
     players: [
-      { name: 'Sluggo the Exhumed',   power: 0.85, contact: 0.45, chaos: 0.30, gimmick: 'Swings like the grave is still on him' },
-      { name: 'Marrow Mary',          power: 0.55, contact: 0.75, chaos: 0.20, gimmick: "Reads pitches with someone else's eyes" },
-      { name: 'The Wormfather',       power: 0.60, contact: 0.60, chaos: 0.55, gimmick: 'The infield squirms at his command' },
-      { name: 'Stitch-Lip Stan',      power: 0.70, contact: 0.55, chaos: 0.25, gimmick: "Never argues a call. Can't." },
-      { name: 'Six-Arm Sally',        power: 0.50, contact: 0.85, chaos: 0.15, gimmick: 'Six arms, one strike zone, no mercy' },
-      { name: 'Old Gasper',           power: 0.90, contact: 0.35, chaos: 0.40, gimmick: 'Every homer costs him a lung' },
+      { name: 'Sluggo the Exhumed',   power: 0.85, contact: 0.45, chaos: 0.30, speed: 0.30, gimmick: 'Swings like the grave is still on him' },
+      { name: 'Marrow Mary',          power: 0.55, contact: 0.75, chaos: 0.20, speed: 0.60, gimmick: "Reads pitches with someone else's eyes" },
+      { name: 'The Wormfather',       power: 0.60, contact: 0.60, chaos: 0.55, speed: 0.45, gimmick: 'The infield squirms at his command' },
+      { name: 'Stitch-Lip Stan',      power: 0.70, contact: 0.55, chaos: 0.25, speed: 0.50, gimmick: "Never argues a call. Can't." },
+      { name: 'Six-Arm Sally',        power: 0.50, contact: 0.85, chaos: 0.15, speed: 0.55, gimmick: 'Six arms, one strike zone, no mercy' },
+      { name: 'Old Gasper',           power: 0.90, contact: 0.35, chaos: 0.40, speed: 0.15, gimmick: 'Every homer costs him a lung' },
     ],
   },
   away: {
     name: 'Isotope Alley Aberrations',
     players: [
-      { name: 'Rad-Rat Rickey',       power: 0.50, contact: 0.80, chaos: 0.25, gimmick: 'First to the base, glows in the dark' },
-      { name: 'Chernobyl Chuck',      power: 0.88, contact: 0.40, chaos: 0.35, gimmick: 'Half-life? He has two full ones' },
-      { name: 'The Split Twins',      power: 0.60, contact: 0.65, chaos: 0.60, gimmick: 'Argue over every swing — take both' },
-      { name: 'Gilly the Gilled',     power: 0.55, contact: 0.70, chaos: 0.20, gimmick: 'Hits better when it rains. It always rains' },
-      { name: 'Bessie Two-Heads',     power: 0.75, contact: 0.50, chaos: 0.30, gimmick: 'Four batting eyes are better than two' },
-      { name: 'Mothlight Moe',        power: 0.45, contact: 0.75, chaos: 0.50, gimmick: 'Tragically distracted by stadium lights' },
+      { name: 'Rad-Rat Rickey',       power: 0.50, contact: 0.80, chaos: 0.25, speed: 0.95, gimmick: 'First to the base, glows in the dark' },
+      { name: 'Chernobyl Chuck',      power: 0.88, contact: 0.40, chaos: 0.35, speed: 0.35, gimmick: 'Half-life? He has two full ones' },
+      { name: 'The Split Twins',      power: 0.60, contact: 0.65, chaos: 0.60, speed: 0.65, gimmick: 'Argue over every swing — take both' },
+      { name: 'Gilly the Gilled',     power: 0.55, contact: 0.70, chaos: 0.20, speed: 0.70, gimmick: 'Hits better when it rains. It always rains' },
+      { name: 'Bessie Two-Heads',     power: 0.75, contact: 0.50, chaos: 0.30, speed: 0.40, gimmick: 'Four batting eyes are better than two' },
+      { name: 'Mothlight Moe',        power: 0.45, contact: 0.75, chaos: 0.50, speed: 0.80, gimmick: 'Tragically distracted by stadium lights' },
     ],
   },
 };

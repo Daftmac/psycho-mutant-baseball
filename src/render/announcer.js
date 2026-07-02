@@ -43,6 +43,14 @@ const BOOTH = {
   take: [
     "He lets it drift by. The graveyard moans.",
   ],
+  steal: [
+    "HE'S OFF! And in there with room to spare!",
+    "Larceny! Beautiful, shameless larceny!",
+  ],
+  caught: [
+    "Gunned down! The catcher's third arm makes the difference!",
+    "Caught creeping! Back to the bench, thief.",
+  ],
   final: [
     "And that's the ballgame, fiends. Drive safe. Drive FAST.",
   ],

@@ -1,0 +1,69 @@
+{
+  "name": "The Mortuary Drive-In",
+  "tagline": "Tonight's double feature: you, and the long walk back to the dugout.",
+  "palette": {
+    "sky": "#0a0e1e",
+    "fog": "#161f38",
+    "grass": "#4b453a",
+    "dirt": "#2c2c32",
+    "chalk": "#d8d2c4",
+    "static": "#9fb4c8",
+    "beam": "#3c4a5e",
+    "pink": "#e86a9e",
+    "rust": "#5e3a28",
+    "carbody": "#3a2e28",
+    "moon": "#c9bfb2"
+  },
+  "fogDensity": 0.012,
+  "lights": {
+    "hemi": { "sky": "#6a7a9a", "ground": "#141018", "intensity": 0.65 },
+    "dir":  { "color": "#9fb4c8", "intensity": 0.7, "pos": [0, 60, -220] }
+  },
+  "props": [
+    { "shape": "box", "size": [96, 54, 3], "color": "carbody",
+      "place": "single", "pos": [0, 36, -242],
+      "children": [
+        { "shape": "cylinder", "size": [1.2, 1.6, 36], "segments": 6, "color": "rust",
+          "count": 1, "pos": [-40, -18, 0] },
+        { "shape": "cylinder", "size": [1.2, 1.6, 36], "segments": 6, "color": "rust",
+          "count": 1, "pos": [40, -18, 0] }
+      ] },
+    { "shape": "plane", "size": [86, 46], "color": "static", "glow": true,
+      "place": "single", "pos": [0, 38, -239.5] },
+
+    { "shape": "box", "size": [2.5, 2.5, 230], "color": "beam", "glow": true,
+      "place": "single", "pos": [0, 42, -120], "rot": [0.05, 0, 0] },
+
+    { "shape": "box", "size": [1.2, 14, 1.2], "color": "rust",
+      "place": "single", "pos": [85, 7, -70], "rot": [0, 0, 0.08],
+      "children": [
+        { "shape": "plane", "size": [10, 6], "color": "pink", "glow": true,
+          "count": 1, "pos": [0, 8.5, 0], "rot": [0, -0.5, 0] }
+      ] },
+
+    { "shape": "box", "size": [8, 2.4, 4.4], "color": "carbody",
+      "place": "ring", "count": 12, "radius": 155, "y": 1.3, "arc": [0.12, 0.88],
+      "lookCenter": true, "yawJitter": 0.25, "tiltJitter": 0.04, "scaleJitter": 0.15,
+      "children": [
+        { "shape": "box", "size": [4.6, 1.9, 3.6], "color": "carbody",
+          "count": 1, "pos": [0.4, 2.1, 0] },
+        { "shape": "box", "size": [3.6, 1.0, 3.9], "color": "static", "glow": true,
+          "count": 1, "pos": [0.4, 2.15, 0] }
+      ] },
+
+    { "shape": "cylinder", "size": [0.2, 0.28, 7], "segments": 5, "color": "rust",
+      "place": "scatter", "count": 10, "ring": [115, 175], "arc": [0.15, 0.85],
+      "y": 3.5, "tiltJitter": 0.06, "scaleJitter": 0.15,
+      "children": [
+        { "shape": "box", "size": [1.5, 1, 0.7], "color": "carbody",
+          "count": 1, "pos": [0, 3.9, 0], "rotJitter": [0, 0.8, 0] }
+      ] },
+
+    { "shape": "box", "size": [2.4, 1.2, 1.8], "color": "rust",
+      "place": "scatter", "count": 8, "ring": [120, 190], "arc": [0.1, 0.9],
+      "y": 0.6, "yawJitter": 0.8, "tiltJitter": 0.12, "scaleJitter": 0.3 },
+
+    { "shape": "sphere", "size": [20], "segments": 12, "color": "moon", "glow": true,
+      "place": "single", "pos": [95, 100, -230] }
+  ]
+}

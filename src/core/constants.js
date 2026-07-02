@@ -1,0 +1,87 @@
+// src/core/constants.js
+// ALL tuning numbers live here. Agents: never hardcode magic numbers in logic
+// files. The balance-analyst agent edits ONLY this file.
+
+export const C = {
+  // game structure
+  INNINGS: 3,
+  TICKS_PER_SEC: 60,
+
+  // pitch cycle (ticks)
+  WINDUP_TICKS: 60,
+  RESOLVE_TICKS: 45,          // balls / strikes / fouls
+  RESOLVE_TICKS_HIT: 85,      // contact — long enough to watch the ball fly
+
+  // Pitch flight: slower and floatier than real baseball, on purpose.
+  // flightTicks = mound->plate time. breakAmt drives the lateral banana curve.
+  // wobble = ectoplasmic sine drift. gravMult scales gravity (ectoplasm floats).
+  PITCH_TYPES: {
+    fastball:  { flightTicks: 52, breakAmt: 0.10, wobble: 0,   gravMult: 0.6,  strikeProb: 0.62 },
+    curve:     { flightTicks: 66, breakAmt: 0.75, wobble: 0,   gravMult: 1.25, strikeProb: 0.55 },
+    ectoball:  { flightTicks: 82, breakAmt: 0.45, wobble: 1.0, gravMult: 0.5,  strikeProb: 0.48 }, // wobbling ectoplasm
+  },
+
+  // pitch flight physics (world units, seconds via TICKS_PER_SEC)
+  PITCH: {
+    RELEASE_X: 0.8,           // pitcher releases slightly off centerline
+    RELEASE_Y: 4.6,           // release height
+    GRAVITY: 13,              // units/s^2 — lofi gravity, scaled by gravMult
+    BREAK_SCALE: 3.4,         // world units of lateral drift per unit breakAmt
+    WOBBLE_AMP: 0.9,          // ectoball wobble amplitude
+    WOBBLE_FREQ: 2.5,         // wobble cycles over the flight
+    DRIFT_EASE: 0.30,         // z eases: leaves the hand hot, floats in (drag illusion)
+    FLIGHT_JITTER: 0.12,      // +/- fraction of flightTicks variance per pitch
+  },
+
+  // strike zone at the plate (world units, x centered on plate, y up)
+  ZONE: { HALF_W: 1.7, BOT: 1.5, TOP: 4.3 },
+  MISS_MARGIN: 1.2,           // balls target up to this far outside a zone edge
+
+  // batting
+  CONTACT_POINT: 0.88,        // ball flight t where perfect contact happens
+  TIMING_WINDOW: 0.14,        // +/- t tolerance scaled by batter contact stat
+  BAT_REACH: 2.1,             // sweet-spot radius around the aim point, scaled by contact
+  SPATIAL_FLOOR: 0.40,        // aim quality blends up from this floor — timing stays king
+  FOUL_THRESHOLD: 0.45,       // contact quality below this (but above whiff) = foul
+  WHIFF_THRESHOLD: 0.25,      // contact quality below this = swinging strike
+
+  // hit outcome thresholds on hitScore = quality * power * roll
+  HIT_OUT: 0.61,              // below = fielded out
+  HIT_SINGLE: 0.79,
+  HIT_DOUBLE: 0.87,
+  HIT_TRIPLE: 0.92,           // above = HOME RUN
+
+  // mutant abilities
+  CHAOS_PROC_CHANCE: 0.12,    // per swing: batter's chaos stat can warp the result
+  CHAOS_BOOST: 0.18,          // hitScore bonus when chaos procs
+
+  // field dimensions (logical units for both sim flavor and renderer)
+  FIELD_SCALE: 60,            // distance mound -> plate
+};
+
+// The mutant rosters. Stats 0..1: power, contact, chaos.
+// chaos = chance-based reality-warping (see CHAOS_PROC_CHANCE).
+export const ROSTERS = {
+  home: {
+    name: 'Gravemound Ghouls',
+    players: [
+      { name: 'Sluggo the Exhumed',   power: 0.85, contact: 0.45, chaos: 0.30 },
+      { name: 'Marrow Mary',          power: 0.55, contact: 0.75, chaos: 0.20 },
+      { name: 'The Wormfather',       power: 0.60, contact: 0.60, chaos: 0.55 },
+      { name: 'Stitch-Lip Stan',      power: 0.70, contact: 0.55, chaos: 0.25 },
+      { name: 'Six-Arm Sally',        power: 0.50, contact: 0.85, chaos: 0.15 },
+      { name: 'Old Gasper',           power: 0.90, contact: 0.35, chaos: 0.40 },
+    ],
+  },
+  away: {
+    name: 'Isotope Alley Aberrations',
+    players: [
+      { name: 'Rad-Rat Rickey',       power: 0.50, contact: 0.80, chaos: 0.25 },
+      { name: 'Chernobyl Chuck',      power: 0.88, contact: 0.40, chaos: 0.35 },
+      { name: 'The Split Twins',      power: 0.60, contact: 0.65, chaos: 0.60 },
+      { name: 'Gilly the Gilled',     power: 0.55, contact: 0.70, chaos: 0.20 },
+      { name: 'Bessie Two-Heads',     power: 0.75, contact: 0.50, chaos: 0.30 },
+      { name: 'Mothlight Moe',        power: 0.45, contact: 0.75, chaos: 0.50 },
+    ],
+  },
+};

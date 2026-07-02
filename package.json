@@ -1,0 +1,17 @@
+{
+  "name": "psycho-mutant-baseball",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node harness/simulate.js 42 && node harness/simulate.js 7 && node harness/simulate.js 1234"
+  },
+  "dependencies": {
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "The Boneyard",
+  "tagline": "Home of the Gravemound Ghouls. Dig in.",
+  "palette": {
+    "sky": "#12091a",
+    "fog": "#241230",
+    "grass": "#26301d",
+    "dirt": "#4a3826",
+    "chalk": "#cfc9b8",
+    "moon": "#a41f2b",
+    "stone": "#6b6b78",
+    "tree": "#150e14"
+  },
+  "fogDensity": 0.011,
+  "props": [
+    { "shape": "sphere", "size": [26], "segments": 12, "color": "moon", "glow": true,
+      "place": "single", "pos": [-70, 85, -260] },
+
+    { "shape": "box", "size": [4, 7, 1.2], "color": "stone",
+      "place": "scatter", "count": 44, "ring": [120, 210], "arc": [0.15, 0.85],
+      "y": 2.5, "zOff": -10, "yawJitter": 0.3, "tiltJitter": 0.08, "scaleJitter": 0.25 },
+
+    { "shape": "cylinder", "size": [0.6, 1.2, 14], "segments": 5, "color": "tree",
+      "place": "scatter", "count": 12, "ring": [150, 230], "arc": [0.1, 0.9],
+      "y": 7, "zOff": -10,
+      "children": [
+        { "shape": "cylinder", "size": [0.15, 0.4, 7], "segments": 4, "color": "tree",
+          "count": 3, "pos": [0, 3, 0], "stack": 1.5, "rotJitter": [0, 0, 1.1] }
+      ] }
+  ]
+}

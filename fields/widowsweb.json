@@ -1,0 +1,63 @@
+{
+  "name": "The Widow's Web",
+  "tagline": "Every pop fly is a gift to Her.",
+  "palette": {
+    "sky": "#0b0612",
+    "fog": "#1a1024",
+    "grass": "#201c2c",
+    "dirt": "#322a3e",
+    "chalk": "#d8d4c6",
+    "silk": "#eee7d6",
+    "silkdim": "#9a917f",
+    "venom": "#9b5cf0",
+    "void": "#08060c"
+  },
+  "fogDensity": 0.013,
+  "lights": {
+    "hemi": { "sky": "#7a6a9a", "ground": "#100a16", "intensity": 0.6 },
+    "dir":  { "color": "#cfc4e8", "intensity": 0.65, "pos": [55, 100, -250] }
+  },
+  "props": [
+    { "shape": "cone", "size": [5, 130], "segments": 6, "color": "void",
+      "place": "ring", "count": 8, "radius": 190, "y": 60, "arc": [0.05, 0.95],
+      "lookCenter": true, "rot": [0.4, 0, 0], "tiltJitter": 0.1, "scaleJitter": 0.12 },
+
+    { "shape": "box", "size": [0.35, 0.35, 240], "color": "silkdim",
+      "place": "ring", "count": 9, "radius": 120, "y": 60, "arc": [0, 2],
+      "lookCenter": true, "tiltJitter": 0.12 },
+    { "shape": "box", "size": [0.25, 0.25, 190], "color": "silkdim",
+      "place": "ring", "count": 7, "radius": 155, "y": 40, "arc": [0, 2],
+      "lookCenter": true, "tiltJitter": 0.18 },
+
+    { "shape": "sphere", "size": [2.4], "segments": 8, "color": "silk", "glow": true,
+      "place": "scatter", "count": 8, "ring": [115, 185], "arc": [0.12, 0.88],
+      "y": 16, "scaleJitter": 0.35,
+      "children": [
+        { "shape": "box", "size": [0.12, 26, 0.12], "color": "silkdim",
+          "count": 1, "pos": [0, 14, 0], "rotJitter": [0.05, 0, 0.05] }
+      ] },
+
+    { "shape": "box", "size": [1.7, 5.2, 1.7], "color": "silkdim",
+      "place": "scatter", "count": 3, "ring": [110, 150], "arc": [0.06, 0.16],
+      "y": 2.6, "yawJitter": 0.5, "tiltJitter": 0.16, "scaleJitter": 0.2 },
+    { "shape": "box", "size": [1.7, 5.2, 1.7], "color": "silkdim",
+      "place": "scatter", "count": 3, "ring": [110, 150], "arc": [0.84, 0.94],
+      "y": 2.6, "yawJitter": 0.5, "tiltJitter": 0.16, "scaleJitter": 0.2 },
+
+    { "shape": "cone", "size": [1.2, 4], "segments": 5, "color": "silkdim",
+      "place": "scatter", "count": 12, "ring": [115, 200], "arc": [0.1, 0.9],
+      "y": 2, "tiltJitter": 0.2, "scaleJitter": 0.4 },
+
+    { "shape": "sphere", "size": [24], "segments": 12, "color": "silk", "glow": true,
+      "place": "single", "pos": [55, 100, -255] },
+
+    { "shape": "sphere", "size": [16], "segments": 8, "color": "void",
+      "place": "single", "pos": [-60, 95, -245],
+      "children": [
+        { "shape": "sphere", "size": [9], "segments": 7, "color": "void",
+          "count": 1, "pos": [13, 4, 7] },
+        { "shape": "sphere", "size": [1.1], "segments": 5, "color": "venom", "glow": true,
+          "count": 2, "pos": [17, 6, 11], "posJitter": [2, 1.2, 0.5] }
+      ] }
+  ]
+}

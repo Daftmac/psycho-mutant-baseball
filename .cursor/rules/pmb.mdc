@@ -1,0 +1,16 @@
+---
+description: Psycho Mutant Baseball project conventions
+alwaysApply: true
+---
+Read CLAUDE.md at the repo root — it is the source of truth for this project.
+
+Key rules:
+- src/core is pure simulation: no DOM, no Three.js, must run in Node. src/render is the
+  Three.js shell + HUD. Never mix them.
+- All tuning numbers and rosters live in src/core/constants.js. No magic numbers in logic.
+- All randomness in core goes through the seeded rng — never Math.random() in core.
+- After any change to src/core, run `npm test` — all three seed games must print OK.
+- Aesthetic law: PS2-era lofi. 480x300 internal res, low-poly flat-shaded geometry,
+  heavy fog, pixelated upscale. No PBR, no high-res assets, no smooth shading.
+- Tone: macabre but playful — creepy carnival, not gore.
+- One mechanic per task; commit after each verified change.

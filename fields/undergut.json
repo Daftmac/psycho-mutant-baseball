@@ -1,0 +1,67 @@
+{
+  "name": "The Undergut",
+  "tagline": "Nine innings below the city. Mind the splash zone.",
+  "palette": {
+    "sky": "#050904",
+    "fog": "#101c0c",
+    "grass": "#1c2a20",
+    "dirt": "#2e2a1e",
+    "chalk": "#b6c294",
+    "bile": "#6ef22e",
+    "sludge": "#3fae1a",
+    "brick": "#48291f",
+    "rust": "#6b4226",
+    "shaft": "#cfe8b0",
+    "eyes": "#ff2d2d"
+  },
+  "fogDensity": 0.019,
+  "lights": {
+    "hemi": { "sky": "#5f8a4c", "ground": "#0c1a0c", "intensity": 0.6 },
+    "dir":  { "color": "#7dff3a", "intensity": 0.7, "pos": [30, 90, -160] }
+  },
+  "props": [
+    { "shape": "cylinder", "size": [200, 200, 620], "segments": 10, "color": "brick",
+      "inside": true, "open": true,
+      "place": "single", "pos": [0, -20, -120], "rot": [1.5708, 0, 0] },
+
+    { "shape": "plane", "size": [460, 64], "color": "bile", "glow": true,
+      "place": "single", "pos": [0, 0.15, -200], "rot": [-1.5708, 0, 0] },
+
+    { "shape": "cylinder", "size": [15, 15, 1.5], "segments": 10, "color": "shaft", "glow": true,
+      "place": "single", "pos": [45, 150, -175] },
+    { "shape": "box", "size": [7, 130, 7], "color": "sludge", "glow": true,
+      "place": "single", "pos": [45, 85, -175] },
+
+    { "shape": "cylinder", "size": [3, 3, 14], "segments": 6, "color": "rust", "open": true,
+      "place": "ring", "count": 8, "radius": 185, "y": 32, "arc": [0.1, 0.9],
+      "lookCenter": true, "rot": [1.5708, 0, 0], "tiltJitter": 0.08, "scaleJitter": 0.2,
+      "children": [
+        { "shape": "cylinder", "size": [0.18, 0.18, 7], "segments": 4, "color": "bile",
+          "count": 1, "pos": [0, -5, 3], "rot": [1.5708, 0, 0], "posJitter": [1, 0, 1] }
+      ] },
+
+    { "shape": "sphere", "size": [1.7], "segments": 6, "color": "sludge", "glow": true,
+      "place": "scatter", "count": 7, "ring": [115, 200], "arc": [0.12, 0.88],
+      "y": 0.9, "scaleJitter": 0.35,
+      "children": [
+        { "shape": "sphere", "size": [0.9], "segments": 5, "color": "bile",
+          "count": 3, "pos": [0, 0.4, 0], "posJitter": [1.6, 0.6, 1.6] }
+      ] },
+
+    { "shape": "box", "size": [0.35, 0.35, 0.35], "color": "eyes", "glow": true,
+      "place": "scatter", "count": 12, "ring": [130, 215], "arc": [0.1, 0.9],
+      "y": 0.6, "yawJitter": 0.4,
+      "children": [
+        { "shape": "box", "size": [0.35, 0.35, 0.35], "color": "eyes",
+          "count": 1, "pos": [0.9, 0, 0] }
+      ] },
+
+    { "shape": "box", "size": [12, 0.8, 12], "color": "rust",
+      "place": "scatter", "count": 3, "ring": [125, 195], "arc": [0.25, 0.75],
+      "y": 58, "yawJitter": 0.6, "tiltJitter": 0.05,
+      "children": [
+        { "shape": "cylinder", "size": [0.22, 0.22, 11], "segments": 4, "color": "rust",
+          "count": 2, "pos": [0, -5.8, 0], "posJitter": [4.5, 0, 4.5], "rotJitter": [0.15, 0, 0.15] }
+      ] }
+  ]
+}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Psycho Mutant Baseball</title>
+  <style>
+    body { margin: 0; background: #000; overflow: hidden; }
+    #game {
+      position: fixed; inset: 0; width: 100vw; height: 100vh;
+      image-rendering: pixelated; /* the PS2 upscale */
+    }
+    #hud {
+      position: fixed; top: 10px; left: 50%; transform: translateX(-50%);
+      font-family: 'Courier New', monospace; color: #e8e2d0; text-align: center;
+      text-shadow: 2px 2px 0 #000; pointer-events: none; width: 100%;
+    }
+    #hud .line { margin: 2px 0; font-size: 15px; letter-spacing: 1px; }
+    #hud .score { font-size: 18px; font-weight: bold; color: #ffd24a; }
+    #hud .batter { color: #9fe870; }
+    #hud .play { color: #ff6a5e; font-weight: bold; }
+    #hud .final { color: #ffd24a; font-size: 20px; margin-top: 8px; }
+    #controls {
+      position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
+      font-family: 'Courier New', monospace; color: #776f8a; font-size: 13px;
+      text-shadow: 1px 1px 0 #000;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="game"></canvas>
+  <div id="hud"></div>
+  <div id="controls">MOVE the mouse to aim the bat — CLICK or SPACE to swing as the ball reaches the zone</div>
+  <script type="module" src="/src/render/main.js"></script>
+</body>
+</html>

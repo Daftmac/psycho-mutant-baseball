@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import { Game } from '../core/game.js';
 import { C, ROSTERS } from '../core/constants.js';
 import { createMenu } from './menu.js';
+import { createTeamSelect, createFieldSelect } from './select.js';
 
 // ---------- field loading ----------
 // Fields are pure data (fields/*.json — schema in fields/README.md).
@@ -249,27 +250,132 @@ const controlsEl = document.getElementById('controls');
 const postgameEl = document.getElementById('postgame');
 const loadingEl = document.getElementById('loading');
 
-let appState = 'menu'; // 'menu' | 'playing' | 'postgame'
+let appState = 'menu'; // 'menu' | 'teamselect' | 'fieldselect' | 'playing' | 'postgame'
 let game = null;
+let playerTeam = null; // 'home' | 'away' — chosen at team select, flavors postgame
 let menuT = Math.random() * 100; // beauty-orbit clock
 
+function reloadTo(query) {
+  // authentic loading beat: cut to black, reload with new params
+  loadingEl.classList.remove('hidden');
+  setTimeout(() => { location.href = query; }, 350);
+}
+
+// ---------- 3D mutant podium for team select ----------
+// appearance is derived from stats: chaos tints the flesh toward the uncanny,
+// power swells the head, high contact grows the spare set of arms
+function appearanceFor(p) {
+  return {
+    skin: new THREE.Color().setHSL(0.24 + p.chaos * 0.55, 0.34, 0.36).getHex(),
+    headScale: 0.9 + p.power * 0.6,
+    extraArms: p.contact > 0.65 ? 1 : 0,
+  };
+}
+
+// the podium floats in the void above the field — pure fog backdrop, own
+// spotlight, nothing from the ballpark can photobomb the star (PS2 tradition)
+const PODIUM_POS = { x: 0, y: 40, z: -10 };
+const podium = new THREE.Mesh(new THREE.CylinderGeometry(2.6, 3.0, 0.5, 8), mat(pal('chalk')));
+podium.position.set(PODIUM_POS.x, PODIUM_POS.y + 0.25, PODIUM_POS.z);
+podium.visible = false;
+scene.add(podium);
+
+const podiumLight = new THREE.PointLight(0xffd9a0, 60, 30);
+podiumLight.position.set(PODIUM_POS.x + 2, PODIUM_POS.y + 5.5, PODIUM_POS.z + 4);
+podiumLight.visible = false;
+scene.add(podiumLight);
+
+const previewCache = new Map(); // player name -> mutant group
+let previewMutant = null;
+function showMutantPreview(p) {
+  if (previewMutant) previewMutant.visible = false;
+  if (!previewCache.has(p.name)) {
+    const m = makeMutant(appearanceFor(p));
+    m.position.set(PODIUM_POS.x, PODIUM_POS.y + 0.5, PODIUM_POS.z);
+    scene.add(m);
+    previewCache.set(p.name, m);
+  }
+  previewMutant = previewCache.get(p.name);
+  previewMutant.visible = true;
+}
+function hidePreview() {
+  if (previewMutant) previewMutant.visible = false;
+  podium.visible = false;
+  podiumLight.visible = false;
+  batter.visible = true;
+  bat.visible = true;
+}
+
 const menu = createMenu({
-  fieldNames: FIELD_NAMES,
-  currentField: fieldName,
-  fieldTitle: (name) => (FIELDS[`../../fields/${name}.json`].default.name ?? name).toUpperCase(),
-  onQuickMatch: startMatch,
-  onFieldChange: (name) => {
-    // authentic loading beat: cut to black, reload onto the chosen field's lobby
-    loadingEl.classList.remove('hidden');
-    setTimeout(() => { location.href = `?field=${name}`; }, 350);
+  onQuickMatch: openTeamSelect,
+  onFieldSelect: () => openFieldSelect('lobby'),
+});
+
+const teamSelect = createTeamSelect({
+  rosters: ROSTERS,
+  onBrowse: showMutantPreview,
+  onConfirm: (teamKey) => {
+    playerTeam = teamKey;
+    teamSelect.hide();
+    hidePreview();
+    openFieldSelect('match');
+  },
+  onBack: () => { teamSelect.hide(); hidePreview(); toMenu(); },
+});
+
+let fieldSelectMode = 'lobby'; // 'lobby' (browse from menu) | 'match' (pre-game step)
+const fieldSelect = createFieldSelect({
+  fields: FIELD_NAMES.map((key) => {
+    const f = FIELDS[`../../fields/${key}.json`].default;
+    return { key, name: f.name ?? key, tagline: f.tagline ?? '', palette: f.palette };
+  }),
+  onConfirm: (key) => {
+    if (fieldSelectMode === 'match') {
+      if (key === fieldName) { fieldSelect.hide(); startMatch(); }
+      else reloadTo(`?field=${key}&team=${playerTeam}&play=1`);
+    } else {
+      if (key === fieldName) { fieldSelect.hide(); toMenu(); }
+      else reloadTo(`?field=${key}`);
+    }
+  },
+  onBack: () => {
+    fieldSelect.hide();
+    if (fieldSelectMode === 'match') openTeamSelect();
+    else toMenu();
   },
 });
+
+function openTeamSelect() {
+  appState = 'teamselect';
+  menu.hide();
+  fieldSelect.hide();
+  batter.visible = false;
+  bat.visible = false;
+  podium.visible = true;
+  podiumLight.visible = true;
+  // subject sits left-of-center; the DOM roster panel owns the right half
+  camera.position.set(PODIUM_POS.x + 4.4, PODIUM_POS.y + 3.4, PODIUM_POS.z + 7.2);
+  camera.lookAt(PODIUM_POS.x + 1.9, PODIUM_POS.y + 2.5, PODIUM_POS.z);
+  teamSelect.show();
+}
+
+function openFieldSelect(mode) {
+  fieldSelectMode = mode;
+  appState = 'fieldselect';
+  menu.hide();
+  teamSelect.hide();
+  hidePreview();
+  fieldSelect.show(fieldName);
+}
 
 function startMatch() {
   game = new Game({ seed: Date.now() & 0xffff });
   appState = 'playing';
   swingQueued = false;
   menu.hide();
+  teamSelect.hide();
+  fieldSelect.hide();
+  hidePreview();
   postgameEl.classList.add('hidden');
   hud.classList.remove('hidden');
   controlsEl.classList.remove('hidden');
@@ -279,6 +385,17 @@ function startMatch() {
 
 function showPostgame() {
   appState = 'postgame';
+  const headlineEl = postgameEl.querySelector('.headline');
+  if (playerTeam) {
+    const s = game.state.score;
+    const mine = s[playerTeam], theirs = s[playerTeam === 'home' ? 'away' : 'home'];
+    headlineEl.textContent = mine > theirs ? 'VICTORY RISES FROM THE DIRT'
+      : mine < theirs ? 'DEFEAT — THE WORMS FEAST TONIGHT'
+      : 'A TIE. NOBODY REJOICES';
+    headlineEl.className = 'headline' + (mine < theirs ? ' lose' : '');
+  } else {
+    headlineEl.textContent = '';
+  }
   postgameEl.querySelector('.final').textContent = game.state.lastPlay?.text ?? 'FINAL';
   postgameEl.classList.remove('hidden');
   controlsEl.classList.add('hidden');
@@ -290,6 +407,9 @@ function toMenu() {
   ball.visible = false;
   zone.visible = false;
   reticle.visible = false;
+  teamSelect.hide();
+  fieldSelect.hide();
+  hidePreview();
   postgameEl.classList.add('hidden');
   hud.classList.add('hidden');
   controlsEl.classList.add('hidden');
@@ -297,7 +417,8 @@ function toMenu() {
 }
 
 addEventListener('keydown', (e) => {
-  if (appState === 'postgame' && e.code === 'Enter') toMenu();
+  if (e.defaultPrevented) return;
+  if (appState === 'postgame' && e.code === 'Enter') { e.preventDefault(); toMenu(); }
 });
 addEventListener('pointerdown', () => {
   if (appState === 'postgame') toMenu();
@@ -456,7 +577,10 @@ function frame(now) {
     else menuT += 1 / C.TICKS_PER_SEC;
     acc -= STEP_MS;
   }
-  if (appState !== 'playing') {
+  if (appState === 'teamselect') {
+    // static podium shot; the highlighted mutant turns slowly on the slab
+    if (previewMutant) previewMutant.rotation.y += 0.012;
+  } else if (appState !== 'playing') {
     // lobby beauty orbit: slow drift around the diamond, landmark in the fog
     const a = menuT * 0.07;
     camera.position.set(Math.sin(a) * 46, 15 + Math.sin(menuT * 0.23) * 2.5, Math.cos(a) * 46 - 38);
@@ -469,8 +593,14 @@ function frame(now) {
   else requestAnimationFrame(frame);
 }
 
-// boot into the lobby
-toMenu();
+// boot: field-select reloads carry ?play=1&team= to jump straight into the match
+const bootParams = new URLSearchParams(location.search);
+if (bootParams.get('play') === '1') {
+  playerTeam = ['home', 'away'].includes(bootParams.get('team')) ? bootParams.get('team') : null;
+  startMatch();
+} else {
+  toMenu();
+}
 frame(performance.now());
 
 // debug handle for harness/devtools poking (not used by game code)

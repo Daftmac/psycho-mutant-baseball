@@ -11,9 +11,12 @@ unchecked items — never build them mid-increment.
       locked with flavor lines), inline field cycler with loading cut,
       menu → playing → postgame → menu state machine in src/render/main.js +
       new src/render/menu.js. Post-game overlay replaces the old refresh flow.
-- [ ] **A2. Team & field select.** Pick your mutants and ballpark. Roster cards
-      with stat bars (power/contact/chaos), gimmick taglines, idle 3D preview
-      of the selected mutant. Field cards show name + tagline + palette swatch.
+- [x] **A2. Team & field select.** ✅ Shipped: roster cards with ▰▱ stat bars +
+      gimmick taglines (new data in constants.js), floating spotlit podium with
+      a stat-derived 3D mutant turntable, field cards with palette chips;
+      choosing a team personalizes the postgame (VICTORY/DEFEAT headline).
+      Fixed a same-keydown-tunneling bug across stacked screens (defaultPrevented
+      guard). New src/render/select.js.
 - [ ] **A3. Home Run Derby.** Solo batting on any field: 10 outs, only homers
       count, distance measured in graves (1 grave = 6 ft). Longest-blast
       tracker, grave-count milestones, final tally screen. Derby rules in core,
@@ -99,6 +102,9 @@ unchecked items — never build them mid-increment.
       averages, a RECORDS screen written like gravestone epitaphs.
 
 ## Parking lot (ideas noticed, not yet scheduled)
+- In-game batter/pitcher models should use the select-screen appearance mapping
+  (appearanceFor in main.js) so the mutant at the plate is the roster mutant
+- A third team ("The Flooded Chapel Choir"?) now that team select exists
 - Weather/time variants per field (blood-moon eclipse innings, sewer fog-outs)
 - Rivalry intros: teams jaw at each other over home plate before game 1
 - Photo mode with fixed lofi filters

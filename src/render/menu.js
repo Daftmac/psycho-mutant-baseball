@@ -3,7 +3,7 @@
 // Pure renderer UI: no game rules, no Three.js. The menu owns its own input
 // while visible; main.js decides what the items actually do.
 
-export function createMenu({ fieldNames, currentField, fieldTitle, onQuickMatch, onFieldChange }) {
+export function createMenu({ onQuickMatch, onFieldSelect }) {
   const root = document.getElementById('menu');
   const list = document.getElementById('menu-items');
   const flash = document.getElementById('menu-flash');
@@ -12,23 +12,13 @@ export function createMenu({ fieldNames, currentField, fieldTitle, onQuickMatch,
   let selected = 0;
   let flashTimer = null;
 
-  const fieldIndex = Math.max(0, fieldNames.indexOf(currentField));
-
   const items = [
     { label: () => 'QUICK MATCH', run: () => onQuickMatch() },
     { label: () => 'HOME RUN DERBY', locked: 'STILL DIGGING THE LONG-BALL PIT' },
-    {
-      label: () => `FIELD: ${fieldTitle(fieldNames[fieldIndexRef.i])}`,
-      cycle: (dir) => {
-        fieldIndexRef.i = (fieldIndexRef.i + dir + fieldNames.length) % fieldNames.length;
-        render();
-      },
-      run: () => onFieldChange(fieldNames[fieldIndexRef.i]),
-    },
+    { label: () => 'FIELD SELECT', run: () => onFieldSelect() },
     { label: () => 'OPTIONS', locked: 'THE COMMISSIONER IS SLEEPING' },
     { label: () => 'SEASON', locked: 'THE COMMISSIONER FORBIDS IT... FOR NOW' },
   ];
-  const fieldIndexRef = { i: fieldIndex };
 
   function showFlash(text) {
     flash.textContent = text;
@@ -56,16 +46,14 @@ export function createMenu({ fieldNames, currentField, fieldTitle, onQuickMatch,
   function render() {
     items.forEach((item, i) => {
       els[i].className = 'menu-item' + (i === selected ? ' sel' : '') + (item.locked ? ' locked' : '');
-      els[i].textContent = (i === selected ? '► ' : '  ') + item.label() + (item.cycle && i === selected ? '  ◄►' : '');
+      els[i].textContent = (i === selected ? '► ' : '  ') + item.label();
     });
   }
 
   function onKey(e) {
-    if (!visible) return;
+    if (!visible || e.defaultPrevented) return; // consumed by another screen this frame
     if (e.code === 'ArrowUp') { selected = (selected - 1 + items.length) % items.length; render(); }
     else if (e.code === 'ArrowDown') { selected = (selected + 1) % items.length; render(); }
-    else if (e.code === 'ArrowLeft' && items[selected].cycle) items[selected].cycle(-1);
-    else if (e.code === 'ArrowRight' && items[selected].cycle) items[selected].cycle(1);
     else if (e.code === 'Enter' || e.code === 'Space') activate(selected);
     else return;
     e.preventDefault();

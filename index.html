@@ -71,6 +71,51 @@
       font-family: 'Courier New', monospace; font-size: 18px; color: #9fe870;
       letter-spacing: 4px;
     }
+    /* ---- select screens ---- */
+    .screen-title { font-size: 24px; font-weight: bold; letter-spacing: 3px; color: #ffd24a;
+      text-shadow: 2px 2px 0 #a41f2b, 4px 4px 0 #000; }
+    .screen-hint { font-size: 12px; color: #776f8a; text-shadow: 1px 1px 0 #000; }
+    #teamselect {
+      position: fixed; top: 0; right: 0; bottom: 0; width: 52vw; min-width: 400px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 12px; font-family: 'Courier New', monospace; text-align: center;
+      background: linear-gradient(270deg, rgba(4,1,8,0.82) 70%, transparent 100%);
+    }
+    .ts-team { font-size: 19px; color: #9fe870; text-shadow: 2px 2px 0 #000; letter-spacing: 2px; }
+    .ts-team .arrow { color: #ffd24a; cursor: pointer; padding: 0 10px; }
+    #ts-cards { width: 88%; }
+    .card {
+      border: 2px solid #3a3350; background: rgba(10,6,18,0.75); text-align: left;
+      padding: 4px 10px; margin: 4px 0; cursor: pointer;
+    }
+    .card.sel { border-color: #ffd24a; background: rgba(30,16,40,0.85); }
+    .card .nm { font-size: 14px; font-weight: bold; color: #e8e2d0; text-shadow: 1px 1px 0 #000; }
+    .card.sel .nm { color: #ffd24a; }
+    .card .gk { font-size: 11px; font-style: italic; color: #9a8fb8; }
+    .card .st { font-size: 11px; line-height: 1.25; }
+    .card .lb { color: #776f8a; margin-right: 8px; }
+    .card .bar.pwr { color: #ff6a5e; } .card .bar.con { color: #9fe870; } .card .bar.cha { color: #c77dff; }
+    .confirm { font-size: 17px; color: #ffd24a; text-shadow: 2px 2px 0 #000; cursor: pointer;
+      animation: promptBlink 1.4s step-end infinite; }
+    #fieldselect {
+      position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 22px; font-family: 'Courier New', monospace; text-align: center;
+      background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.6) 100%);
+    }
+    #fs-cards { display: flex; gap: 14px; }
+    .fcard {
+      width: 190px; border: 2px solid #3a3350; background: rgba(10,6,18,0.82);
+      padding: 12px 10px; cursor: pointer;
+    }
+    .fcard.sel { border-color: #ffd24a; background: rgba(30,16,40,0.9); }
+    .fcard .nm { font-size: 15px; font-weight: bold; color: #e8e2d0; text-shadow: 1px 1px 0 #000; min-height: 36px; }
+    .fcard.sel .nm { color: #ffd24a; }
+    .fcard .gk { font-size: 11px; font-style: italic; color: #9a8fb8; min-height: 42px; margin: 6px 0; }
+    .fcard .chips { display: flex; justify-content: center; gap: 4px; }
+    .fcard .chip { width: 16px; height: 16px; border: 1px solid #000; display: inline-block; }
+    #postgame .headline { font-size: 34px; font-weight: bold; letter-spacing: 4px; color: #9fe870;
+      text-shadow: 3px 3px 0 #3a145e, 6px 6px 0 #000; }
+    #postgame .headline.lose { color: #ff6a5e; text-shadow: 3px 3px 0 #5e1414, 6px 6px 0 #000; }
   </style>
 </head>
 <body>
@@ -81,9 +126,12 @@
     <div id="logo">PSYCHO<span class="mid">MUTANT</span>BASEBALL</div>
     <div id="menu-items"></div>
     <div id="menu-flash"></div>
-    <div id="menu-hint">↑↓ SELECT • ENTER CONFIRM • ◄► CHANGE FIELD</div>
+    <div id="menu-hint">↑↓ SELECT • ENTER CONFIRM</div>
   </div>
+  <div id="teamselect" class="hidden"></div>
+  <div id="fieldselect" class="hidden"></div>
   <div id="postgame" class="hidden">
+    <div class="headline"></div>
     <div class="final"></div>
     <div class="prompt">PRESS ENTER — BACK TO THE LOBBY</div>
   </div>

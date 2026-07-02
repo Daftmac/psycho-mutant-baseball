@@ -6,6 +6,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "deploy": "bash scripts/deploy.sh",
     "test": "node harness/simulate.js 42 && node harness/simulate.js 7 && node harness/simulate.js 1234 && node harness/derby.js 42 && node harness/derby.js 7"
   },
   "dependencies": {

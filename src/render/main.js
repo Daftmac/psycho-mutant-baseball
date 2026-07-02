@@ -947,6 +947,78 @@ function pitchCallTick() {
   renderPitchCall();
 }
 
+// ---------- contact juice: hitstop, shake, particles, trail ----------
+let hitstopTicks = 0;
+let shakeTicks = 0;
+let shakeAmp = 0;
+
+// chunky particle pool (one Points mesh, preallocated)
+const P_COUNT = 36;
+const pPos = new Float32Array(P_COUNT * 3).fill(-500);
+const pVel = new Float32Array(P_COUNT * 3);
+const pLife = new Float32Array(P_COUNT);
+const pGeo = new THREE.BufferGeometry();
+pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+const pMat = new THREE.PointsMaterial({ size: 1.6, sizeAttenuation: true, color: 0xaa8866 });
+const particles = new THREE.Points(pGeo, pMat);
+particles.frustumCulled = false;
+scene.add(particles);
+
+function burstParticles(x, y, z, color) {
+  pMat.color.set(color);
+  for (let i = 0; i < P_COUNT; i++) {
+    pPos[i * 3] = x; pPos[i * 3 + 1] = y; pPos[i * 3 + 2] = z;
+    pVel[i * 3] = (Math.random() * 2 - 1) * 14;
+    pVel[i * 3 + 1] = 4 + Math.random() * 14;
+    pVel[i * 3 + 2] = (Math.random() * 2 - 1) * 14;
+    pLife[i] = 0.5 + Math.random() * 0.5;
+  }
+}
+
+function updateParticles() {
+  const dt = 1 / C.TICKS_PER_SEC;
+  let dirty = false;
+  for (let i = 0; i < P_COUNT; i++) {
+    if (pLife[i] <= 0) continue;
+    dirty = true;
+    pLife[i] -= dt * 1.6;
+    pVel[i * 3 + 1] -= 30 * dt;
+    pPos[i * 3] += pVel[i * 3] * dt;
+    pPos[i * 3 + 1] += pVel[i * 3 + 1] * dt;
+    pPos[i * 3 + 2] += pVel[i * 3 + 2] * dt;
+    if (pLife[i] <= 0) pPos[i * 3 + 1] = -500;
+  }
+  if (dirty) pGeo.attributes.position.needsUpdate = true;
+}
+
+// afterimage trail for screamers
+const TRAIL_N = 7;
+const trailMeshes = Array.from({ length: TRAIL_N }, (_, i) => {
+  const m = new THREE.Mesh(
+    new THREE.SphereGeometry(0.34 - i * 0.03, 6, 5),
+    new THREE.MeshBasicMaterial({ color: 0xeeeae0, transparent: true, opacity: 0.5 - i * 0.06 }));
+  m.visible = false;
+  scene.add(m);
+  return m;
+});
+const trailRing = Array.from({ length: TRAIL_N * 2 }, () => new THREE.Vector3(0, -500, 0));
+let trailHead = 0;
+let trailActive = false;
+
+function updateTrail() {
+  if (trailActive && ball.visible) {
+    trailRing[trailHead % trailRing.length].copy(ball.position);
+    trailHead++;
+    for (let i = 0; i < TRAIL_N; i++) {
+      const idx = trailHead - 2 - i * 2;
+      trailMeshes[i].visible = idx >= 0;
+      if (idx >= 0) trailMeshes[i].position.copy(trailRing[((idx % trailRing.length) + trailRing.length) % trailRing.length]);
+    }
+  } else {
+    for (const m of trailMeshes) m.visible = false;
+  }
+}
+
 // ---------- moonfire: Old Gasper's homers set the sky burning ----------
 let moonfireTicks = 0;
 const _fogBase = new THREE.Color(field.palette.fog);
@@ -1154,6 +1226,19 @@ function stepGame() {
     if (['hit', 'homer', 'out'].includes(lp.kind) && lp.hitScore > 0.2) audio.batCrack(lp.hitScore);
     if (lp.kind === 'homer') audio.organSting('homer');
     else if (/strikes out/.test(lp.text)) audio.organSting('strikeout');
+    // juice: hitstop + shake + dirt burst on real contact, ecto-splat on ecto fouls
+    if (['hit', 'homer', 'out'].includes(lp.kind) && lp.hitScore > 0.45) {
+      hitstopTicks = Math.round(2 + lp.hitScore * 4);
+      shakeTicks = 18;
+      shakeAmp = 0.1 + lp.hitScore * 0.45;
+      burstParticles(0, 2.2, 0.3, pal('dirt'));
+      trailActive = lp.hitScore > 0.85;
+      trailHead = 0;
+    } else if (lp.kind === 'foul' && game.state.pitch?.type === 'ectoball') {
+      burstParticles(0, 2.6, 0.4, 0x6ef22e); // ectoplasm does not wipe off
+    } else {
+      trailActive = false;
+    }
     if ((lp.kind === 'homer' || lp.kind === 'sideout') && replayWrite > 100) {
       replayArmed = { from: Math.max(0, replayWrite - 80) }; // a beat before contact
     }
@@ -1188,11 +1273,14 @@ function stepGame() {
 }
 
 function advanceOneTick() {
-  if (replay) playReplayStep();                 // the sim holds its breath
+  if (hitstopTicks > 0) hitstopTicks--;         // frozen at the moment of impact
+  else if (replay) playReplayStep();            // the sim holds its breath
   else if (appState === 'playing' && game && pitchCall) pitchCallTick(); // calling the pitch
   else if (appState === 'playing' && game) stepGame();
   else menuT += 1 / C.TICKS_PER_SEC;
   updateCrowd(); // the crowd never stops (even in the lobby)
+  updateParticles();
+  updateTrail();
 }
 
 function frame(now) {
@@ -1216,7 +1304,19 @@ function frame(now) {
     camera.lookAt(0, 5, -55);
   }
   drawHud();
+  // screen shake rides on top of whatever camera is live, then backs off
+  let shakeX = 0, shakeY = 0;
+  if (shakeTicks > 0) {
+    shakeTicks--;
+    const k = shakeTicks / 18;
+    shakeX = (Math.random() * 2 - 1) * shakeAmp * k;
+    shakeY = (Math.random() * 2 - 1) * shakeAmp * k;
+    camera.position.x += shakeX;
+    camera.position.y += shakeY;
+  }
   renderer.render(scene, camera);
+  camera.position.x -= shakeX;
+  camera.position.y -= shakeY;
   // rAF freezes in hidden tabs — fall back to timers so the game keeps living
   if (document.hidden) setTimeout(() => frame(performance.now()), STEP_MS);
   else requestAnimationFrame(frame);

@@ -117,9 +117,11 @@ unchecked items — never build them mid-increment.
       wind), SOUND on/off in options. Unlocks on first user gesture per
       browser policy. NOTE: synthesized sound needs human ears — headless
       verification covered wiring + no-exceptions only.
-- [ ] **D2. Contact juice.** 2-tick hitstop on contact, screen shake scaled by
-      hitScore, chunky particle puffs (infield dirt, ecto-splat on ectoball
-      fouls), ball trail streak on 90+ mph exit velocity equivalents.
+- [x] **D2. Contact juice.** ✅ Shipped: hitstop scaled by hitScore (2–6 ticks,
+      verified frozen-then-resumed), screen shake decaying over 18 frames on
+      top of any live camera, preallocated 36-point dirt burst at contact
+      (ecto-green splat on ectoball fouls), 7-ghost afterimage trail on
+      hitScore > .85 screamers.
 - [ ] **D3. Animation upgrade.** Real windup (leg kick, arm whip), batter
       stride + follow-through, fielder run cycle — all chunky 4-6 keyframe
       poses, no smoothing that kills the lofi charm.

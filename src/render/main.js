@@ -178,6 +178,47 @@ const D = C.FIELD_SCALE; // mound->plate distance
 // field props from JSON
 for (const spec of field.props ?? []) spawnProp(spec);
 
+// ---------- crowd: one InstancedMesh of swaying mutant silhouettes ----------
+let crowd = null;
+if (field.crowd) {
+  const cs = field.crowd;
+  const geo = new THREE.BoxGeometry(1.3, 2.0, 0.55);
+  const cMat = new THREE.MeshLambertMaterial({ color: new THREE.Color(pal(cs.color ?? '#221a2e')), flatShading: true });
+  const mesh = new THREE.InstancedMesh(geo, cMat, cs.count);
+  const base = [];
+  const [a0, a1] = cs.arc ?? [0.1, 0.9];
+  for (let i = 0; i < cs.count; i++) {
+    const a = A(a0 + rng() * (a1 - a0));
+    const r = cs.ring[0] + rng() * (cs.ring[1] - cs.ring[0]);
+    base.push({
+      x: Math.cos(a) * r, y: cs.y ?? 1, z: Math.sin(a) * r + (cs.zOff ?? 0),
+      s: 0.8 + rng() * 0.5, ry: rng() * Math.PI * 2, ph: rng() * Math.PI * 2,
+    });
+  }
+  scene.add(mesh);
+  crowd = { mesh, base, excite: 0 };
+}
+
+const _crowdDummy = new THREE.Object3D();
+let crowdT = 0;
+function updateCrowd() {
+  if (!crowd) return;
+  crowdT++;
+  if (crowd.excite > 0) crowd.excite--;
+  const roaring = crowd.excite > 0;
+  const amp = roaring ? 1.0 : 0.16;
+  const speed = roaring ? 0.28 : 0.06;
+  for (let i = 0; i < crowd.base.length; i++) {
+    const b = crowd.base[i];
+    _crowdDummy.position.set(b.x, b.y + Math.abs(Math.sin(crowdT * speed + b.ph)) * amp, b.z);
+    _crowdDummy.rotation.set(0, b.ry, 0);
+    _crowdDummy.scale.setScalar(b.s);
+    _crowdDummy.updateMatrix();
+    crowd.mesh.setMatrixAt(i, _crowdDummy.matrix);
+  }
+  crowd.mesh.instanceMatrix.needsUpdate = true;
+}
+
 // ---------- mutants ----------
 function makeMutant({ skin, extraArms = 0, headScale = 1 }) {
   const g = new THREE.Group();
@@ -878,6 +919,7 @@ function stepGame() {
   if (lp && lp.tick !== lastSeenPlay) {
     lastSeenPlay = lp.tick;
     announcer.onPlay(lp);
+    if (crowd && (lp.kind === 'homer' || lp.kind === 'hit')) crowd.excite = 130; // the roar
     if ((lp.kind === 'homer' || lp.kind === 'sideout') && replayWrite > 100) {
       replayArmed = { from: Math.max(0, replayWrite - 80) }; // a beat before contact
     }
@@ -919,6 +961,7 @@ function advanceOneTick() {
   if (replay) playReplayStep();                 // the sim holds its breath
   else if (appState === 'playing' && game) stepGame();
   else menuT += 1 / C.TICKS_PER_SEC;
+  updateCrowd(); // the crowd never stops (even in the lobby)
 }
 
 function frame(now) {

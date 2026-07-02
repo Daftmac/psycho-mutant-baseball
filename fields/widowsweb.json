@@ -29,6 +29,7 @@
     "hemi": { "sky": "#7a6a9a", "ground": "#100a16", "intensity": 0.6 },
     "dir":  { "color": "#cfc4e8", "intensity": 0.65, "pos": [55, 100, -250] }
   },
+  "crowd": { "count": 80, "ring": [118, 165], "arc": [0.1, 0.9], "y": 1.0, "color": "silkdim" },
   "props": [
     { "shape": "cone", "size": [5, 130], "segments": 6, "color": "void",
       "place": "ring", "count": 8, "radius": 190, "y": 60, "arc": [0.05, 0.95],

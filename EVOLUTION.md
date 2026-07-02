@@ -54,9 +54,11 @@ unchecked items — never build them mid-increment.
       every new batter (team, name, gimmick, stat bars — statBlocks shared
       from select.js), auto-hides after ~2.5s; batter does a knuckle-crack
       shimmy during the windup. Works in derby too (one card for the slugger).
-- [ ] **B5. Crowd.** Billboard-sprite mutant crowd rows where the field wants
-      them (drive-in car roofs, web cocoons that sway). Two states: murmur
-      sway, roar bounce on hits/homers. Budget: one instanced mesh per field.
+- [x] **B5. Crowd.** ✅ Shipped: one InstancedMesh of chunky mutant silhouettes
+      per field, placed by a new "crowd" block in each field JSON (car roofs at
+      the drive-in, cultist rows in the boneyard, pipe-dwellers in the sewer,
+      cocoon fans in the web). Murmur sway idle, roar bounce for ~2s on hits
+      and homers; animates in the lobby too. Phase B complete.
 - [x] **B6. Broadcast wipes.** ✅ Shipped: skewed field-palette band sweeps the
       screen on every half-inning change with a "BOTTOM 1 — THE UNDERGUT" card
       riding it; the HUD score line pulses when runs score. (Taken before B5 —

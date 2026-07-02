@@ -31,6 +31,7 @@
     "hemi": { "sky": "#5f8a4c", "ground": "#0c1a0c", "intensity": 0.6 },
     "dir":  { "color": "#7dff3a", "intensity": 0.7, "pos": [30, 90, -160] }
   },
+  "crowd": { "count": 90, "ring": [95, 128], "arc": [0.15, 0.85], "y": 0.8, "color": "rust" },
   "props": [
     { "shape": "cylinder", "size": [200, 200, 620], "segments": 10, "color": "brick",
       "inside": true, "open": true,

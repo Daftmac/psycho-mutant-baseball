@@ -24,6 +24,7 @@
       "GONE! Right over the tombstones — somebody's ancestors are FURIOUS!"
     ]
   },
+  "crowd": { "count": 110, "ring": [112, 150], "arc": [0.14, 0.86], "y": 0.9, "color": "stone" },
   "props": [
     { "shape": "sphere", "size": [26], "segments": 12, "color": "moon", "glow": true,
       "place": "single", "pos": [-70, 85, -260] },

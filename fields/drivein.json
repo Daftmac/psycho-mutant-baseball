@@ -31,6 +31,7 @@
     "hemi": { "sky": "#6a7a9a", "ground": "#141018", "intensity": 0.65 },
     "dir":  { "color": "#9fb4c8", "intensity": 0.7, "pos": [0, 60, -220] }
   },
+  "crowd": { "count": 100, "ring": [147, 164], "arc": [0.12, 0.88], "y": 4.6, "color": "beam" },
   "props": [
     { "shape": "box", "size": [96, 54, 3], "color": "carbody",
       "place": "single", "pos": [0, 36, -242],

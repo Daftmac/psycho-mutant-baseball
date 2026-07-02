@@ -522,6 +522,7 @@ function startMatch() {
   hidePreview();
   postgameEl.classList.add('hidden');
   hud.classList.remove('hidden');
+  scorebugEl.classList.remove('hidden');
   controlsEl.classList.remove('hidden');
   camera.position.set(0, 7.5, 14);
   camera.lookAt(0, 2.5, -40);
@@ -590,6 +591,7 @@ function showPostgame() {
     postgameEl.classList.remove('hidden');
     controlsEl.classList.add('hidden');
     hud.classList.add('hidden');
+    scorebugEl.classList.add('hidden');
     return;
   }
 
@@ -640,6 +642,7 @@ function showPostgame() {
   postgameEl.classList.remove('hidden');
   controlsEl.classList.add('hidden');
   hud.classList.add('hidden');
+  scorebugEl.classList.add('hidden');
 }
 
 function toMenu() {
@@ -661,6 +664,7 @@ function toMenu() {
   hidePreview();
   postgameEl.classList.add('hidden');
   hud.classList.add('hidden');
+  scorebugEl.classList.add('hidden');
   controlsEl.classList.add('hidden');
   menu.show();
 }
@@ -877,6 +881,7 @@ const PC_PUPIL = 0.12; // accuracy target position on the meter
 let pitchCall = null;       // { stage, type, needle, dir, power }
 let pendingPitchPlan = null; // handed to core on the next update
 let pitchPlanSent = false;
+let prevPhase = null;        // for release detection (pitch-type flash)
 
 const pcChipEls = PITCH_NAMES.map((name) => {
   const el = document.createElement('div');
@@ -1131,26 +1136,57 @@ function updateBat() {
   }
 }
 
-// ---------- HUD ----------
+// ---------- HUD: broadcast score bug + slim center lines ----------
+const scorebugEl = document.getElementById('scorebug');
+const sb = {
+  awayAbbr: document.getElementById('sb-away-abbr'),
+  awayScore: document.getElementById('sb-away-score'),
+  homeAbbr: document.getElementById('sb-home-abbr'),
+  homeScore: document.getElementById('sb-home-score'),
+  inning: document.getElementById('sb-inning'),
+  count: document.getElementById('sb-count'),
+  bases: [document.getElementById('sb-b1'), document.getElementById('sb-b2'), document.getElementById('sb-b3')],
+};
+const teamAbbr = (key) => ROSTERS[key].name.split(' ').pop().slice(0, 3).toUpperCase();
+sb.awayAbbr.textContent = teamAbbr('away');
+sb.homeAbbr.textContent = teamAbbr('home');
+
+const flashEl = document.getElementById('flash');
+function flash(text, pitchStyle = false) {
+  flashEl.textContent = text;
+  flashEl.className = pitchStyle ? 'pitch' : '';
+  void flashEl.offsetWidth;
+  flashEl.classList.add('pop');
+}
+
 function drawHud() {
   if (!game) return;
   const s = game.state;
   const batterNow = game.currentBatter();
   if (game.mode === 'derby') {
-    const d = s.derby;
+    sb.awayAbbr.textContent = 'HR';
+    sb.awayScore.textContent = s.derby.homers;
+    sb.homeAbbr.textContent = 'OUT';
+    sb.homeScore.textContent = `${s.derby.outs}/${C.DERBY.OUTS}`;
+    sb.inning.textContent = 'DERBY';
+    sb.count.textContent = `LNG ${s.derby.longest}`;
+    sb.bases.forEach((el) => el.classList.remove('on'));
     hud.innerHTML =
-      `<div class="line score">HOME RUN DERBY — ${batterNow.name.toUpperCase()}</div>` +
-      `<div class="line">HOMERS ${d.homers}  •  OUTS ${d.outs}/${C.DERBY.OUTS}  •  LONGEST ${d.longest} GRAVES</div>` +
+      `<div class="line batter">AT BAT: ${batterNow.name}</div>` +
       (s.lastPlay ? `<div class="line play">${s.lastPlay.text}</div>` : '');
     return;
   }
-  const half = s.half === 'top' ? '▲' : '▼';
-  const basesTxt = s.bases.map((b) => (b ? '◆' : '◇')).join(' ');
-  const teams = `${ROSTERS.away.name} ${s.score.away} — ${s.score.home} ${ROSTERS.home.name}`;
-  const pulse = game.tick < scorePulseUntil ? ' pulse' : '';
+  sb.awayAbbr.textContent = teamAbbr('away');
+  sb.homeAbbr.textContent = teamAbbr('home');
+  sb.awayScore.textContent = s.score.away;
+  sb.homeScore.textContent = s.score.home;
+  const pulsing = game.tick < scorePulseUntil;
+  sb.awayScore.classList.toggle('pulse', pulsing);
+  sb.homeScore.classList.toggle('pulse', pulsing);
+  sb.inning.textContent = `${s.half === 'top' ? '▲' : '▼'} ${Math.min(s.inning, C.INNINGS)}`;
+  sb.count.textContent = `${s.balls}-${s.strikes}  ${'●'.repeat(s.outs)}${'○'.repeat(Math.max(0, 2 - s.outs))}`;
+  sb.bases.forEach((el, i) => el.classList.toggle('on', !!s.bases[i]));
   hud.innerHTML =
-    `<div class="line score${pulse}">${teams}</div>` +
-    `<div class="line">${half} INN ${Math.min(s.inning, C.INNINGS)}  •  ${s.outs} OUT  •  ${s.balls}-${s.strikes}  •  ${basesTxt}</div>` +
     `<div class="line batter">AT BAT: ${batterNow.name}</div>` +
     (s.lastPlay ? `<div class="line play">${s.lastPlay.text}</div>` : '');
   // light bases
@@ -1208,7 +1244,12 @@ function stepGame() {
     swingQueued = false;
     stealQueued = false;
   }
+  const phaseBefore = prevPhase;
   game.update(input);
+  prevPhase = game.state.phase;
+  if (phaseBefore === 'windup' && game.state.phase === 'pitch') {
+    flash(`${game.state.pitch.type.toUpperCase()}...`, true); // called off the mound
+  }
   if (game.state.phase === 'pitch' && pitchPlanSent) {
     pitchPlanSent = false; // re-arm for the next windup
   } else if (game.state.phase === 'pitch' && !playerFields() && controlsEl.classList.contains('hidden') && appState === 'playing') {
@@ -1226,6 +1267,12 @@ function stepGame() {
     if (['hit', 'homer', 'out'].includes(lp.kind) && lp.hitScore > 0.2) audio.batCrack(lp.hitScore);
     if (lp.kind === 'homer') audio.organSting('homer');
     else if (/strikes out/.test(lp.text)) audio.organSting('strikeout');
+    // broadcast stamp callouts
+    if (lp.kind === 'homer') flash(lp.moonfire ? 'MOONFIRE!' : 'GRAVE DIGGER!');
+    else if (/triple/.test(lp.text)) flash('BONE RATTLER!');
+    else if (/ROBBED/.test(lp.text)) flash('DAYLIGHT ROBBERY!');
+    else if (/BOOTED/.test(lp.text)) flash('BUTCHERED!');
+    else if (/STEALS HOME/.test(lp.text)) flash('HOME INVASION!');
     // juice: hitstop + shake + dirt burst on real contact, ecto-splat on ecto fouls
     if (['hit', 'homer', 'out'].includes(lp.kind) && lp.hitScore > 0.45) {
       hitstopTicks = Math.round(2 + lp.hitScore * 4);

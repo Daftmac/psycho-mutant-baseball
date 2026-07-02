@@ -125,11 +125,15 @@ unchecked items — never build them mid-increment.
 - [ ] **D3. Animation upgrade.** Real windup (leg kick, arm whip), batter
       stride + follow-through, fielder run cycle — all chunky 4-6 keyframe
       poses, no smoothing that kills the lofi charm.
-- [ ] **D4. HUD reskin.** Proper PS2 broadcast score bug (corner box: team
-      abbreviations, score, inning arrow, count dots, base diamond), pitch-type
-      flash ("ECTOBALL...") on release, "GRAVE DIGGER" style hit callouts.
-- [ ] **D5. CRT option.** Scanlines + slight barrel distortion + phosphor
-      bloom as a cheap post shader, off by default, sold as "HAUNTED TV MODE".
+- [x] **D4. HUD reskin.** ✅ Shipped: corner broadcast score bug (abbrs, scores,
+      inning arrow, mini base diamond, count + out dots, derby variant), slim
+      center HUD, pitch-type flash on release ("ECTOBALL..."), and stamp
+      callouts: GRAVE DIGGER! / MOONFIRE! / BONE RATTLER! / DAYLIGHT ROBBERY! /
+      BUTCHERED! / HOME INVASION!
+- [x] **D5. CRT option.** ✅ Satisfied by A4's HAUNTED TV MODE (CSS scanlines +
+      vignette, off by default, forced on during replays). A true post shader
+      with barrel distortion remains an optional upgrade if the art-director
+      ever wants it — parked.
 
 ## Phase E — Longevity (All-Star Baseball's spine)
 - [ ] **E1. Season mode lite (roadmap #6).** 6-game season, standings, stat

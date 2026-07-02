@@ -44,6 +44,39 @@
       100% { transform: translateY(0); opacity: 1; }
     }
     .hidden { display: none !important; }
+    #scorebug {
+      position: fixed; top: 12px; left: 12px; display: flex; gap: 0;
+      font-family: 'Courier New', monospace; z-index: 18;
+      border: 2px solid #3a3350; background: rgba(6, 3, 10, 0.85);
+    }
+    .sb-teams { padding: 4px 8px; border-right: 2px solid #3a3350; }
+    .sb-row { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; line-height: 1.35; }
+    .sb-abbr { color: #9fe870; font-weight: bold; letter-spacing: 1px; text-shadow: 1px 1px 0 #000; }
+    .sb-score { color: #ffd24a; font-weight: bold; text-shadow: 1px 1px 0 #000; }
+    .sb-side { padding: 4px 8px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    #sb-inning { font-size: 12px; color: #e8e2d0; text-shadow: 1px 1px 0 #000; }
+    #sb-bases { width: 26px; height: 14px; position: relative; }
+    #sb-bases i {
+      position: absolute; width: 8px; height: 8px; background: #3a3350;
+      transform: rotate(45deg); border: 1px solid #000;
+    }
+    #sb-bases i.on { background: #d8ff55; }
+    #sb-b1 { right: 0; bottom: 0; } #sb-b2 { left: 9px; top: 0; } #sb-b3 { left: 0; bottom: 0; }
+    #sb-count { font-size: 11px; color: #b8b0cc; text-shadow: 1px 1px 0 #000; white-space: pre; }
+    #flash {
+      position: fixed; top: 30%; left: 50%; transform: translateX(-50%);
+      font-family: 'Courier New', monospace; font-weight: bold; text-align: center;
+      font-size: 40px; letter-spacing: 6px; color: #ffd24a; pointer-events: none;
+      text-shadow: 3px 3px 0 #a41f2b, 6px 6px 0 #000; opacity: 0; z-index: 30;
+    }
+    #flash.pop { animation: flashPop 1.1s ease-out; }
+    #flash.pitch { font-size: 20px; color: #c77dff; text-shadow: 2px 2px 0 #000; }
+    @keyframes flashPop {
+      0% { opacity: 0; transform: translateX(-50%) scale(2.2); }
+      12% { opacity: 1; transform: translateX(-50%) scale(1); }
+      75% { opacity: 1; }
+      100% { opacity: 0; }
+    }
     #menu {
       position: fixed; inset: 0; display: flex; flex-direction: column;
       align-items: center; justify-content: center; gap: 26px;
@@ -220,7 +253,7 @@
       45%, 60% { opacity: 1; transform: translateY(0); }
       80%, 100% { opacity: 0; transform: translateY(-14px); }
     }
-    #hud .score.pulse { animation: scorePulse 0.7s ease-out; }
+    #hud .score.pulse, .sb-score.pulse { animation: scorePulse 0.7s ease-out; }
     @keyframes scorePulse {
       0% { transform: scale(1.35); color: #fff; }
       100% { transform: scale(1); }
@@ -259,6 +292,18 @@
 </head>
 <body>
   <canvas id="game"></canvas>
+  <div id="scorebug" class="hidden">
+    <div class="sb-teams">
+      <div class="sb-row"><span class="sb-abbr" id="sb-away-abbr"></span><span class="sb-score" id="sb-away-score"></span></div>
+      <div class="sb-row"><span class="sb-abbr" id="sb-home-abbr"></span><span class="sb-score" id="sb-home-score"></span></div>
+    </div>
+    <div class="sb-side">
+      <div id="sb-inning"></div>
+      <div id="sb-bases"><i id="sb-b2"></i><i id="sb-b3"></i><i id="sb-b1"></i></div>
+      <div id="sb-count"></div>
+    </div>
+  </div>
+  <div id="flash"></div>
   <div id="hud" class="hidden"></div>
   <div id="controls" class="hidden">MOUSE aims — CLICK/SPACE swing • RIGHT-CLICK/X power • B bunt • S steal (during windup)</div>
   <div id="menu" class="hidden">

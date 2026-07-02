@@ -210,6 +210,15 @@ unchecked items — never build them mid-increment.
       scale plus a clarity trim (~half the old murk). Every infield gets a
       bright contrasting clay diamond with an inner grass cutout.
 
+- [x] **F9. The race to first + a real diamond.** ✅ Contact plays now unfold:
+      the ball flies, the nearest fielder gathers it (fly balls settle into
+      the glove), and on ground outs he FIRES to first — verified the throw
+      beats the runner by ~20 ticks on outs while singles never draw a throw.
+      Infield rebuilt to real geometry: bases form a true 45° square with
+      second beyond the mound, clay skin arc, manicured grass interior, dirt
+      basepaths and base cutouts, raised mound (pitcher stands on it), home
+      circle. Runner speed and hit-resolve retimed for the race.
+
 ## Parking lot (ideas noticed, not yet scheduled)
 - Signature abilities for the 60 new mutants (C.ABILITIES only covers the
   original twelve)

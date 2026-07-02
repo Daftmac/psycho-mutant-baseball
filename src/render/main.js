@@ -187,39 +187,54 @@ const D = C.FIELD_SCALE; // mound->plate distance
   ground.rotation.x = -Math.PI / 2;
   scene.add(ground);
 
-  const infield = new THREE.Mesh(new THREE.CircleGeometry(D * 1.4, 16), mat(pal('dirt')));
-  infield.rotation.x = -Math.PI / 2;
-  infield.position.set(0, 0.02, -D * 0.7);
-  scene.add(infield);
+  // ---- the infield, laid out like the real thing ----
+  // Real diamonds: the bases form a SQUARE rotated 45° with home at one
+  // corner; second base sits BEYOND the mound; the dirt "skin" is an arc
+  // around the whole square with grass inside the basepaths, dirt cutouts
+  // at the bases, a raised mound, and a dirt circle at home.
+  const BASE_HALF = D * 0.625;             // half-diagonal: first base at (62.5, -62.5) for D=100
+  const clayMat = new THREE.MeshLambertMaterial({
+    color: new THREE.Color(pal(field.palette.diamond ? 'diamond' : '#b98d5a')),
+    flatShading: true,
+  });
 
-  // the diamond itself: a bright clay kite from home around the bases,
-  // deliberately contrasting whatever murk the ballpark is made of
+  // infield skin: a clay disc centered on the mound, arcing behind second
+  const skin = new THREE.Mesh(new THREE.CircleGeometry(D * 1.06, 24), clayMat);
+  skin.rotation.x = -Math.PI / 2;
+  skin.position.set(0, 0.03, -D);
+  scene.add(skin);
+
+  // grass interior inset from the basepaths (the manicured square)
   {
-    const fx = 16 * PROP_SCALE, fz = -16 * PROP_SCALE - D * 0.15; // first
-    const sz = -32 * PROP_SCALE - D * 0.15;                       // second
-    const y = 0.06;
-    const kite = new THREE.BufferGeometry();
-    kite.setAttribute('position', new THREE.BufferAttribute(new Float32Array([
-      0, y, 3,   fx, y, fz,   0, y, sz,   // plate -> first -> second
-      0, y, 3,   0, y, sz,   -fx, y, fz,  // plate -> second -> third
+    const w = 6; // basepath width
+    const cy = -BASE_HALF; // square center z
+    const k = 1 - w / BASE_HALF;
+    const iy = 0.06;
+    const pt = (x, z) => [x * k, iy, cy + (z - cy) * k];
+    const [p0, p1, p2, p3] = [pt(0, 0), pt(BASE_HALF, -BASE_HALF), pt(0, -2 * BASE_HALF), pt(-BASE_HALF, -BASE_HALF)];
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(new Float32Array([
+      ...p0, ...p1, ...p2,
+      ...p0, ...p2, ...p3,
     ]), 3));
-    kite.computeVertexNormals();
-    const diamond = new THREE.Mesh(kite, new THREE.MeshLambertMaterial({
-      color: new THREE.Color(pal(field.palette.diamond ? 'diamond' : '#b98d5a')),
-      flatShading: true,
-    }));
-    scene.add(diamond);
-    // inner grass cutout for that classic manicured look
-    const inner = new THREE.BufferGeometry();
-    const k = 0.62, iy = 0.09, izOff = (1 - k) * (sz - 3) * 0.5;
-    inner.setAttribute('position', new THREE.BufferAttribute(new Float32Array([
-      0, iy, 3 + izOff,  fx * k, iy, fz * k + izOff,  0, iy, sz * k + izOff,
-      0, iy, 3 + izOff,  0, iy, sz * k + izOff,  -fx * k, iy, fz * k + izOff,
-    ]), 3));
-    inner.computeVertexNormals();
-    const innerMesh = new THREE.Mesh(inner, mat(pal('grass')));
-    scene.add(innerMesh);
+    g.computeVertexNormals();
+    scene.add(new THREE.Mesh(g, mat(pal('grass'))));
   }
+
+  // dirt cutouts at the three bases + the home-plate circle
+  for (const [cx, cz, r] of [
+    [BASE_HALF, -BASE_HALF, 7], [0, -2 * BASE_HALF, 7], [-BASE_HALF, -BASE_HALF, 7], [0, 0, 11],
+  ]) {
+    const cut = new THREE.Mesh(new THREE.CircleGeometry(r, 12), clayMat);
+    cut.rotation.x = -Math.PI / 2;
+    cut.position.set(cx, 0.08, cz);
+    scene.add(cut);
+  }
+
+  // the mound: actually raised, with its own clay crown
+  const mound = new THREE.Mesh(new THREE.CylinderGeometry(6.5, 9, 1.4, 12), clayMat);
+  mound.position.set(0, 0.7, -D);
+  scene.add(mound);
 
   // foul lines
   for (const side of [-1, 1]) {
@@ -230,12 +245,13 @@ const D = C.FIELD_SCALE; // mound->plate distance
     scene.add(line);
   }
 
-  // bases
+  // bases at the true square corners (1st, 2nd, 3rd)
   window.__bases = [];
-  const basePos = [[16, -16], [0, -32], [-16, -16]].map(([x, z]) => [x * PROP_SCALE, z * PROP_SCALE]);
+  const basePos = [[BASE_HALF, -BASE_HALF], [0, -2 * BASE_HALF], [-BASE_HALF, -BASE_HALF]];
   for (const [x, z] of basePos) {
-    const b = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.3, 2.4), new THREE.MeshLambertMaterial({ color: new THREE.Color(pal('chalk')), flatShading: true }));
-    b.position.set(x, 0.15, z - D * 0.15);
+    const b = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.35, 2.6), new THREE.MeshLambertMaterial({ color: new THREE.Color(pal('chalk')), flatShading: true }));
+    b.position.set(x, 0.25, z);
+    b.rotation.y = Math.PI / 4; // bags sit square to the basepaths
     scene.add(b);
     window.__bases.push(b);
   }
@@ -342,7 +358,7 @@ bat.rotation.set(0.55, 0, 0.3);
 scene.add(bat);
 
 const pitcher = makeMutant({ skin: 0x8a6fb0, headScale: 1.5 }); // bulbous purple dome
-pitcher.position.set(0, 0, -D);
+pitcher.position.set(0, 1.4, -D); // up on the mound
 scene.add(pitcher);
 
 const ball = new THREE.Mesh(new THREE.SphereGeometry(0.45, 8, 6), new THREE.MeshBasicMaterial({ color: 0xeeeae0 }));
@@ -993,21 +1009,74 @@ function positionBall() {
       const exit = (26 + lp.hitScore * 58) * (0.7 + PROP_SCALE * 0.3);
       const horiz = Math.cos(launch) * exit;
       const vy = Math.sin(launch) * exit;
+      const contact = lp.hitScore > 0.2;
       hitFly = {
         tick: lp.tick,
         pos: new THREE.Vector3(0, 2.0, 0),
         vel: new THREE.Vector3(Math.sin(ang) * horiz, vy, -Math.cos(ang) * horiz),
+        // the play that unfolds: outs get fielded and fired to first ahead of
+        // the runner; hits get gathered too slowly to matter
+        stage: 'fly',
+        flyCatch: lp.kind === 'out' && lp.loft > 0.35 && contact,
+        groundOut: lp.kind === 'out' && lp.loft <= 0.35 && contact,
+        safeHit: lp.kind === 'hit' && contact,
+        age: 0, gather: 0, carrier: null, throwFrom: null, throwT: 0, throwTicks: 1, bounced: false,
       };
     }
     const dt = 1 / 60;
-    hitFly.vel.y -= HIT_GRAVITY * dt;
-    hitFly.pos.addScaledVector(hitFly.vel, dt);
-    if (hitFly.pos.y < BALL_REST_Y && hitFly.vel.y < 0) {
-      hitFly.pos.y = BALL_REST_Y;
-      hitFly.vel.y *= -0.42;
-      hitFly.vel.x *= 0.72;
-      hitFly.vel.z *= 0.72;
-    }
+    hitFly.age++;
+    if (hitFly.stage === 'fly') {
+      hitFly.vel.y -= HIT_GRAVITY * dt;
+      hitFly.pos.addScaledVector(hitFly.vel, dt);
+      if (hitFly.pos.y < BALL_REST_Y && hitFly.vel.y < 0) {
+        hitFly.pos.y = BALL_REST_Y;
+        hitFly.vel.y *= -0.42;
+        hitFly.vel.x *= 0.72;
+        hitFly.vel.z *= 0.72;
+        hitFly.bounced = true;
+      }
+      // fielding beats: catches settle into gloves, grounders get scooped
+      const nearest = fielders.reduce((best, f) => {
+        const d = Math.hypot(f.mesh.position.x - hitFly.pos.x, f.mesh.position.z - hitFly.pos.z);
+        return d < best.d ? { f, d } : best;
+      }, { f: null, d: 1e9 });
+      const settling = hitFly.flyCatch && hitFly.vel.y < 0 && hitFly.pos.y < 6;
+      const scooped = (hitFly.groundOut || hitFly.safeHit) && hitFly.bounced && nearest.d < 8;
+      const tooLong = (hitFly.groundOut || hitFly.safeHit) && hitFly.age > 85;
+      if (settling || scooped || tooLong) {
+        hitFly.carrier = nearest.f ?? fielders[3];
+        hitFly.stage = 'carried';
+        hitFly.gather = hitFly.groundOut ? 10 : 26; // outs come out of the glove HOT
+      }
+    } else if (hitFly.stage === 'carried') {
+      const c = hitFly.carrier.mesh.position;
+      hitFly.pos.set(c.x + 0.9, c.y + 3.1, c.z + 0.9);
+      if (--hitFly.gather <= 0) {
+        if (hitFly.groundOut) {
+          const first = window.__bases[0].position;
+          hitFly.throwFrom = hitFly.pos.clone();
+          const dist = Math.hypot(first.x - hitFly.pos.x, first.z - hitFly.pos.z);
+          hitFly.throwTicks = Math.max(12, Math.round(dist / (85 / 60))); // 85 u/s rope
+          hitFly.throwT = 0;
+          hitFly.stage = 'throw';
+        } else {
+          hitFly.stage = 'held'; // hits: too late, hold it and stew
+        }
+      }
+    } else if (hitFly.stage === 'throw') {
+      hitFly.throwT += 1 / hitFly.throwTicks;
+      const t = Math.min(1, hitFly.throwT);
+      const first = window.__bases[0].position;
+      hitFly.pos.set(
+        THREE.MathUtils.lerp(hitFly.throwFrom.x, first.x, t),
+        THREE.MathUtils.lerp(hitFly.throwFrom.y, first.y + 1.2, t) + Math.sin(t * Math.PI) * 5,
+        THREE.MathUtils.lerp(hitFly.throwFrom.z, first.z, t),
+      );
+      if (t >= 1) hitFly.stage = 'beat'; // the ball is waiting at the bag
+    } else if (hitFly.stage === 'held') {
+      const c = hitFly.carrier.mesh.position;
+      hitFly.pos.set(c.x + 0.9, c.y + 3.1, c.z + 0.9);
+    } // 'beat': the ball sits on the bag while the runner arrives late
     ball.position.copy(hitFly.pos);
     ball.visible = true;
     return;
@@ -1370,7 +1439,7 @@ function poseBatter() {
     const dz = first.z - batter.position.z;
     const d = Math.hypot(dx, dz);
     if (d > 2.2) {
-      const step = 26 / C.TICKS_PER_SEC;
+      const step = 34 / C.TICKS_PER_SEC; // dig for first, it's a long way now
       batter.position.x += (dx / d) * step;
       batter.position.z += (dz / d) * step;
       batter.rotation.y = Math.atan2(dx, dz);

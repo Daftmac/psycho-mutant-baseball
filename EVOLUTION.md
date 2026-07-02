@@ -138,8 +138,11 @@ unchecked items — never build them mid-increment.
       ever wants it — parked.
 
 ## Phase E — Longevity (All-Star Baseball's spine)
-- [ ] **E1. Season mode lite (roadmap #6).** 6-game season, standings, stat
-      leaders, field rotation; unlock the locked menu item.
+- [x] **E1. Season mode lite (roadmap #6).** ✅ Shipped: 6-game campaign
+      (src/render/season.js, localStorage) — pick your team, shuffled field
+      rotation, W-L record, league leaders aggregated across games, campaign
+      verdict (CHAMPIONS / RESPECTABLE HAUNTING / THE WORMS WON), CONTINUE
+      SEASON from the postgame. The Commissioner no longer forbids it.
 - [ ] **E2. Unlockables.** Hidden mutants and fields earned by feats (win a
       derby in the Undergut without a single splash-zone foul...). Griffey-era
       cheat-code energy; store progress in localStorage.

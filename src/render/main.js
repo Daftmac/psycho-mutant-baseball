@@ -11,6 +11,7 @@ import { createTeamSelect, createFieldSelect, statBlocks } from './select.js';
 import { createOptions } from './options.js';
 import { createAnnouncer } from './announcer.js';
 import { audio } from './audio.js';
+import { loadSeason, saveSeason, newSeason, recordGame, createSeasonScreen, SEASON_GAMES } from './season.js';
 
 // ---------- field loading ----------
 // Fields are pure data (fields/*.json — schema in fields/README.md).
@@ -447,11 +448,50 @@ function openOptions() {
   optionsScreen.show();
 }
 
+// ---------- season mode ----------
+let seasonActive = false;
+const fieldTitleOf = (key) => (FIELDS[`../../fields/${key}.json`].default.name ?? key).toUpperCase();
+const shuffle = (arr) => {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+};
+
+const seasonScreen = createSeasonScreen({
+  fieldTitle: fieldTitleOf,
+  onPlay: (season) => {
+    const nextField = season.fields[season.i];
+    playerTeam = season.team;
+    pendingMode = 'match';
+    if (nextField === fieldName) {
+      seasonActive = true;
+      seasonScreen.hide();
+      startMatch();
+    } else {
+      reloadTo(`?field=${nextField}&play=1&team=${playerTeam}&season=1`);
+    }
+  },
+  onAbandon: () => { saveSeason(null); seasonScreen.hide(); toMenu(); },
+  onBack: () => { seasonScreen.hide(); toMenu(); },
+});
+
+function openSeason() {
+  seasonActive = false;
+  const season = loadSeason();
+  if (!season) return openTeamSelect('season');
+  appState = 'season';
+  menu.hide();
+  seasonScreen.show(season);
+}
+
 const menu = createMenu({
   onQuickMatch: () => openTeamSelect('match'),
   onDerby: () => openTeamSelect('derby'),
   onFieldSelect: () => openFieldSelect('lobby'),
   onOptions: openOptions,
+  onSeason: openSeason,
 });
 
 const teamSelect = createTeamSelect({
@@ -462,6 +502,13 @@ const teamSelect = createTeamSelect({
     derbyPlayerIdx = playerIdx;
     teamSelect.hide();
     hidePreview();
+    if (pendingMode === 'season') {
+      const season = newSeason(teamKey, FIELD_NAMES, shuffle);
+      saveSeason(season);
+      appState = 'season';
+      seasonScreen.show(season);
+      return;
+    }
     openFieldSelect('match');
   },
   onBack: () => { teamSelect.hide(); hidePreview(); toMenu(); },
@@ -529,6 +576,7 @@ function startMatch() {
   teamSelect.hide();
   fieldSelect.hide();
   optionsScreen.hide();
+  seasonScreen.hide();
   hidePreview();
   postgameEl.classList.add('hidden');
   hud.classList.remove('hidden');
@@ -579,7 +627,7 @@ function showPostgame() {
   boxEl.innerHTML = '';
   mvpEl.innerHTML = '';
 
-  // rematch / lobby buttons (both modes)
+  // rematch / continue / lobby buttons
   btnsEl.innerHTML = '';
   const mkBtn = (label, fn) => {
     const b = document.createElement('div');
@@ -588,7 +636,14 @@ function showPostgame() {
     b.addEventListener('click', (e) => { e.stopPropagation(); fn(); });
     btnsEl.appendChild(b);
   };
-  mkBtn('REMATCH', startMatch);
+  if (seasonActive && game.mode === 'match') {
+    const season = loadSeason();
+    if (season) recordGame(season, game);
+    seasonActive = false; // recorded; any rematch from here is a casual game
+    mkBtn('CONTINUE SEASON', () => { postgameEl.classList.add('hidden'); openSeason(); });
+  } else {
+    mkBtn('REMATCH', startMatch);
+  }
   mkBtn('BACK TO THE LOBBY', toMenu);
 
   if (game.mode === 'derby') {
@@ -671,6 +726,7 @@ function toMenu() {
   teamSelect.hide();
   fieldSelect.hide();
   optionsScreen.hide();
+  seasonScreen.hide();
   hidePreview();
   postgameEl.classList.add('hidden');
   hud.classList.add('hidden');
@@ -1437,6 +1493,7 @@ if (bootParams.get('play') === '1') {
   playerTeam = ['home', 'away'].includes(bootParams.get('team')) ? bootParams.get('team') : null;
   pendingMode = bootParams.get('mode') === 'derby' ? 'derby' : 'match';
   derbyPlayerIdx = Math.max(0, parseInt(bootParams.get('player') ?? '0', 10) || 0) % 6;
+  seasonActive = bootParams.get('season') === '1' && !!loadSeason();
   startMatch();
 } else {
   toMenu();

@@ -67,10 +67,13 @@ export function createTeamSelect({ rosters, onConfirm, onBack, onBrowse }) {
       el.querySelector('.con').textContent = blocks(p.contact);
       el.querySelector('.cha').textContent = blocks(p.chaos);
     });
-    titleEl.textContent = mode === 'derby' ? 'CHOOSE YOUR SLUGGER' : 'CHOOSE YOUR MUTANTS';
+    titleEl.textContent = mode === 'derby' ? 'CHOOSE YOUR SLUGGER'
+      : mode === 'season' ? 'CHOOSE YOUR CAMPAIGN MUTANTS' : 'CHOOSE YOUR MUTANTS';
     confirmEl.textContent = mode === 'derby'
       ? `► SWING AS ${t.players[playerIdx].name.toUpperCase()}`
-      : `► PLAY AS THE ${t.name.toUpperCase()}`;
+      : mode === 'season'
+        ? `► BEGIN THE CAMPAIGN — ${t.name.toUpperCase()}`
+        : `► PLAY AS THE ${t.name.toUpperCase()}`;
     onBrowse(t.players[playerIdx]);
   }
 

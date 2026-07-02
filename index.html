@@ -279,6 +279,19 @@
       letter-spacing: 3px; color: #ff4444; text-shadow: 2px 2px 0 #000;
       animation: promptBlink 0.9s step-end infinite;
     }
+    #season {
+      position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 14px; font-family: 'Courier New', monospace; text-align: center;
+      background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.6) 100%);
+    }
+    .sn-team { font-size: 19px; color: #9fe870; letter-spacing: 2px; text-shadow: 2px 2px 0 #000; }
+    .sn-record { font-size: 42px; font-weight: bold; color: #ffd24a; text-shadow: 3px 3px 0 #a41f2b, 5px 5px 0 #000; }
+    .sn-record .sn-game { display: block; font-size: 14px; color: #b8b0cc; letter-spacing: 2px; text-shadow: 2px 2px 0 #000; }
+    .sn-next { font-size: 15px; color: #c77dff; letter-spacing: 1px; text-shadow: 2px 2px 0 #000; }
+    .sn-leaders { border: 2px solid #3a3350; background: rgba(10,6,18,0.8); padding: 8px 18px; }
+    .sn-lt { font-size: 11px; color: #776f8a; letter-spacing: 3px; margin-bottom: 4px; }
+    .sn-ldr { font-size: 13px; color: #e8e2d0; text-shadow: 1px 1px 0 #000; line-height: 1.5; }
+    #sn-buttons { display: flex; gap: 16px; }
     #crt {
       position: fixed; inset: 0; pointer-events: none; z-index: 50;
       background: repeating-linear-gradient(0deg,
@@ -315,6 +328,7 @@
   <div id="teamselect" class="hidden"></div>
   <div id="fieldselect" class="hidden"></div>
   <div id="options" class="hidden"></div>
+  <div id="season" class="hidden"></div>
   <div id="crt" class="hidden"></div>
   <div id="postgame" class="hidden">
     <div class="headline"></div>

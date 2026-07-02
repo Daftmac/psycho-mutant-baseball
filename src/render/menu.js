@@ -3,7 +3,7 @@
 // Pure renderer UI: no game rules, no Three.js. The menu owns its own input
 // while visible; main.js decides what the items actually do.
 
-export function createMenu({ onQuickMatch, onDerby, onFieldSelect, onOptions }) {
+export function createMenu({ onQuickMatch, onDerby, onFieldSelect, onOptions, onSeason }) {
   const root = document.getElementById('menu');
   const list = document.getElementById('menu-items');
   const flash = document.getElementById('menu-flash');
@@ -17,7 +17,7 @@ export function createMenu({ onQuickMatch, onDerby, onFieldSelect, onOptions }) 
     { label: () => 'HOME RUN DERBY', run: () => onDerby() },
     { label: () => 'FIELD SELECT', run: () => onFieldSelect() },
     { label: () => 'OPTIONS', run: () => onOptions() },
-    { label: () => 'SEASON', locked: 'THE COMMISSIONER FORBIDS IT... FOR NOW' },
+    { label: () => 'SEASON', run: () => onSeason() },
   ];
 
   function showFlash(text) {

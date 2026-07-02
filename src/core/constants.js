@@ -104,10 +104,17 @@ export const C = {
   CHAOS_BOOST: 0.18,          // hitScore bonus when chaos procs
 
   // difficulty presets (renderer options screen picks one; harness uses midnight)
+  // cpuErrMult scales the CPU batter's error: pushover CPUs are sloppier
   DIFFICULTY: {
-    pushover:  { flightMult: 1.18, windowMult: 1.30 }, // slower pitches, fatter timing
-    midnight:  { flightMult: 1.00, windowMult: 1.00 }, // the balanced default
-    nightmare: { flightMult: 0.86, windowMult: 0.78 }, // heat and a needle-thin window
+    pushover:  { flightMult: 1.18, windowMult: 1.30, cpuErrMult: 1.35 },
+    midnight:  { flightMult: 1.00, windowMult: 1.00, cpuErrMult: 1.00 },
+    nightmare: { flightMult: 0.86, windowMult: 0.78, cpuErrMult: 0.78 },
+  },
+
+  // arcade rubber band: the player's mutants find their chaos when trailing
+  RUBBER_BAND: {
+    DEFICIT: 3,               // trailing by this many in the final inning...
+    CHAOS_MULT: 1.6,          // ...multiplies chaos proc chance
   },
 
   // home run derby (distance is measured in graves; a grave is six feet under)

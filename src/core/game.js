@@ -22,12 +22,13 @@ function makeRng(seed) {
 export class Game {
   // mode 'match' = full game; mode 'derby' = home run derby (one slugger,
   // grooved pitches, any swing that isn't a homer is an out)
-  constructor({ seed = 1, mode = 'match', derbyTeam = 'home', derbyPlayer = 0, difficulty = 'midnight' } = {}) {
+  constructor({ seed = 1, mode = 'match', derbyTeam = 'home', derbyPlayer = 0, difficulty = 'midnight', playerTeam = null } = {}) {
     this.rng = makeRng(seed);
     this.mode = mode;
     this.derbyTeam = derbyTeam;
     this.derbyPlayer = derbyPlayer;
     this.diff = C.DIFFICULTY[difficulty] ?? C.DIFFICULTY.midnight;
+    this.playerTeam = playerTeam; // enables the arcade rubber band
     this.tick = 0;
     this.state = {
       phase: 'windup',              // 'windup' | 'pitch' | 'resolve' | 'gameover'
@@ -129,7 +130,7 @@ export class Game {
       const takes = (!s.pitch.isStrike && this.rng() < takeProb) ||
         this.rng() < cb.SWING_ANY_PROB * (s.strikes === 2 ? 0.4 : 1);
       if (takes) { this._cpuPlan = { take: true }; return {}; }
-      const sloppy = 1.3 - batter.contact;
+      const sloppy = (1.3 - batter.contact) * this.diff.cpuErrMult;
       const gauss = () => this.rng() + this.rng() - 1;
       this._cpuPlan = {
         swingT: C.CONTACT_POINT + gauss() * cb.TIMING_ERR * sloppy,
@@ -294,7 +295,14 @@ export class Game {
     }
     let hitScore = quality * (0.5 + batter.power * 0.7) * roll * st.hitMult;
     let chaos = false;
-    const chaosMult = ability === 'halfLives' ? 2 : 1;
+    let chaosMult = ability === 'halfLives' ? 2 : 1;
+    // arcade rubber band: the player's mutants dig deep in a late deficit
+    if (this.playerTeam && this.battingTeam() === this.playerTeam && s.inning >= C.INNINGS) {
+      const other = this.playerTeam === 'home' ? 'away' : 'home';
+      if (s.score[other] - s.score[this.playerTeam] >= C.RUBBER_BAND.DEFICIT) {
+        chaosMult *= C.RUBBER_BAND.CHAOS_MULT;
+      }
+    }
     if (this.rng() < C.CHAOS_PROC_CHANCE * (batter.chaos * 2) * chaosMult) {
       hitScore += C.CHAOS_BOOST;
       chaos = true;

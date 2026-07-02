@@ -102,9 +102,11 @@ unchecked items — never build them mid-increment.
       at 2 strikes, spits at 3 balls), and a batter's-eye telegraph — the zone
       flashes green mid-flight on probable balls, scaled by contact stat.
       Walks went from ~0 to ~2.3/game mean across 7 seeds (0–7 range).
-- [ ] **C7. Difficulty-aware CPU.** CPU batting/pitching skill scales with the
-      Options difficulty; rubber-band lightly in arcade fashion (down 3 in the
-      9th... I mean 3rd? chaos stat procs rise).
+- [x] **C7. Difficulty-aware CPU.** ✅ Shipped: CPU batter error scales with
+      difficulty (cpuErrMult — verified ranking: pushover 12.8 CPU hits/game,
+      nightmare 18.8), and the arcade rubber band raises the player team's
+      chaos procs when trailing by 3+ in the final inning (C.RUBBER_BAND).
+      Phase C complete — the game now has hands.
 
 ## Phase D — Feel, audio & juice (Griffey's soul)
 - [ ] **D1. Audio pass 1 (roadmap #5, Tone.js).** Bat crack (pitched by

@@ -497,6 +497,7 @@ function startMatch() {
     derbyTeam: playerTeam ?? 'home',
     derbyPlayer: derbyPlayerIdx,
     difficulty: options.difficulty,
+    playerTeam,
   });
   appState = 'playing';
   swingQueued = false;

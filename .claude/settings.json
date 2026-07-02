@@ -1,7 +1,11 @@
 {
   "permissions": {
-    "defaultMode": "acceptEdits",
+    "defaultMode": "dontAsk",
     "allow": [
+      "Bash(*)",
+      "Skill",
+      "WebFetch",
+      "WebSearch",
       "Read",
       "Edit",
       "Write",

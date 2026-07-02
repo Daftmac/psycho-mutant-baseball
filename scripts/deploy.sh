@@ -12,6 +12,7 @@ npm run build -- --base=/psycho-mutant-baseball/
 
 DEPLOY=$(mktemp -d)
 cp -R dist/. "$DEPLOY/"
+touch "$DEPLOY/.nojekyll" # keep Jekyll's hands off the bundle
 cd "$DEPLOY"
 git init -b gh-pages -q
 git add -A

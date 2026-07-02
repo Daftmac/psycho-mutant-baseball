@@ -195,6 +195,14 @@ unchecked items — never build them mid-increment.
       the Lobby. Options returns to the pause overlay, not the lobby; Escape
       backs all the way out. Verified with 8 live assertions.
 
+- [x] **F7. Controller support.** ✅ Gamepad API, standard mapping: left stick
+      is an absolute bat/aim cursor (menus navigate on stick edges + d-pad),
+      A swing/confirm, X power cut (R = rematch on tallies), B bunt/back,
+      Y steal, Start pause, LB/RB cycle pitch types during the call. Buttons
+      synthesize the keyboard's own events so every screen works identically.
+      Caveat: browsers don't count pad input as a user gesture — one real
+      click/keypress is still needed to unlock audio.
+
 ## Parking lot (ideas noticed, not yet scheduled)
 - Signature abilities for the 60 new mutants (C.ABILITIES only covers the
   original twelve)

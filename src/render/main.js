@@ -1497,6 +1497,70 @@ function drawHud() {
   window.__bases.forEach((m, i) => m.material.color.set(s.bases[i] ? 0xd8ff55 : 0xcfc9b8));
 }
 
+// ---------- gamepad support ----------
+// Standard-mapping pads. Buttons synthesize the same key events the keyboard
+// uses (so every screen Just Works); the left stick drives the aim directly.
+//   A swing/confirm • X power cut (rematch on the tally) • B bunt/back
+//   Y steal • Start pause • D-pad/stick navigate • LB/RB cycle pitch types
+const PAD = { deadzone: 0.18, prev: [], stick: { x: 0, y: 0 }, connected: false };
+const padKey = (code) => dispatchEvent(new KeyboardEvent('keydown', { code, cancelable: true }));
+
+addEventListener('gamepadconnected', () => {
+  PAD.connected = true;
+  controlsEl.textContent = '🎮 STICK aims — A swing • X power • B bunt • Y steal • START pause';
+  flash('CONTROLLER CONNECTED', true);
+});
+addEventListener('gamepaddisconnected', () => { PAD.connected = false; });
+
+function pollGamepad() {
+  const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+  let gp = null;
+  for (const p of pads) if (p && p.connected) { gp = p; break; }
+  if (!gp) return;
+
+  const pressed = (i) => !!gp.buttons[i]?.pressed;
+  const edge = (i) => pressed(i) && !PAD.prev[i];
+  const inPlay = appState === 'playing' && !paused && !!game;
+
+  // left stick: absolute bat/aim cursor while playing, menu nav elsewhere
+  const sx = gp.axes[0] ?? 0;
+  const sy = gp.axes[1] ?? 0;
+  if (inPlay) {
+    if (Math.abs(sx) > PAD.deadzone || Math.abs(sy) > PAD.deadzone) {
+      aim.x = THREE.MathUtils.clamp(sx * 3.6, -3.6, 3.6);
+      aim.y = THREE.MathUtils.clamp(2.95 - sy * 2.8, 0.5, 5.6);
+    }
+  } else {
+    if (sy < -0.5 && PAD.stick.y >= -0.5) padKey('ArrowUp');
+    if (sy > 0.5 && PAD.stick.y <= 0.5) padKey('ArrowDown');
+    if (sx < -0.5 && PAD.stick.x >= -0.5) padKey('ArrowLeft');
+    if (sx > 0.5 && PAD.stick.x <= 0.5) padKey('ArrowRight');
+  }
+  PAD.stick = { x: sx, y: sy };
+
+  // d-pad always navigates
+  if (edge(12)) padKey('ArrowUp');
+  if (edge(13)) padKey('ArrowDown');
+  if (edge(14)) padKey('ArrowLeft');
+  if (edge(15)) padKey('ArrowRight');
+
+  if (edge(0)) padKey(inPlay ? 'Space' : 'Enter');           // A
+  if (edge(1)) padKey(inPlay ? 'KeyB' : 'Escape');           // B
+  if (edge(2)) padKey(inPlay ? 'KeyX' : 'KeyR');             // X
+  if (edge(3) && inPlay) padKey('KeyS');                     // Y
+  if (edge(9)) padKey('Escape');                             // Start
+
+  // shoulders flip through the arsenal during a pitch call
+  if (pitchCall && (edge(4) || edge(5))) {
+    const dir = edge(5) ? 1 : -1;
+    const idx = (PITCH_NAMES.indexOf(pitchCall.type) + dir + PITCH_NAMES.length) % PITCH_NAMES.length;
+    pitchCall.type = PITCH_NAMES[idx];
+    renderPitchCall();
+  }
+
+  PAD.prev = gp.buttons.map((b) => b.pressed);
+}
+
 // ---------- main loop ----------
 // Fixed timestep: the sim always runs at TICKS_PER_SEC regardless of display
 // refresh (no double-speed pitches on 120Hz screens, no slow-mo on weak GPUs).
@@ -1632,6 +1696,7 @@ function advanceOneTick() {
 }
 
 function frame(now) {
+  pollGamepad();
   acc += Math.min(now - last, 1000); // clamp long gaps (tab switches)
   last = now;
   while (acc >= STEP_MS) {
@@ -1711,6 +1776,8 @@ window.__replayActive = () => !!replay;
 window.__drawCalls = () => renderer.info.render.calls;
 window.__pitchCall = () => pitchCall && { ...pitchCall };
 window.__aimAt = (x, y) => { aim.x = x; aim.y = y; };
+window.__pollPad = pollGamepad; // deterministic gamepad polling for tests
+window.__aim = () => ({ ...aim });
 window.__actors = () => ({
   batter: batter.position.toArray().map((v) => +v.toFixed(1)),
   batVisible: bat.visible,

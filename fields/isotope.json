@@ -12,7 +12,9 @@
     "hazard": "#ffd53a",
     "drum": "#3c4a3a",
     "concrete": "#4a5248",
-    "sludgepool": "#2fbf24"
+    "sludgepool": "#2fbf24",
+    "mutantflora": "#63e84a",
+    "dialface": "#d8ecc0"
   },
   "fogDensity": 0.018,
   "announcer": {
@@ -20,7 +22,9 @@
       "The pool is bubbling at a friendly rate tonight, folks. Very friendly.",
       "Stadium management reminds you: the drums are decorative. Do not hug the drums.",
       "My badge just turned a NEW color up here in the booth. Gorgeous.",
-      "Cooling Tower Two is humming the seventh-inning stretch a little early."
+      "Cooling Tower Two is humming the seventh-inning stretch a little early.",
+      "The geiger tower's needle just did a full lap. That is a home-run trot if I've ever seen one.",
+      "Lovely green puffs off the chimney stacks tonight. The cacti in left field are waving back."
     ],
     "homer": [
       "INTO THE POOL! That ball has a half-life now, and so does the outfield!",
@@ -78,6 +82,59 @@
 
     { "shape": "sphere", "size": [1.1], "segments": 5, "color": "coolant", "glow": true,
       "place": "scatter", "count": 9, "ring": [150, 210], "arc": [0.3, 0.7],
-      "y": 0.9, "scaleJitter": 0.45 }
+      "y": 0.9, "scaleJitter": 0.45 },
+
+    { "shape": "cylinder", "size": [1.8, 2.3, 0.25], "segments": 7, "color": "glowgreen", "glow": true,
+      "place": "scatter", "count": 45, "ring": [95, 135], "arc": [0.13, 0.87],
+      "y": 0.14, "scaleJitter": 0.5 },
+
+    { "shape": "cone", "size": [1.4, 5.5], "segments": 5, "color": "mutantflora", "glow": true,
+      "place": "scatter", "count": 34, "ring": [100, 168], "arc": [0.14, 0.86],
+      "y": 2.4, "tiltJitter": 0.14, "scaleJitter": 0.45 },
+
+    { "shape": "cone", "size": [2.4, 4.2], "segments": 3, "color": "hazard", "glow": true,
+      "place": "ring", "count": 12, "radius": 122, "y": 2.6, "arc": [0.12, 0.88],
+      "yawJitter": 0.5, "scaleJitter": 0.2 },
+
+    { "shape": "cylinder", "size": [0.9, 0.9, 0.4], "segments": 8, "color": "coolant", "glow": true,
+      "place": "scatter", "count": 18, "ring": [112, 158], "arc": [0.15, 0.85],
+      "y": 3, "rot": [1.5708, 0, 0], "yawJitter": 1.2, "scaleJitter": 0.3 },
+
+    { "shape": "box", "size": [132, 2.5, 7], "color": "concrete",
+      "place": "single", "pos": [-2, 56, -247], "rot": [0, 0.04, 0] },
+    { "shape": "box", "size": [132, 1, 0.8], "color": "drum",
+      "place": "single", "pos": [-2, 60, -243.8], "rot": [0, 0.04, 0] },
+    { "shape": "box", "size": [132, 1, 0.8], "color": "drum",
+      "place": "single", "pos": [-2, 60, -250.2], "rot": [0, 0.04, 0] },
+
+    { "shape": "cylinder", "size": [3, 4.2, 26], "segments": 7, "color": "concrete",
+      "place": "single", "pos": [96, 13, -185],
+      "children": [
+        { "shape": "cylinder", "size": [7, 7, 2], "segments": 10, "color": "dialface", "glow": true,
+          "count": 1, "pos": [0, 17, 0], "rot": [1.5708, 0, 0] },
+        { "shape": "box", "size": [1, 1, 8.5], "color": "glowgreen", "glow": true,
+          "count": 1, "pos": [0, 17.6, -1.6], "rot": [0, 0.9, 0] }
+      ] },
+
+    { "shape": "cylinder", "size": [2.5, 3.5, 30], "segments": 7, "color": "concrete", "open": true,
+      "place": "ring", "count": 3, "radius": 205, "y": 15, "arc": [0.25, 0.75],
+      "tiltJitter": 0.03, "scaleJitter": 0.15,
+      "children": [
+        { "shape": "sphere", "size": [2.4], "segments": 5, "color": "glowgreen", "glow": true,
+          "count": 3, "pos": [0, 18, 0], "stack": 6, "posJitter": [2, 0, 2] }
+      ] },
+
+    { "shape": "cylinder", "size": [12, 19, 62], "segments": 9, "color": "concrete", "open": true,
+      "place": "single", "pos": [-8, 31, -260] },
+    { "shape": "sphere", "size": [8], "segments": 6, "color": "coolant", "glow": true,
+      "place": "single", "pos": [-8, 65, -260] },
+
+    { "shape": "cylinder", "size": [1.2, 1.2, 9], "segments": 7, "color": "drum", "open": true,
+      "place": "scatter", "count": 14, "ring": [110, 180], "arc": [0.15, 0.85],
+      "y": 1.2, "rot": [0, 0, 1.5708], "yawJitter": 1.4, "scaleJitter": 0.3 },
+
+    { "shape": "sphere", "size": [0.5], "segments": 4, "color": "glowgreen", "glow": true,
+      "place": "scatter", "count": 30, "ring": [100, 190], "arc": [0.15, 0.85],
+      "y": 4.5, "scaleJitter": 0.6 }
   ]
 }

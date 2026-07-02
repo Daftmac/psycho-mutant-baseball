@@ -12,7 +12,11 @@
     "ice": "#bfe4f2",
     "frost": "#e8f4fa",
     "chain": "#4a5560",
-    "porthole": "#d8f0fc"
+    "porthole": "#d8f0fc",
+    "exit": "#3aff86",
+    "mercury": "#ff4a52",
+    "fishsilver": "#9ab4c0",
+    "rustmetal": "#5a5248"
   },
   "fogDensity": 0.021,
   "announcer": {
@@ -20,7 +24,9 @@
       "A crisp minus forty in the cheap seats tonight. The expensive seats are colder.",
       "The slabs above left field are swaying. There is no wind in here. Enjoy the game!",
       "Lost and found now has eleven tongues stuck to the foul pole. Claim yours after the ninth.",
-      "My coffee froze mid-pour again, folks. It's hanging there. It's beautiful."
+      "My coffee froze mid-pour again, folks. It's hanging there. It's beautiful.",
+      "Do NOT take the glowing green exit door in right field. Management checked. It goes nowhere. It ENJOYS going nowhere.",
+      "The big thermometer just gave up and started counting down. To what, it won't say."
     ],
     "homer": [
       "THAT BALL IS FLASH-FROZEN AND FLYING! Fresh out through the porthole!",
@@ -55,6 +61,10 @@
       "place": "ring", "count": 10, "radius": 170, "y": 56, "arc": [0.1, 0.9],
       "rot": [3.1416, 0, 0], "tiltJitter": 0.1, "scaleJitter": 0.35 },
 
+    { "shape": "cone", "size": [0.7, 4.5], "segments": 5, "color": "frost",
+      "place": "scatter", "count": 32, "ring": [110, 200], "arc": [0.1, 0.9],
+      "y": 52, "rot": [3.1416, 0, 0], "tiltJitter": 0.12, "scaleJitter": 0.5 },
+
     { "shape": "cylinder", "size": [14, 14, 1.4], "segments": 12, "color": "porthole", "glow": true,
       "place": "single", "pos": [52, 92, -235], "rot": [1.5708, 0, 0],
       "children": [
@@ -73,6 +83,80 @@
       "children": [
         { "shape": "box", "size": [11, 2.5, 9], "color": "frost", "glow": true,
           "count": 1, "pos": [0, 7.5, 0] }
+      ] },
+
+    { "shape": "cylinder", "size": [0.12, 0.12, 7], "segments": 4, "color": "chain",
+      "place": "scatter", "count": 44, "ring": [104, 175], "arc": [0.12, 0.88],
+      "y": 46, "tiltJitter": 0.08, "scaleJitter": 0.3 },
+
+    { "shape": "box", "size": [2.6, 1.6, 2], "color": "ice",
+      "place": "scatter", "count": 46, "ring": [95, 132], "arc": [0.1, 0.9],
+      "y": 0.8, "yawJitter": 1.4, "scaleJitter": 0.4 },
+
+    { "shape": "box", "size": [2.2, 1.4, 1.8], "color": "frost",
+      "place": "scatter", "count": 20, "ring": [98, 128], "arc": [0.15, 0.85],
+      "y": 2.4, "yawJitter": 1.4, "scaleJitter": 0.35 },
+
+    { "shape": "box", "size": [1.8, 0.5, 1.8], "color": "rustmetal",
+      "place": "scatter", "count": 10, "ring": [100, 145], "arc": [0.12, 0.88],
+      "y": 0.25, "yawJitter": 1.2, "scaleJitter": 0.3 },
+
+    { "shape": "sphere", "size": [1.8], "segments": 5, "color": "frost", "glow": true,
+      "place": "scatter", "count": 22, "ring": [108, 170], "arc": [0.12, 0.88],
+      "y": 3.2, "scaleJitter": 0.55 },
+
+    { "shape": "box", "size": [7, 1.2, 5], "color": "rustmetal",
+      "place": "single", "pos": [-46, 0.6, -152], "rot": [0, 0.5, 0],
+      "children": [
+        { "shape": "box", "size": [2.2, 0.7, 0.9], "color": "fishsilver",
+          "count": 5, "pos": [0, 1.2, 0], "posJitter": [2.2, 0.3, 1.6], "rotJitter": [0, 1.2, 0.2] },
+        { "shape": "box", "size": [7.2, 0.4, 5.2], "color": "frost", "glow": true,
+          "count": 1, "pos": [0, 1.9, 0] }
+      ] },
+
+    { "shape": "cylinder", "size": [4.2, 4.2, 2], "segments": 10, "color": "rustmetal",
+      "place": "ring", "count": 5, "radius": 200, "y": 42, "arc": [0.14, 0.86],
+      "lookCenter": true, "scaleJitter": 0.15,
+      "children": [
+        { "shape": "box", "size": [6.6, 1.1, 0.5], "color": "chain",
+          "count": 1, "pos": [0, 0, 1.2] },
+        { "shape": "box", "size": [1.1, 6.6, 0.5], "color": "chain",
+          "count": 1, "pos": [0, 0, 1.2] },
+        { "shape": "sphere", "size": [0.8], "segments": 5, "color": "ice", "glow": true,
+          "count": 1, "pos": [0, 0, 1.4] }
+      ] },
+
+    { "shape": "cylinder", "size": [1.6, 1.6, 34], "segments": 8, "color": "chalk",
+      "place": "single", "pos": [78, 22, -218], "rot": [0, 0, 0.06],
+      "children": [
+        { "shape": "sphere", "size": [3.6], "segments": 8, "color": "mercury", "glow": true,
+          "count": 1, "pos": [0, -18, 0] },
+        { "shape": "cylinder", "size": [0.7, 0.7, 15], "segments": 6, "color": "mercury", "glow": true,
+          "count": 1, "pos": [0, -8, 0] },
+        { "shape": "box", "size": [3.4, 0.5, 0.5], "color": "chain",
+          "count": 4, "pos": [0, 2, 1], "stack": 4 }
+      ] },
+
+    { "shape": "box", "size": [3.4, 7.5, 4.6], "color": "rustmetal",
+      "place": "single", "pos": [40, 3.7, -142], "rot": [0, -0.9, 0],
+      "children": [
+        { "shape": "box", "size": [1, 13, 1], "color": "chain",
+          "count": 1, "pos": [0, 5, 3] },
+        { "shape": "box", "size": [0.5, 0.4, 5.5], "color": "chain",
+          "count": 2, "pos": [0, -3.2, 5.6], "posJitter": [0.9, 0, 0] },
+        { "shape": "box", "size": [4, 0.6, 5], "color": "frost",
+          "count": 1, "pos": [0, 7.7, 0] },
+        { "shape": "cylinder", "size": [0.9, 0.9, 0.8], "segments": 6, "color": "chain",
+          "count": 2, "pos": [0, -3.4, 1.6], "posJitter": [1.6, 0, 0], "rot": [0, 0, 1.5708] }
+      ] },
+
+    { "shape": "box", "size": [7, 12, 1.2], "color": "wall",
+      "place": "single", "pos": [104, 6, -172], "rot": [0, -0.55, 0],
+      "children": [
+        { "shape": "plane", "size": [5.4, 10.2], "color": "exit", "glow": true,
+          "count": 1, "pos": [0, -0.3, 0.7] },
+        { "shape": "plane", "size": [4.6, 1.6], "color": "exit", "glow": true,
+          "count": 1, "pos": [0, 7.4, 0.7] }
       ] }
   ]
 }

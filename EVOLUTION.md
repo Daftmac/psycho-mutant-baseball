@@ -177,11 +177,22 @@ unchecked items — never build them mid-increment.
       Commissioner's Office = 12. New mutants have no signature abilities yet
       (parked below).
 
+- [x] **F5. Deep detail pass, all twelve parks.** ✅ Child-less prop entries now
+      render as InstancedMesh (one draw call at any count — budget rewritten in
+      fields/README.md), then three parallel field-designer crews tripled every
+      park's dressing (league total 75 → 219 prop entries): crypts, crow-fences
+      and grave candles; collapsed second screens and glowing popcorn; the Rat
+      King's throne and rising bile bubbles; dew-lit webs and wrapped bundles;
+      stuck clocks and PRODUCE banners; geiger towers and venting chimneys;
+      sunken domes and floating candles; a pig carousel and funhouse grin
+      (abattoir lighting brightened); static campfires and a broadcast van;
+      a rearing bear under chandeliers; hook rows and the EXIT door to
+      nowhere; wheelbarrow graveyards and rejected carrots. +2 themed
+      announcer lines per park. All 12 verified live: 33–135 draw calls.
+
 ## Parking lot (ideas noticed, not yet scheduled)
 - Signature abilities for the 60 new mutants (C.ABILITIES only covers the
   original twelve)
-- Abattoir Fairgrounds reads dark in the lobby orbit — art-director pass on
-  its lights/palette contrast
 - balance-analyst: the .250–.380 BA band is tighter than seed variance allows
   (~40 swings/game → ±.07 std). Build a multi-seed averaging harness mode and
   re-express the target as a mean across ≥10 seeds.

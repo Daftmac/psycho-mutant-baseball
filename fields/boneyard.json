@@ -9,7 +9,14 @@
     "chalk": "#cfc9b8",
     "moon": "#a41f2b",
     "stone": "#6b6b78",
-    "tree": "#150e14"
+    "tree": "#150e14",
+    "bone": "#d8d0b9",
+    "candle": "#ffb45e",
+    "keyhole": "#ffd76a",
+    "iron": "#2b2b36",
+    "coffin": "#3a2b1c",
+    "wisp": "#79d6a3",
+    "grave": "#060409"
   },
   "fogDensity": 0.011,
   "announcer": {
@@ -17,7 +24,9 @@
       "The fog's rolling in thick tonight, fiends.",
       "That moon has been staring at me the entire game.",
       "Groundskeeper says the outfield dug itself again. Lovely.",
-      "A hush falls over the Boneyard... a literal hush. It crawled in from left field."
+      "A hush falls over the Boneyard... a literal hush. It crawled in from left field.",
+      "Mind the open graves in shallow left — the grounds crew dug those for 'atmosphere.' Sure they did.",
+      "Every candle along the iron fence just leaned toward home plate at once. Interesting."
     ],
     "homer": [
       "THAT ONE'S BOUND FOR A SHALLOW GRAVE IN THE NEXT COUNTY!",
@@ -39,6 +48,64 @@
       "children": [
         { "shape": "cylinder", "size": [0.15, 0.4, 7], "segments": 4, "color": "tree",
           "count": 3, "pos": [0, 3, 0], "stack": 1.5, "rotJitter": [0, 0, 1.1] }
-      ] }
+      ] },
+
+    { "shape": "box", "size": [4.4, 2.8, 0.28], "color": "iron",
+      "place": "ring", "count": 26, "radius": 116, "y": 1.4, "arc": [0.12, 0.88],
+      "lookCenter": true, "tiltJitter": 0.07, "scaleJitter": 0.1 },
+
+    { "shape": "box", "size": [2.2, 1.0, 5.2], "color": "coffin",
+      "place": "scatter", "count": 14, "ring": [100, 168], "arc": [0.12, 0.88],
+      "y": 0.5, "yawJitter": 0.6, "tiltJitter": 0.22, "scaleJitter": 0.2 },
+
+    { "shape": "plane", "size": [2.8, 6], "color": "grave", "rot": [-1.5708, 0, 0],
+      "place": "scatter", "count": 12, "ring": [98, 158], "arc": [0.15, 0.85],
+      "y": 0.06, "yawJitter": 0.8, "scaleJitter": 0.2 },
+
+    { "shape": "box", "size": [0.24, 0.55, 0.24], "color": "candle", "glow": true,
+      "place": "scatter", "count": 60, "ring": [96, 148], "arc": [0.1, 0.9],
+      "y": 0.3, "yawJitter": 0.5, "scaleJitter": 0.45 },
+
+    { "shape": "cone", "size": [1.2, 1.7], "segments": 5, "color": "bone",
+      "place": "scatter", "count": 34, "ring": [100, 175], "arc": [0.12, 0.88],
+      "y": 0.8, "tiltJitter": 0.25, "scaleJitter": 0.4 },
+
+    { "shape": "cylinder", "size": [0.18, 0.24, 5.5], "segments": 4, "color": "iron",
+      "place": "scatter", "count": 9, "ring": [105, 160], "arc": [0.12, 0.88],
+      "y": 2.75, "tiltJitter": 0.07, "scaleJitter": 0.15,
+      "children": [
+        { "shape": "box", "size": [0.9, 0.55, 0.4], "color": "tree",
+          "count": 1, "pos": [0, 3.1, 0], "rotJitter": [0, 1.5, 0] }
+      ] },
+
+    { "shape": "box", "size": [15, 11, 11], "color": "stone",
+      "place": "single", "pos": [70, 5.5, -195], "rot": [0, -0.35, 0],
+      "children": [
+        { "shape": "cone", "size": [10.5, 6], "segments": 4, "color": "stone",
+          "count": 1, "pos": [0, 8.5, 0] },
+        { "shape": "plane", "size": [1.4, 3.2], "color": "keyhole", "glow": true,
+          "count": 1, "pos": [0, -0.5, 5.56] }
+      ] },
+
+    { "shape": "box", "size": [18, 18, 12], "color": "tree",
+      "place": "single", "pos": [-130, 9, -235], "rot": [0, 0.3, 0],
+      "children": [
+        { "shape": "cone", "size": [4, 14], "segments": 4, "color": "tree",
+          "count": 1, "pos": [0, 13, 0] },
+        { "shape": "plane", "size": [3, 3], "color": "moon", "glow": true,
+          "count": 1, "pos": [0, 3, 6.06] }
+      ] },
+
+    { "shape": "sphere", "size": [0.8], "segments": 5, "color": "wisp", "glow": true,
+      "place": "scatter", "count": 10, "ring": [125, 210], "arc": [0.1, 0.9],
+      "y": 24, "scaleJitter": 0.5 },
+
+    { "shape": "box", "size": [1.7, 0.28, 0.5], "color": "tree",
+      "place": "scatter", "count": 14, "ring": [185, 245], "arc": [0.5, 0.85],
+      "y": 70, "yawJitter": 1.2, "scaleJitter": 0.3 },
+
+    { "shape": "cone", "size": [1.8, 9], "segments": 4, "color": "stone",
+      "place": "scatter", "count": 6, "ring": [140, 200], "arc": [0.15, 0.85],
+      "y": 4.5, "tiltJitter": 0.12, "scaleJitter": 0.25 }
   ]
 }

@@ -122,6 +122,27 @@ function spawnProp(spec) {
     }
   }
 
+  // entries WITHOUT children render as one InstancedMesh — a single draw
+  // call no matter the count, so fields can drown in themed clutter
+  if (!(spec.children?.length) && spots.length >= 8) {
+    const imesh = new THREE.InstancedMesh(geo, material, spots.length);
+    const dummy = new THREE.Object3D();
+    spots.forEach(([px, py, pz], i) => {
+      dummy.position.set(px, py, pz);
+      dummy.rotation.set(0, 0, 0);
+      if (spec.rot) dummy.rotation.set(spec.rot[0], spec.rot[1], spec.rot[2]);
+      if (spec.lookCenter) dummy.lookAt(0, py, 0);
+      if (spec.yawJitter) dummy.rotation.y += (rng() * 2 - 1) * spec.yawJitter;
+      if (spec.tiltJitter) dummy.rotation.z += (rng() * 2 - 1) * spec.tiltJitter;
+      dummy.scale.setScalar(spec.scaleJitter ? 1 + (rng() * 2 - 1) * spec.scaleJitter : 1);
+      dummy.updateMatrix();
+      imesh.setMatrixAt(i, dummy.matrix);
+    });
+    imesh.instanceMatrix.needsUpdate = true;
+    scene.add(imesh);
+    return;
+  }
+
   // children share one geometry/material across every parent instance
   const kids = (spec.children ?? []).map((ch) => ({ ch, geo: propGeometry(ch), material: propMaterial(ch) }));
 
@@ -1625,6 +1646,7 @@ window.__advance = (n = 1) => {
 };
 window.__swing = (x, y, type = 'contact') => { aim.x = x; aim.y = y; queueSwing(type); };
 window.__replayActive = () => !!replay;
+window.__drawCalls = () => renderer.info.render.calls;
 window.__pitchCall = () => pitchCall && { ...pitchCall };
 window.__aimAt = (x, y) => { aim.x = x; aim.y = y; };
 window.__actors = () => ({

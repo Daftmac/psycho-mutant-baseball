@@ -69,9 +69,11 @@ Y is up. Keep it chunky: low segment counts, few big meshes, palette colors only
 **Angles**: `arc` values are in units of PI, mapped so the outfield fan is
 `[0.15, 0.85]`-ish and a full surrounding circle is `[0, 2]`.
 
-**Performance budget**: aim for < ~150 meshes per field. One prop entry shares
-one geometry + one material across all its instances — prefer one entry with
-`count: 40` over 40 entries.
+**Performance budget**: entries WITHOUT `children` render as a single
+InstancedMesh — one draw call no matter the count — so go generous (20–80)
+on flat clutter. Entries WITH `children` create `count × (1 + children)` real
+meshes; keep the SUM of those under ~140 per field. Total instances per field
+under ~900.
 
 **Vibe rules** (see CLAUDE.md): macabre but playful, small palettes, heavy fog,
 no realism. Every field needs a personality and one signature landmark

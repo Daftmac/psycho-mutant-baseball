@@ -12,7 +12,8 @@
     "brick": "#48291f",
     "rust": "#6b4226",
     "shaft": "#cfe8b0",
-    "eyes": "#ff2d2d"
+    "eyes": "#ff2d2d",
+    "warn": "#e8c832"
   },
   "fogDensity": 0.019,
   "announcer": {
@@ -20,7 +21,9 @@
       "Whew. The sewer is RIPE tonight, folks.",
       "Something just brushed my ankle up here in the booth. Moving on.",
       "The sludge main is flowing at a healthy pace this evening.",
-      "I'm told the red eyes in the outfield are 'mostly rats.' Mostly."
+      "I'm told the red eyes in the outfield are 'mostly rats.' Mostly.",
+      "Those yellow placards bolted along the walls? Each one is a different apology.",
+      "All rise for the Rat King on his debris throne in left-center. He's already standing. On everything."
     ],
     "homer": [
       "SPLASH ZONE! Right into the main! The front rows are SO sorry!",
@@ -75,6 +78,66 @@
       "children": [
         { "shape": "cylinder", "size": [0.22, 0.22, 11], "segments": 4, "color": "rust",
           "count": 2, "pos": [0, -5.8, 0], "posJitter": [4.5, 0, 4.5], "rotJitter": [0.15, 0, 0.15] }
-      ] }
+      ] },
+
+    { "shape": "cylinder", "size": [2.2, 2.2, 16], "segments": 6, "open": true, "color": "rust",
+      "place": "ring", "count": 10, "radius": 165, "y": 48, "arc": [0.08, 0.92],
+      "lookCenter": true, "rot": [1.5708, 0, 0], "tiltJitter": 0.1, "scaleJitter": 0.2 },
+
+    { "shape": "cylinder", "size": [1.6, 1.6, 12], "segments": 6, "open": true, "color": "brick",
+      "place": "ring", "count": 7, "radius": 125, "y": 22, "arc": [0.12, 0.88],
+      "lookCenter": true, "rot": [1.5708, 0, 0], "tiltJitter": 0.12, "scaleJitter": 0.15 },
+
+    { "shape": "cylinder", "size": [1.1, 1.1, 0.45], "segments": 8, "open": true, "color": "rust",
+      "place": "scatter", "count": 14, "ring": [100, 150], "arc": [0.1, 0.9],
+      "y": 9, "rot": [1.5708, 0, 0], "yawJitter": 0.6, "scaleJitter": 0.3 },
+
+    { "shape": "box", "size": [1.4, 14, 0.3], "color": "rust",
+      "place": "scatter", "count": 4, "ring": [110, 165], "arc": [0.15, 0.85],
+      "y": 7, "tiltJitter": 0.04, "scaleJitter": 0.15,
+      "children": [
+        { "shape": "box", "size": [1.3, 0.28, 0.34], "color": "brick",
+          "count": 4, "pos": [0, -4.5, 0.2], "stack": 3 }
+      ] },
+
+    { "shape": "sphere", "size": [0.5], "segments": 4, "color": "bile", "glow": true,
+      "place": "scatter", "count": 24, "ring": [108, 200], "arc": [0.1, 0.9],
+      "y": 2.2, "scaleJitter": 0.5 },
+
+    { "shape": "sphere", "size": [0.4], "segments": 4, "color": "bile", "glow": true,
+      "place": "scatter", "count": 20, "ring": [115, 205], "arc": [0.1, 0.9],
+      "y": 6.5, "scaleJitter": 0.5 },
+
+    { "shape": "plane", "size": [1.8, 1.4], "color": "warn", "glow": true,
+      "place": "scatter", "count": 12, "ring": [100, 162], "arc": [0.1, 0.9],
+      "y": 4.5, "yawJitter": 0.9, "tiltJitter": 0.1, "scaleJitter": 0.2 },
+
+    { "shape": "box", "size": [0.26, 20, 0.26], "color": "rust",
+      "place": "scatter", "count": 12, "ring": [120, 195], "arc": [0.15, 0.85],
+      "y": 40, "tiltJitter": 0.1, "scaleJitter": 0.3 },
+
+    { "shape": "cone", "size": [1.6, 8], "segments": 5, "color": "brick",
+      "place": "scatter", "count": 26, "ring": [140, 220], "arc": [0.1, 0.9],
+      "y": 60, "rot": [3.1416, 0, 0], "scaleJitter": 0.5 },
+
+    { "shape": "cone", "size": [9, 12], "segments": 6, "color": "rust",
+      "place": "single", "pos": [-85, 5, -190], "rot": [0, 0.4, 0],
+      "children": [
+        { "shape": "box", "size": [3, 1.5, 2], "color": "brick",
+          "count": 2, "pos": [0, -3, 3], "posJitter": [3, 1, 2], "rotJitter": [0, 1, 0.2] },
+        { "shape": "box", "size": [0.4, 0.4, 0.4], "color": "eyes", "glow": true,
+          "count": 2, "pos": [0, 4.5, 2.5], "posJitter": [0.9, 0.2, 0.3] }
+      ] },
+
+    { "shape": "cylinder", "size": [5.5, 5.5, 12], "segments": 8, "open": true, "color": "brick",
+      "place": "single", "pos": [130, 10, -150], "rot": [0, 0, 1.5708],
+      "children": [
+        { "shape": "plane", "size": [8, 9], "color": "bile", "glow": true,
+          "count": 1, "pos": [0, -7, 0], "rot": [0, 1.5708, 0] }
+      ] },
+
+    { "shape": "box", "size": [1.6, 1.0, 1.4], "color": "brick",
+      "place": "scatter", "count": 30, "ring": [98, 155], "arc": [0.1, 0.9],
+      "y": 0.5, "yawJitter": 1, "tiltJitter": 0.2, "scaleJitter": 0.45 }
   ]
 }

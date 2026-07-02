@@ -10,7 +10,9 @@
     "silk": "#eee7d6",
     "silkdim": "#9a917f",
     "venom": "#9b5cf0",
-    "void": "#08060c"
+    "void": "#08060c",
+    "dew": "#d6ecff",
+    "bonepale": "#cfc6ae"
   },
   "fogDensity": 0.013,
   "announcer": {
@@ -18,7 +20,9 @@
       "The egg sacs are simply gorgeous under the silk moon tonight.",
       "A reminder from stadium management: do NOT touch the strands.",
       "She is watching from the third-base side this evening. Wave hello!",
-      "Eight legs, folks. I counted again during the seventh. Still eight."
+      "Eight legs, folks. I counted again during the seventh. Still eight.",
+      "Dew on every strand tonight — thousands of little chandeliers. She decorated. Compliment it.",
+      "Those wrapped bundles hanging over center field are swaying, folks. There is no wind in here."
     ],
     "homer": [
       "UP, UP, INTO THE WEB— no, THROUGH IT! She noticed. SHE NOTICED!",
@@ -71,6 +75,62 @@
           "count": 1, "pos": [13, 4, 7] },
         { "shape": "sphere", "size": [1.1], "segments": 5, "color": "venom", "glow": true,
           "count": 2, "pos": [17, 6, 11], "posJitter": [2, 1.2, 0.5] }
-      ] }
+      ] },
+
+    { "shape": "box", "size": [0.3, 0.3, 260], "color": "silkdim",
+      "place": "ring", "count": 12, "radius": 138, "y": 78, "arc": [0, 2],
+      "lookCenter": true, "tiltJitter": 0.25 },
+
+    { "shape": "box", "size": [0.2, 0.2, 150], "color": "silkdim",
+      "place": "ring", "count": 10, "radius": 100, "y": 28, "arc": [0, 2],
+      "lookCenter": true, "tiltJitter": 0.3 },
+
+    { "shape": "box", "size": [0.22, 120, 0.22], "color": "silkdim",
+      "place": "scatter", "count": 14, "ring": [115, 190], "arc": [0.08, 0.92],
+      "y": 55, "yawJitter": 1, "tiltJitter": 0.55, "scaleJitter": 0.2 },
+
+    { "shape": "sphere", "size": [0.28], "segments": 4, "color": "dew", "glow": true,
+      "place": "scatter", "count": 34, "ring": [100, 185], "arc": [0.05, 0.95],
+      "y": 20, "scaleJitter": 0.5 },
+
+    { "shape": "sphere", "size": [0.34], "segments": 4, "color": "dew", "glow": true,
+      "place": "scatter", "count": 30, "ring": [110, 195], "arc": [0.05, 0.95],
+      "y": 52, "scaleJitter": 0.5 },
+
+    { "shape": "box", "size": [1.6, 2.6, 1.6], "color": "silk",
+      "place": "scatter", "count": 9, "ring": [110, 180], "arc": [0.1, 0.9],
+      "y": 26, "yawJitter": 0.8, "tiltJitter": 0.12, "scaleJitter": 0.3,
+      "children": [
+        { "shape": "box", "size": [0.1, 30, 0.1], "color": "silkdim",
+          "count": 1, "pos": [0, 16, 0] }
+      ] },
+
+    { "shape": "box", "size": [0.5, 0.25, 0.6], "color": "void",
+      "place": "scatter", "count": 50, "ring": [96, 150], "arc": [0.08, 0.92],
+      "y": 0.15, "yawJitter": 1.4, "scaleJitter": 0.4 },
+
+    { "shape": "box", "size": [0.9, 0.4, 0.5], "color": "bonepale",
+      "place": "scatter", "count": 36, "ring": [100, 170], "arc": [0.1, 0.9],
+      "y": 0.2, "yawJitter": 1.2, "scaleJitter": 0.5 },
+
+    { "shape": "box", "size": [10, 6, 5], "color": "silkdim",
+      "place": "single", "pos": [95, 3.5, -165], "rot": [0, -0.5, 0.08],
+      "children": [
+        { "shape": "cylinder", "size": [2.6, 2.6, 0.6], "segments": 8, "color": "void",
+          "count": 2, "pos": [0, -2.2, 3], "posJitter": [4.5, 0, 0], "rot": [1.5708, 0, 0] },
+        { "shape": "sphere", "size": [3.4], "segments": 6, "color": "silk",
+          "count": 1, "pos": [2, 3.4, 0] }
+      ] },
+
+    { "shape": "sphere", "size": [7], "segments": 7, "color": "silk", "glow": true,
+      "place": "single", "pos": [-95, 62, -200],
+      "children": [
+        { "shape": "sphere", "size": [4], "segments": 6, "color": "silk", "glow": true,
+          "count": 3, "pos": [0, -2, 0], "posJitter": [6, 4, 6] }
+      ] },
+
+    { "shape": "box", "size": [0.9, 0.18, 0.4], "color": "void",
+      "place": "scatter", "count": 12, "ring": [180, 235], "arc": [0.15, 0.55],
+      "y": 78, "yawJitter": 1.2, "scaleJitter": 0.4 }
   ]
 }

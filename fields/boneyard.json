@@ -16,7 +16,8 @@
     "iron": "#2b2b36",
     "coffin": "#3a2b1c",
     "wisp": "#79d6a3",
-    "grave": "#060409"
+    "grave": "#060409",
+    "cloud": "#3d2438"
   },
   "fogDensity": 0.011,
   "announcer": {

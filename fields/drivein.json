@@ -15,7 +15,8 @@
     "moon": "#c9bfb2",
     "popcorn": "#f2e4b4",
     "bulb": "#ffd98a",
-    "exit": "#9df23e"
+    "exit": "#9df23e",
+    "cloud": "#2c3550"
   },
   "fogDensity": 0.012,
   "announcer": {

@@ -12,7 +12,8 @@
     "venom": "#9b5cf0",
     "void": "#08060c",
     "dew": "#d6ecff",
-    "bonepale": "#cfc6ae"
+    "bonepale": "#cfc6ae",
+    "cloud": "#4a4258"
   },
   "fogDensity": 0.013,
   "announcer": {

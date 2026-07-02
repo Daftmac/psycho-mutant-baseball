@@ -14,7 +14,8 @@
     "concrete": "#4a5248",
     "sludgepool": "#2fbf24",
     "mutantflora": "#63e84a",
-    "dialface": "#d8ecc0"
+    "dialface": "#d8ecc0",
+    "cloud": "#4f7a2e"
   },
   "fogDensity": 0.018,
   "announcer": {

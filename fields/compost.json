@@ -17,7 +17,8 @@
     "steam": "#cfe0b8",
     "rust": "#6e4a2a",
     "grub": "#c9a8b4",
-    "flyblack": "#14120a"
+    "flyblack": "#14120a",
+    "cloud": "#474f28"
   },
   "fogDensity": 0.014,
   "announcer": {

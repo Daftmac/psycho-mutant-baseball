@@ -287,7 +287,32 @@ const PITCH_Z_RATIO = MOUND_Z / D;
 // field props from JSON
 for (const spec of field.props ?? []) spawnProp(spec);
 
-// ---------- crowd: one InstancedMesh of swaying mutant silhouettes ----------
+// ---------- grandstands: tiered bleachers down both foul lines ----------
+// Four stepped rows per side; the crowd sits ON them like a real park.
+const STAND_ROWS = 4;
+const standRowInfo = []; // { cx, cz, dirX, dirZ, topY } per (side, row)
+{
+  const standMat = new THREE.MeshLambertMaterial({ color: 0x332f3d, flatShading: true });
+  const rowGeo = new THREE.BoxGeometry(120, 1.8, 3.6);
+  for (const side of [1, -1]) {
+    for (let r = 0; r < STAND_ROWS; r++) {
+      const off = 17 + r * 3.6;
+      const cx = side * (84 + off * 0.707);
+      const cz = -84 + off * 0.707;
+      const y = 0.9 + r * 1.8;
+      const row = new THREE.Mesh(rowGeo, standMat);
+      row.position.set(cx, y, cz);
+      row.rotation.y = Math.PI / 2 - side * Math.PI / 4;
+      scene.add(row);
+      standRowInfo.push({
+        cx, cz, topY: y + 0.9,
+        dirX: side * 0.707, dirZ: -0.707,
+      });
+    }
+  }
+}
+
+// ---------- crowd: one InstancedMesh of swaying mutants IN the stands ----------
 let crowd = null;
 if (field.crowd) {
   const cs = field.crowd;
@@ -295,17 +320,107 @@ if (field.crowd) {
   const cMat = new THREE.MeshLambertMaterial({ color: new THREE.Color(pal(cs.color ?? '#221a2e')), flatShading: true });
   const mesh = new THREE.InstancedMesh(geo, cMat, cs.count);
   const base = [];
-  const [a0, a1] = cs.arc ?? [0.1, 0.9];
   for (let i = 0; i < cs.count; i++) {
-    const a = A(a0 + rng() * (a1 - a0));
-    const r = (cs.ring[0] + rng() * (cs.ring[1] - cs.ring[0])) * PROP_SCALE;
+    const row = standRowInfo[Math.floor(rng() * standRowInfo.length)];
+    const t = (rng() * 2 - 1) * 56;
+    const px = row.cx + row.dirX * t;
+    const pz = row.cz + row.dirZ * t;
     base.push({
-      x: Math.cos(a) * r, y: cs.y ?? 1, z: Math.sin(a) * r + (cs.zOff ?? 0) * PROP_SCALE,
-      s: 0.8 + rng() * 0.5, ry: rng() * Math.PI * 2, ph: rng() * Math.PI * 2,
+      x: px, y: row.topY + 1.0, z: pz,
+      s: 0.8 + rng() * 0.5,
+      ry: Math.atan2(-px, -pz) + (rng() - 0.5) * 0.6, // watching the game (mostly)
+      ph: rng() * Math.PI * 2,
     });
   }
   scene.add(mesh);
   crowd = { mesh, base, excite: 0 };
+}
+
+// ---------- the outfield wall, sold to the highest mutant bidder ----------
+{
+  const WALL_R = 236;
+  const wallGeo = new THREE.BoxGeometry(42, 8, 2);
+  const wallMat = new THREE.MeshLambertMaterial({ color: 0x241f2e, flatShading: true });
+  const wall = new THREE.InstancedMesh(wallGeo, wallMat, 34);
+  const dummy = new THREE.Object3D();
+  for (let i = 0; i < 34; i++) {
+    const a = A(0.06 + (i / 33) * 0.88);
+    dummy.position.set(Math.cos(a) * WALL_R, 4, Math.sin(a) * WALL_R);
+    dummy.lookAt(0, 4, 0);
+    dummy.updateMatrix();
+    wall.setMatrixAt(i, dummy.matrix);
+  }
+  scene.add(wall);
+
+  // ad boards: local businesses of questionable legitimacy
+  const ADS = [
+    ['GRAVE DANGER INSURANCE', '#1a2438', '#8fb8ff'],
+    ['ISOTOPE COLA — GLOWS GOOD', '#12300f', '#7dff3a'],
+    ['WORM & SONS, ATTORNEYS', '#2e1a10', '#e8b45e'],
+    ['SECOND-HAND COFFINS', '#241226', '#c77dff'],
+    ['MOTHLIGHT BULBS', '#2e2a10', '#ffe97d'],
+    ['EAT AT THE OSSUARY', '#301114', '#ff8f8f'],
+    ['HALF-LIFE PHARMACY', '#0f2830', '#7de8d8'],
+    ["MME OCHO'S SILKWEAR", '#28202e', '#eee7d6'],
+  ];
+  const signTexture = (text, bg, fg) => {
+    const cv = document.createElement('canvas');
+    cv.width = 256; cv.height = 64;
+    const cx = cv.getContext('2d');
+    cx.fillStyle = bg; cx.fillRect(0, 0, 256, 64);
+    cx.strokeStyle = fg; cx.lineWidth = 4; cx.strokeRect(4, 4, 248, 56);
+    cx.fillStyle = fg;
+    cx.font = 'bold 17px monospace';
+    cx.textAlign = 'center'; cx.textBaseline = 'middle';
+    cx.fillText(text, 128, 34);
+    const tex = new THREE.CanvasTexture(cv);
+    tex.magFilter = THREE.NearestFilter;
+    tex.minFilter = THREE.NearestFilter;
+    return tex;
+  };
+  ADS.forEach(([text, bg, fg], i) => {
+    const a = A(0.14 + (i / (ADS.length - 1)) * 0.72);
+    const sign = new THREE.Mesh(
+      new THREE.PlaneGeometry(34, 8.5),
+      new THREE.MeshBasicMaterial({ map: signTexture(text, bg, fg) }),
+    );
+    sign.position.set(Math.cos(a) * (WALL_R - 2.4), 5.4, Math.sin(a) * (WALL_R - 2.4));
+    sign.lookAt(0, 5.4, 0);
+    scene.add(sign);
+  });
+}
+
+// ---------- sky: eerie drifting clouds over the outdoor parks ----------
+let cloudMesh = null;
+if (!field.indoor) {
+  const cloudColor = new THREE.Color(pal(field.palette.cloud ? 'cloud' : field.palette.fog));
+  const cGeo = new THREE.SphereGeometry(1, 7, 5);
+  const cMat = new THREE.MeshLambertMaterial({ color: cloudColor, flatShading: true, transparent: true, opacity: 0.85 });
+  cloudMesh = new THREE.InstancedMesh(cGeo, cMat, 16);
+  const dummy = new THREE.Object3D();
+  for (let i = 0; i < 16; i++) {
+    const a = rng() * Math.PI * 2;
+    const r = 140 + rng() * 260;
+    dummy.position.set(Math.cos(a) * r, 115 + rng() * 55, Math.sin(a) * r - 60);
+    dummy.scale.set(20 + rng() * 26, 5 + rng() * 5, 12 + rng() * 14); // squashed billows
+    dummy.rotation.y = rng() * Math.PI;
+    dummy.updateMatrix();
+    cloudMesh.setMatrixAt(i, dummy.matrix);
+  }
+  cloudMesh.frustumCulled = false;
+  scene.add(cloudMesh);
+}
+
+// ---------- dynamic lighting: the moon breathes, the park hums ----------
+const keyLightBase = keyLight.intensity;
+const parkGlow = new THREE.PointLight(0xfff2cc, 18, 220);
+parkGlow.position.set(0, 48, -70);
+scene.add(parkGlow);
+
+function updateAtmosphere(t) {
+  keyLight.intensity = keyLightBase * (1 + Math.sin(t * 0.008) * 0.14); // slow lunar breathing
+  parkGlow.intensity = 16 + Math.sin(t * 0.05) * 2.5 + Math.sin(t * 0.013) * 3; // humming lamps
+  if (cloudMesh) cloudMesh.rotation.y += 0.00009; // the weather crawls
 }
 
 const _crowdDummy = new THREE.Object3D();
@@ -332,7 +447,7 @@ function updateCrowd() {
 }
 
 // ---------- mutants ----------
-function makeMutant({ skin, extraArms = 0, headScale = 1 }) {
+function makeMutant({ skin, extraArms = 0, headScale = 1, glove = false }) {
   const g = new THREE.Group();
   const body = new THREE.Mesh(new THREE.BoxGeometry(1.6, 2.4, 1), mat(skin));
   body.position.y = 2.2;
@@ -360,6 +475,13 @@ function makeMutant({ skin, extraArms = 0, headScale = 1 }) {
       arms.push(arm);
     }
   }
+  if (glove && arms.length) {
+    // league-issue leather: a fat mitt swallowing the lead hand
+    const mitt = new THREE.Mesh(new THREE.SphereGeometry(0.55, 6, 5), mat(0x6b4226));
+    mitt.scale.set(1, 1.15, 0.55);
+    mitt.position.set(0, -1.05, 0.1);
+    arms[0].add(mitt);
+  }
   g.userData.parts = { body, head, legs, arms };
   return g;
 }
@@ -384,7 +506,28 @@ const pitcher = makeMutant({ skin: 0x8a6fb0, headScale: 1.5 }); // bulbous purpl
 pitcher.position.set(0, 1.4, -MOUND_Z); // up on the mound
 scene.add(pitcher);
 
-const ball = new THREE.Mesh(new THREE.SphereGeometry(0.45, 8, 6), new THREE.MeshBasicMaterial({ color: 0xeeeae0 }));
+// a real baseball: pixel-stitched leather that shades under the lights
+function baseballTexture() {
+  const cv = document.createElement('canvas');
+  cv.width = cv.height = 32;
+  const cx = cv.getContext('2d');
+  cx.fillStyle = '#f2efe4';
+  cx.fillRect(0, 0, 32, 32);
+  cx.strokeStyle = '#c23b2e';
+  cx.lineWidth = 2;
+  cx.beginPath(); cx.arc(-5, 16, 15, -0.85, 0.85); cx.stroke();
+  cx.beginPath(); cx.arc(37, 16, 15, Math.PI - 0.85, Math.PI + 0.85); cx.stroke();
+  cx.fillStyle = '#a8a196'; // scuff from the last inning
+  cx.fillRect(20, 24, 4, 3);
+  const tex = new THREE.CanvasTexture(cv);
+  tex.magFilter = THREE.NearestFilter;
+  tex.minFilter = THREE.NearestFilter;
+  return tex;
+}
+const ball = new THREE.Mesh(
+  new THREE.SphereGeometry(0.45, 8, 6),
+  new THREE.MeshLambertMaterial({ map: baseballTexture(), emissive: 0x4a463e }), // never fades to black
+);
 scene.add(ball);
 
 // ---------- the defense: a proper nine (minus pitcher and catcher here) ----------
@@ -399,7 +542,7 @@ const FIELDER_POSTS = [
   [63, -158],   // right field
 ];
 const fielders = FIELDER_POSTS.map(([x, z]) => {
-  const m = makeMutant({ skin: 0x4a5568 }); // drab away-grays; every mutant fields in gray
+  const m = makeMutant({ skin: 0x4a5568, glove: true }); // drab away-grays, leather ready
   m.position.set(x, 0, z);
   m.rotation.y = Math.PI; // facing the plate
   scene.add(m);
@@ -408,7 +551,7 @@ const fielders = FIELDER_POSTS.map(([x, z]) => {
 
 // the battery's other half and the law: catcher crouched behind the plate,
 // umpire looming behind him — offset right so they never block the zone
-const catcher = makeMutant({ skin: 0x7a4a3a });
+const catcher = makeMutant({ skin: 0x7a4a3a, glove: true });
 catcher.position.set(1.7, 0, 7.2);
 catcher.scale.set(1, 0.58, 1); // deep crouch
 catcher.rotation.y = Math.PI;  // facing the mound
@@ -419,6 +562,16 @@ umpire.position.set(2.9, 0, 10.4);
 umpire.scale.set(1.05, 0.82, 1.05); // hunched over the catcher's shoulder
 umpire.rotation.y = Math.PI;
 scene.add(umpire);
+
+// the rest of the crew: first, second, and third base umpires
+const baseUmps = [[86, -60, -0.9], [14, -142, 0.1], [-86, -60, 0.9]].map(([x, z, ry]) => {
+  const u = makeMutant({ skin: 0x23232c });
+  u.position.set(x, 0, z);
+  u.rotation.y = Math.PI + ry; // eyes on their bag
+  u.scale.setScalar(0.95);
+  scene.add(u);
+  return u;
+});
 
 // first and third base coaches, living in their boxes
 const coaches = [0, 2].map((baseIdx) => {
@@ -1044,6 +1197,7 @@ function positionBall() {
   if (s.phase === 'pitch' && s.pitch) {
     hitFly = null;
     ball.position.set(s.pitch.pos.x, s.pitch.pos.y, s.pitch.pos.z * PITCH_Z_RATIO);
+    ball.rotation.x += s.pitch.type === 'ectoball' ? 0.06 : 0.38; // ecto barely spins, that's the horror
     ball.visible = true;
     return;
   }
@@ -1074,6 +1228,7 @@ function positionBall() {
     }
     const dt = 1 / 60;
     hitFly.age++;
+    ball.rotation.x += 0.45; // tumbling leather
     if (hitFly.stage === 'fly') {
       // real aerodynamics: gravity + air drag — screams off the bat, dies late
       hitFly.vel.y -= HIT_GRAVITY * dt;
@@ -1855,6 +2010,7 @@ function advanceOneTick() {
   updateCrowd(); // the crowd never stops (even in the lobby)
   updateParticles();
   updateTrail();
+  updateAtmosphere(game ? game.tick : menuT * 60);
 }
 
 function frame(now) {

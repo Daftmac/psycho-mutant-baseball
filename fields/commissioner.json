@@ -696,5 +696,6 @@
       "y": 51.5,
       "scaleJitter": 0.25
     }
-  ]
+  ],
+  "indoor": true
 }

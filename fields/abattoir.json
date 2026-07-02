@@ -14,7 +14,8 @@
     "pigpink": "#f2a0b4",
     "dusk": "#523048",
     "sausage": "#b05038",
-    "grinface": "#3a1a30"
+    "grinface": "#3a1a30",
+    "cloud": "#4d2a38"
   },
   "fogDensity": 0.015,
   "announcer": {

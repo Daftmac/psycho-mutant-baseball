@@ -16,7 +16,8 @@
     "barmagenta": "#d04ac0",
     "vanwhite": "#b8bec4",
     "beaconred": "#ff5a5a",
-    "cable": "#22262c"
+    "cable": "#22262c",
+    "cloud": "#39424e"
   },
   "fogDensity": 0.016,
   "announcer": {

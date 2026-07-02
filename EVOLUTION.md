@@ -240,6 +240,16 @@ unchecked items — never build them mid-increment.
       pitch's rendered flight z-compressed to match — sim untouched, ball
       reads closer and calmer.
 
+- [x] **F13. Presentation megabatch.** ✅ Fielders and catcher wear mitts; a
+      full four-umpire crew (home + 1B/2B/3B); tiered grandstands down both
+      foul lines with the crowd seated on the steps facing the game; eerie
+      per-park cloud layers drifting over the eight outdoor stadiums (toxic
+      billows at Isotope Alley, indoor parks flagged and skipped); breathing
+      moonlight + humming park lamps (dynamic light pulses); the ball is a
+      pixel-stitched Lambert baseball that spins in flight (the ectoball
+      barely spins — that's the horror); and a 34-panel outfield wall ringed
+      with glowing ads: GRAVE DANGER INSURANCE, ISOTOPE COLA, WORM & SONS...
+
 ## Parking lot (ideas noticed, not yet scheduled)
 - Signature abilities for the 60 new mutants (C.ABILITIES only covers the
   original twelve)

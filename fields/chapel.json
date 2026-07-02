@@ -18,7 +18,8 @@
     "lilypad": "#274d3a",
     "kelp": "#1d4a34",
     "fish": "#0a141c",
-    "organpipe": "#8a94a0"
+    "organpipe": "#8a94a0",
+    "cloud": "#2e4248"
   },
   "fogDensity": 0.014,
   "announcer": {

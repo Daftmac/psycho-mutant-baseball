@@ -110,6 +110,25 @@ export const C = {
     GRAVE_FT: 6,
   },
 
+  // per-mutant signature abilities. passive ones are always on; proc'd ones
+  // fire at ABILITY_PROC_BASE + chaos * ABILITY_PROC_CHAOS per relevant event.
+  ABILITY_PROC_BASE: 0.25,
+  ABILITY_PROC_CHAOS: 0.6,
+  ABILITIES: {
+    'Sluggo the Exhumed': { key: 'graveweight',  label: 'GRAVE WEIGHT',   passive: false }, // hit roll floor raised
+    'Marrow Mary':        { key: 'borrowedEyes', label: 'BORROWED EYES',  passive: true },  // timing window +15%
+    'The Wormfather':     { key: 'wormfield',    label: 'WORMFIELD',      passive: true },  // errors x2, robs nullified on his ABs
+    'Stitch-Lip Stan':    { key: 'silentAppeal', label: 'SILENT APPEAL',  passive: false }, // called strikes become balls
+    'Six-Arm Sally':      { key: 'sixArms',      label: 'SIX ARMS',       passive: true },  // bat reach x1.35
+    'Old Gasper':         { key: 'moonfire',     label: 'MOONFIRE',       passive: true },  // his homers ignite the moon
+    'Rad-Rat Rickey':     { key: 'glowLegs',     label: 'GLOW LEGS',      passive: true },  // steal +0.18, stretch x1.4
+    'Chernobyl Chuck':    { key: 'halfLives',    label: 'TWO HALF-LIVES', passive: true },  // chaos proc chance x2
+    'The Split Twins':    { key: 'twoSwings',    label: 'TWO SWINGS',     passive: false }, // hit roll = best of two
+    'Gilly the Gilled':   { key: 'wetRead',      label: 'WET READ',       passive: true },  // breaking balls don't bite him
+    'Bessie Two-Heads':   { key: 'fourEyes',     label: 'FOUR EYES',      passive: true },  // foul threshold -0.06
+    'Mothlight Moe':      { key: 'mothdance',    label: 'MOTH DANCE',     passive: true },  // steal +0.12, stretch x1.25
+  },
+
   // field dimensions (logical units for both sim flavor and renderer)
   FIELD_SCALE: 60,            // distance mound -> plate
 };

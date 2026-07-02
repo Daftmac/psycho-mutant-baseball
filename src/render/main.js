@@ -932,6 +932,22 @@ function pitchCallTick() {
   renderPitchCall();
 }
 
+// ---------- moonfire: Old Gasper's homers set the sky burning ----------
+let moonfireTicks = 0;
+const _fogBase = new THREE.Color(field.palette.fog);
+const _fogFire = new THREE.Color('#8a1a10');
+function updateMoonfire() {
+  if (moonfireTicks <= 0) return;
+  moonfireTicks--;
+  const k = Math.sin((moonfireTicks / 180) * Math.PI); // swell in, burn out
+  scene.fog.color.copy(_fogBase).lerp(_fogFire, k * 0.8);
+  scene.background.copy(_fogBase).lerp(_fogFire, k * 0.5);
+  if (moonfireTicks === 0) {
+    scene.fog.color.copy(_fogBase);
+    scene.background.set(field.palette.sky);
+  }
+}
+
 // ---------- broadcast wipes + score pulse (renderer-only) ----------
 const wipeEl = document.getElementById('wipe');
 wipeEl.style.setProperty('--wipe-a', field.palette.fog);
@@ -1104,6 +1120,7 @@ function stepGame() {
     lastSeenPlay = lp.tick;
     announcer.onPlay(lp);
     if (crowd && (lp.kind === 'homer' || lp.kind === 'hit')) crowd.excite = 130; // the roar
+    if (lp.moonfire) moonfireTicks = 180; // Old Gasper lights the sky
     if ((lp.kind === 'homer' || lp.kind === 'sideout') && replayWrite > 100) {
       replayArmed = { from: Math.max(0, replayWrite - 80) }; // a beat before contact
     }
@@ -1111,6 +1128,7 @@ function stepGame() {
   announcer.tick(true);
   updateWalkup();
   updateBroadcastBeats();
+  updateMoonfire();
   if (replayArmed && game.state.phase === 'resolve' && game.state.phaseTicks <= 2) {
     replay = { from: Math.max(replayArmed.from, replayWrite - REPLAY_TICKS + 1), to: replayWrite, i: 0 };
     replayArmed = null;

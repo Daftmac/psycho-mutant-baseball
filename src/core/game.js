@@ -222,15 +222,23 @@ export class Game {
     p.pos.z = -C.FIELD_SCALE * (1 - zu);
   }
 
+  _ability(player) { return C.ABILITIES[player.name]?.key ?? null; }
+
+  _abilityProcs(player) {
+    return this.rng() < C.ABILITY_PROC_BASE + (player.chaos ?? 0) * C.ABILITY_PROC_CHAOS;
+  }
+
   _resolveSwing() {
     const s = this.state;
     const batter = this.currentBatter();
+    const ability = this._ability(batter);
 
     // timing: how close to the ideal contact moment
     const st = C.SWING_TYPES[s.swing.type ?? 'contact'];
     const timingError = Math.abs(s.swing.atT - C.CONTACT_POINT);
-    const window = C.TIMING_WINDOW * this.diff.windowMult * st.windowMult * (0.6 + batter.contact * 0.8);
-    const difficulty = 1 + s.pitch.breakAmt * 0.25; // breaking stuff still bites a little
+    let window = C.TIMING_WINDOW * this.diff.windowMult * st.windowMult * (0.6 + batter.contact * 0.8);
+    if (ability === 'borrowedEyes') window *= 1.15;
+    const difficulty = ability === 'wetRead' ? 1 : 1 + s.pitch.breakAmt * 0.25; // breaking stuff bites (most mutants)
     const timingQ = Math.max(0, 1 - (timingError * difficulty) / window);
 
     // location: how close the bat is to the ball RIGHT NOW. Swinging early at a
@@ -238,7 +246,8 @@ export class Game {
     // location punish each other naturally.
     const dx = s.swing.aimX - s.pitch.pos.x;
     const dy = s.swing.aimY - s.pitch.pos.y;
-    const reach = C.BAT_REACH * (0.75 + batter.contact * 0.5);
+    let reach = C.BAT_REACH * (0.75 + batter.contact * 0.5);
+    if (ability === 'sixArms') reach *= 1.35;
     const spatialQ = Math.max(0, 1 - Math.hypot(dx, dy) / reach);
 
     let quality = timingQ * (C.SPATIAL_FLOOR + (1 - C.SPATIAL_FLOOR) * spatialQ);
@@ -254,16 +263,32 @@ export class Game {
     if (s.swing.type === 'bunt') return this._resolveBunt(quality);
 
     if (quality < C.WHIFF_THRESHOLD) return this._strike('swinging strike');
-    if (quality < C.FOUL_THRESHOLD) return this._foul();
+    const foulThresh = ability === 'fourEyes' ? C.FOUL_THRESHOLD - 0.06 : C.FOUL_THRESHOLD;
+    if (quality < foulThresh) return this._foul();
 
     // contact! compute hit outcome
-    let hitScore = quality * (0.5 + batter.power * 0.7) * (0.7 + this.rng() * 0.6) * st.hitMult;
+    let roll = 0.7 + this.rng() * 0.6;
+    let abilityFired = null;
+    if (ability === 'twoSwings' && this._abilityProcs(batter)) {
+      roll = Math.max(roll, 0.7 + this.rng() * 0.6); // the twins take both swings
+      abilityFired = 'TWO SWINGS';
+    } else if (ability === 'graveweight' && this._abilityProcs(batter)) {
+      roll = Math.max(roll, 1.0); // six feet of momentum behind the barrel
+      abilityFired = 'GRAVE WEIGHT';
+    }
+    let hitScore = quality * (0.5 + batter.power * 0.7) * roll * st.hitMult;
     let chaos = false;
-    if (this.rng() < C.CHAOS_PROC_CHANCE * (batter.chaos * 2)) {
+    const chaosMult = ability === 'halfLives' ? 2 : 1;
+    if (this.rng() < C.CHAOS_PROC_CHANCE * (batter.chaos * 2) * chaosMult) {
       hitScore += C.CHAOS_BOOST;
       chaos = true;
       s.stats.chaosProcs++;
     }
+    if (abilityFired) {
+      s.stats.chaosProcs++;
+      this._lastContact.ability = abilityFired;
+    }
+    if (ability === 'moonfire') this._lastContact.moonfire = true;
 
     // fielding layer: mutant gloves giveth and taketh away
     const F = C.FIELDING;
@@ -272,14 +297,16 @@ export class Game {
     if (hitScore < C.HIT_OUT) {
       const fieldingTeam = this.battingTeam() === 'away' ? 'home' : 'away';
       const chaosAvg = ROSTERS[fieldingTeam].players.reduce((a, p) => a + p.chaos, 0) / ROSTERS[fieldingTeam].players.length;
-      if (this.rng() < F.ERROR_CHANCE * (0.6 + chaosAvg * 2)) {
+      const wormMult = ability === 'wormfield' ? 2 : 1; // the infield squirms
+      if (this.rng() < F.ERROR_CHANCE * (0.6 + chaosAvg * 2) * wormMult) {
         this._lastContact.fielded = 'error';
+        if (wormMult > 1) this._lastContact.ability = 'WORMFIELD';
         s.stats.hits++; // scored a hit for flavor — the mutant leagues keep loose books
         return this._advance(1, `BOOTED! ${batter.name} reaches on the error`, hitScore);
       }
       return this._out(`${batter.name} ${outVerb}`, hitScore);
     }
-    if (hitScore < C.HIT_OUT + F.ROB_WINDOW && this.rng() < F.ROB_CHANCE) {
+    if (ability !== 'wormfield' && hitScore < C.HIT_OUT + F.ROB_WINDOW && this.rng() < F.ROB_CHANCE) {
       this._lastContact.fielded = 'robbed';
       return this._out(`${batter.name} is ROBBED at the gap`, hitScore);
     }
@@ -350,7 +377,19 @@ export class Game {
   _resolveTake() {
     const s = this.state;
     if (this.mode === 'derby') return this._endPitch('takes it — the graveyard moans', 'take');
-    if (s.pitch.isStrike) return this._strike('called strike');
+    if (s.pitch.isStrike) {
+      const batter = this.currentBatter();
+      if (this._ability(batter) === 'silentAppeal' && this._abilityProcs(batter)) {
+        s.balls++;
+        s.stats.chaosProcs++;
+        if (s.balls >= 4) {
+          s.stats.walks++;
+          return this._advance(1, `${batter.name} stares a walk out of the ump — SILENT APPEAL`, 0, true);
+        }
+        return this._endPitch(`the ump can't meet Stan's gaze — ball ${s.balls} — SILENT APPEAL`, 'ball');
+      }
+      return this._strike('called strike');
+    }
     s.balls++;
     if (s.balls >= 4) {
       s.stats.walks++;
@@ -411,7 +450,9 @@ export class Game {
         s.bases[i] = null;
         let dest = i + n;
         // a runner arriving at third may stretch home on fast legs
-        if (dest === 2 && n < 4 && this.rng() < (runner.speed ?? 0.5) * C.RUN.EXTRA_BASE_PROB) dest = 3;
+        const rAbility = C.ABILITIES[runner.name]?.key;
+        const stretchMult = rAbility === 'glowLegs' ? 1.4 : rAbility === 'mothdance' ? 1.25 : 1;
+        if (dest === 2 && n < 4 && this.rng() < (runner.speed ?? 0.5) * C.RUN.EXTRA_BASE_PROB * stretchMult) dest = 3;
         if (dest >= 3) runs++;
         else s.bases[dest] = runner;
       }
@@ -444,7 +485,9 @@ export class Game {
     const runner = s.bases[lead];
     s.bases[lead] = null;
     const R = C.RUN;
-    if (this.rng() < R.STEAL_BASE + (runner.speed ?? 0.5) * R.STEAL_SPEED) {
+    const runnerAbility = C.ABILITIES[runner.name]?.key;
+    const stealBonus = runnerAbility === 'glowLegs' ? 0.18 : runnerAbility === 'mothdance' ? 0.12 : 0;
+    if (this.rng() < R.STEAL_BASE + (runner.speed ?? 0.5) * R.STEAL_SPEED + stealBonus) {
       if (lead === 2) {
         const team = this.battingTeam();
         s.score[team]++;
@@ -474,9 +517,11 @@ export class Game {
   _endPitch(text, kind, hitScore = 0) {
     const s = this.state;
     const contact = ['hit', 'homer', 'out'].includes(kind) ? this._lastContact : null;
+    if (contact?.ability && !text.includes(contact.ability)) text += ` — ${contact.ability}!`;
     s.lastPlay = {
       text, kind, hitScore, tick: this.tick,
       spray: contact?.spray ?? 0, loft: contact?.loft ?? 0, fielded: contact?.fielded ?? null,
+      moonfire: (kind === 'homer' && contact?.moonfire) || false,
     };
     this._lastContact = null;
     s.phase = 'resolve';

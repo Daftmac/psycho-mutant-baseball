@@ -88,10 +88,14 @@ unchecked items — never build them mid-increment.
       stretch third into home on hits (C.RUN), and S during the windup sends
       the lead runner — swipe a bag, steal home, or get gunned down (booth
       lines included). SEND/HOLD prompts deferred; auto-decisions by speed.
-- [ ] **C5. Mutant chaos abilities (roadmap #3).** One signature ability each,
-      proc'd off the chaos stat: Wormfather summons a worm that trips fielders,
-      Split Twins get two swing windows, Old Gasper's homers set the moon on
-      fire (cosmetic). Core-resolved, constants-tuned, harness-verified.
+- [x] **C5. Mutant chaos abilities (roadmap #3).** ✅ Shipped: all 12 mutants
+      have signature abilities (C.ABILITIES) — passives (Six Arms reach,
+      Wet Read, Four Eyes, Borrowed Eyes, Glow Legs/Moth Dance on the bases,
+      Two Half-Lives) and chaos-gated procs (TWO SWINGS best-of-two roll,
+      GRAVE WEIGHT roll floor, SILENT APPEAL turns called strikes into balls).
+      WORMFIELD doubles errors/kills robs on Wormfather ABs. Old Gasper's
+      MOONFIRE homers set the whole sky burning (fog/background lerp).
+      Verified: all proc types fire across 30 sim games.
 - [ ] **C6. Count tension (known gap).** Pitcher stamina + strategic ball
       mixing so walks actually happen; batter's eye highlight flashes on
       probable balls at high contact stat. Target: 1–4 walks/game across seeds.

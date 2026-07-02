@@ -497,16 +497,61 @@ addEventListener('keydown', unlockAudio);
 const announcer = createAnnouncer();
 announcer.setField(field);
 
+let optionsReturnTo = 'menu'; // 'menu' | 'pause' — where BACK leads
 const optionsScreen = createOptions({
   values: options,
   onChange: (key, value) => { options[key] = value; applyOptions(); },
-  onBack: () => { optionsScreen.hide(); toMenu(); },
+  onBack: () => {
+    optionsScreen.hide();
+    if (optionsReturnTo === 'pause' && appState === 'playing') showPauseOverlay();
+    else toMenu();
+  },
 });
 
 function openOptions() {
+  optionsReturnTo = 'menu';
   appState = 'options';
   menu.hide();
   optionsScreen.show();
+}
+
+// ---------- pause menu (Escape during play) ----------
+const pauseEl = document.getElementById('pause');
+const pauseItemsEl = document.getElementById('pause-items');
+let paused = false;
+let pauseSel = 0;
+const PAUSE_ITEMS = [
+  { label: 'RESUME', run: () => resumeGame() },
+  { label: 'OPTIONS', run: () => { pauseEl.classList.add('hidden'); optionsReturnTo = 'pause'; optionsScreen.show(); } },
+  { label: 'QUIT TO THE LOBBY', run: () => { resumeGame(); toMenu(); } },
+];
+const pauseItemEls = PAUSE_ITEMS.map((it, i) => {
+  const el = document.createElement('div');
+  el.className = 'menu-item';
+  el.addEventListener('mouseenter', () => { pauseSel = i; renderPause(); });
+  el.addEventListener('click', (e) => { e.stopPropagation(); it.run(); });
+  pauseItemsEl.appendChild(el);
+  return el;
+});
+function renderPause() {
+  PAUSE_ITEMS.forEach((it, i) => {
+    pauseItemEls[i].className = 'menu-item' + (i === pauseSel ? ' sel' : '');
+    pauseItemEls[i].textContent = (i === pauseSel ? '► ' : '  ') + it.label;
+  });
+}
+function showPauseOverlay() {
+  pauseEl.classList.remove('hidden');
+  renderPause();
+}
+function pauseGame() {
+  if (appState !== 'playing' || paused) return;
+  paused = true;
+  pauseSel = 0;
+  showPauseOverlay();
+}
+function resumeGame() {
+  paused = false;
+  pauseEl.classList.add('hidden');
 }
 
 // ---------- season mode ----------
@@ -662,6 +707,7 @@ function startMatch() {
   camera.position.set(0.9, 4.7, 13.5);
   camera.lookAt(0, 3.1, -40);
   camMode = 'none'; // force a fresh cut on the first frame
+  resumeGame();
   resetReplay();
   announcer.show();
   lastBatterName = null;
@@ -802,6 +848,7 @@ function toMenu() {
   game = null;
   appState = 'menu';
   pendingMode = 'match';
+  resumeGame();
   resetReplay();
   announcer.hide();
   walkupEl.classList.remove('in');
@@ -852,7 +899,21 @@ let swingTypeQueued = 'contact';
 function queueSwing(type) { swingQueued = true; swingTypeQueued = type; }
 
 addEventListener('keydown', (e) => {
-  if (appState !== 'playing') return;
+  if (appState !== 'playing' || e.defaultPrevented) return;
+  if (e.code === 'Escape') {
+    e.preventDefault();
+    paused ? resumeGame() : pauseGame();
+    return;
+  }
+  if (paused) {
+    if (optionsScreen.visible) return; // options owns its keys
+    if (e.code === 'ArrowUp') { pauseSel = (pauseSel + PAUSE_ITEMS.length - 1) % PAUSE_ITEMS.length; renderPause(); }
+    else if (e.code === 'ArrowDown') { pauseSel = (pauseSel + 1) % PAUSE_ITEMS.length; renderPause(); }
+    else if (e.code === 'Enter') PAUSE_ITEMS[pauseSel].run();
+    else return;
+    e.preventDefault();
+    return;
+  }
   if (pitchCall) {
     const digit = { Digit1: 0, Digit2: 1, Digit3: 2 }[e.code];
     if (digit !== undefined && PITCH_NAMES[digit]) { pitchCall.type = PITCH_NAMES[digit]; renderPitchCall(); e.preventDefault(); }
@@ -866,7 +927,7 @@ addEventListener('keydown', (e) => {
 });
 let stealQueued = false;
 addEventListener('pointerdown', (e) => {
-  if (appState !== 'playing') return;
+  if (appState !== 'playing' || paused) return;
   if (pitchCall) {
     // clicks on the panel itself (type chips) don't lock the meter
     if (!e.target.closest('#pitchcall')) pitchCallAdvanceStage();
@@ -1559,6 +1620,7 @@ function stepGame() {
 }
 
 function advanceOneTick() {
+  if (paused) return;                           // the world holds still
   if (hitstopTicks > 0) hitstopTicks--;         // frozen at the moment of impact
   else if (replay) playReplayStep();            // the sim holds its breath
   else if (appState === 'playing' && game && pitchCall) pitchCallTick(); // calling the pitch

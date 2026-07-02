@@ -190,6 +190,11 @@ unchecked items — never build them mid-increment.
       nowhere; wheelbarrow graveyards and rejected carrots. +2 themed
       announcer lines per park. All 12 verified live: 33–135 draw calls.
 
+- [x] **F6. Pause menu.** ✅ Escape during play freezes the sim dead (input
+      gated, world holds still) and opens PAUSED: Resume / Options / Quit to
+      the Lobby. Options returns to the pause overlay, not the lobby; Escape
+      backs all the way out. Verified with 8 live assertions.
+
 ## Parking lot (ideas noticed, not yet scheduled)
 - Signature abilities for the 60 new mutants (C.ABILITIES only covers the
   original twelve)

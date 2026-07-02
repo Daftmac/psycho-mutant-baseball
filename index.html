@@ -112,6 +112,14 @@
       font-family: 'Courier New', monospace; text-align: center;
       background: rgba(4, 1, 8, 0.45);
     }
+    #pause {
+      position: fixed; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 20px;
+      font-family: 'Courier New', monospace; text-align: center;
+      background: rgba(4, 1, 8, 0.62); z-index: 22;
+    }
+    #pause-items { font-size: 20px; letter-spacing: 2px; }
+    #pause-items .menu-item { margin: 8px 0; }
     #postgame .final { font-size: 26px; color: #ffd24a; text-shadow: 3px 3px 0 #a41f2b, 5px 5px 0 #000; }
     #postgame .prompt { font-size: 15px; color: #b8b0cc; text-shadow: 2px 2px 0 #000;
       animation: promptBlink 1.2s step-end infinite; }
@@ -346,6 +354,11 @@
   <div id="season" class="hidden"></div>
   <div id="records" class="hidden"></div>
   <div id="crt" class="hidden"></div>
+  <div id="pause" class="hidden">
+    <div class="screen-title">PAUSED</div>
+    <div id="pause-items"></div>
+    <div class="screen-hint">↑↓ SELECT • ENTER CONFIRM • ESC RESUME</div>
+  </div>
   <div id="postgame" class="hidden">
     <div class="headline"></div>
     <div class="final"></div>

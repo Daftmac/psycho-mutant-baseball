@@ -61,6 +61,13 @@ export const C = {
   FOUL_THRESHOLD: 0.45,       // contact quality below this (but above whiff) = foul
   WHIFF_THRESHOLD: 0.25,      // contact quality below this = swinging strike
 
+  // fielding layer (match mode): outs can be booted, gap hits can be robbed
+  FIELDING: {
+    ERROR_CHANCE: 0.055,      // clean out booted into a single (x fielding-team chaos)
+    ROB_CHANCE: 0.25,         // near-threshold hit robbed back into an out
+    ROB_WINDOW: 0.05,         // hitScore within this above HIT_OUT is robbable
+  },
+
   // hit outcome thresholds on hitScore = quality * power * roll
   HIT_OUT: 0.61,              // below = fielded out
   HIT_SINGLE: 0.79,

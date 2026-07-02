@@ -72,10 +72,13 @@ unchecked items — never build them mid-increment.
       pitch plan input; the CPU batter moved INTO core (game.autoBatterInput,
       tuned via C.CPU_BATTER) and now drives both the harness and live
       opponents. Balance recentered (~.33 mean BA across 7 seeds).
-- [ ] **C2. Fielding v1 (roadmap #1).** Fly balls catchable from hitScore +
-      loft + spray; chunky fielder mutants converge with simple run cycles;
-      catch probability + error chance (chaos stat) resolved in core, animated
-      in render. Grounders can be beaten out by batter speed.
+- [x] **C2. Fielding v1 (roadmap #1).** ✅ Shipped: core fielding layer — clean
+      outs can be BOOTED into error singles (scaled by fielding team's chaos),
+      near-threshold hits get ROBBED at the gap (C.FIELDING), out verbs vary by
+      trajectory (skies/lines/grounds out), lastPlay.fielded feeds the booth.
+      Four gray fielder mutants hold posts and the two nearest converge on
+      struck balls with a chunky run bob. Side effect: all 5 check seeds now
+      inside the .279–.365 BA band. Beat-out-by-speed deferred to C4 (speed stat).
 - [ ] **C3. Swing types.** Tap = contact swing, hold = power swing (bigger
       hitScore ceiling, tighter timing window), down+swing = bunt. Griffey
       simplicity, MVP depth.

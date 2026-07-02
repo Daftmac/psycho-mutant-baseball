@@ -261,7 +261,24 @@ export class Game {
       s.stats.chaosProcs++;
     }
 
-    if (hitScore < C.HIT_OUT) return this._out(`${batter.name} grounds out`, hitScore);
+    // fielding layer: mutant gloves giveth and taketh away
+    const F = C.FIELDING;
+    const loft = this._lastContact.loft;
+    const outVerb = loft > 0.35 ? 'skies out' : loft < -0.1 ? 'grounds out' : 'lines out';
+    if (hitScore < C.HIT_OUT) {
+      const fieldingTeam = this.battingTeam() === 'away' ? 'home' : 'away';
+      const chaosAvg = ROSTERS[fieldingTeam].players.reduce((a, p) => a + p.chaos, 0) / ROSTERS[fieldingTeam].players.length;
+      if (this.rng() < F.ERROR_CHANCE * (0.6 + chaosAvg * 2)) {
+        this._lastContact.fielded = 'error';
+        s.stats.hits++; // scored a hit for flavor — the mutant leagues keep loose books
+        return this._advance(1, `BOOTED! ${batter.name} reaches on the error`, hitScore);
+      }
+      return this._out(`${batter.name} ${outVerb}`, hitScore);
+    }
+    if (hitScore < C.HIT_OUT + F.ROB_WINDOW && this.rng() < F.ROB_CHANCE) {
+      this._lastContact.fielded = 'robbed';
+      return this._out(`${batter.name} is ROBBED at the gap`, hitScore);
+    }
     s.stats.hits++;
     if (hitScore < C.HIT_SINGLE) return this._advance(1, `${batter.name} rips a single${chaos ? ' — CHAOS!' : ''}`, hitScore);
     if (hitScore < C.HIT_DOUBLE) return this._advance(2, `${batter.name} laces a double${chaos ? ' — CHAOS!' : ''}`, hitScore);
@@ -396,7 +413,10 @@ export class Game {
   _endPitch(text, kind, hitScore = 0) {
     const s = this.state;
     const contact = ['hit', 'homer', 'out'].includes(kind) ? this._lastContact : null;
-    s.lastPlay = { text, kind, hitScore, tick: this.tick, spray: contact?.spray ?? 0, loft: contact?.loft ?? 0 };
+    s.lastPlay = {
+      text, kind, hitScore, tick: this.tick,
+      spray: contact?.spray ?? 0, loft: contact?.loft ?? 0, fielded: contact?.fielded ?? null,
+    };
     this._lastContact = null;
     s.phase = 'resolve';
     // contact plays get a longer resolve so the ball flight reads on screen

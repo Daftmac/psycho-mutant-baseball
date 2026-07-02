@@ -268,6 +268,46 @@ scene.add(pitcher);
 const ball = new THREE.Mesh(new THREE.SphereGeometry(0.45, 8, 6), new THREE.MeshBasicMaterial({ color: 0xeeeae0 }));
 scene.add(ball);
 
+// ---------- fielders: four gloves in the murk ----------
+const FIELDER_POSTS = [[-38, -95], [0, -112], [38, -95], [15, -52]]; // LF CF RF rover
+const fielders = FIELDER_POSTS.map(([x, z]) => {
+  const m = makeMutant({ skin: 0x4a5568 }); // drab away-grays; every mutant fields in gray
+  m.position.set(x, 0, z);
+  m.rotation.y = Math.PI; // facing the plate
+  scene.add(m);
+  return { mesh: m, home: { x, z }, phase: Math.random() * Math.PI * 2 };
+});
+
+// two nearest fielders converge on a struck ball; everyone else drifts home
+function updateFielders() {
+  const s = game.state;
+  const chasing = s.phase === 'resolve' && s.lastPlay &&
+    ['hit', 'homer', 'out'].includes(s.lastPlay.kind) && ball.visible;
+  let a = null, b = null;
+  if (chasing) {
+    const byDist = [...fielders].sort((f, g) =>
+      Math.hypot(f.mesh.position.x - ball.position.x, f.mesh.position.z - ball.position.z) -
+      Math.hypot(g.mesh.position.x - ball.position.x, g.mesh.position.z - ball.position.z));
+    [a, b] = byDist;
+  }
+  const step = 30 / C.TICKS_PER_SEC; // sprint speed, units/s
+  for (const f of fielders) {
+    const target = (f === a || f === b) ? { x: ball.position.x, z: ball.position.z } : f.home;
+    const dx = target.x - f.mesh.position.x;
+    const dz = target.z - f.mesh.position.z;
+    const d = Math.hypot(dx, dz);
+    if (d > 1.5) {
+      f.mesh.position.x += (dx / d) * step;
+      f.mesh.position.z += (dz / d) * step;
+      f.mesh.rotation.y = Math.atan2(dx, dz);
+      f.mesh.position.y = Math.abs(Math.sin(game.tick * 0.35 + f.phase)) * 0.5; // chunky run bob
+    } else {
+      f.mesh.position.y *= 0.8;
+      if (target === f.home) f.mesh.rotation.y = Math.PI;
+    }
+  }
+}
+
 // ---------- strike zone + aim reticle ----------
 const Z = C.ZONE;
 const zone = new THREE.LineSegments(
@@ -1082,6 +1122,7 @@ function stepGame() {
   updateReticle();
 
   positionBall();
+  updateFielders();
   recordFrame();
 }
 

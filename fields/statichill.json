@@ -4,7 +4,7 @@
   "palette": {
     "sky": "#05070c",
     "fog": "#10141c",
-    "grass": "#1e242a",
+    "grass": "#4f9c5c",
     "dirt": "#2c3034",
     "chalk": "#ccd4da",
     "casing": "#3a4148",
@@ -34,148 +34,926 @@
     ]
   },
   "lights": {
-    "hemi": { "sky": "#66788c", "ground": "#0a0e14", "intensity": 0.6 },
-    "dir":  { "color": "#a8c8f0", "intensity": 0.7, "pos": [55, 100, -240] }
+    "hemi": {
+      "sky": "#66788c",
+      "ground": "#0a0e14",
+      "intensity": 0.6
+    },
+    "dir": {
+      "color": "#a8c8f0",
+      "intensity": 0.7,
+      "pos": [
+        55,
+        100,
+        -240
+      ]
+    }
   },
-  "crowd": { "count": 85, "ring": [100, 138], "arc": [0.12, 0.88], "y": 0.9, "color": "antenna" },
+  "crowd": {
+    "count": 85,
+    "ring": [
+      100,
+      138
+    ],
+    "arc": [
+      0.12,
+      0.88
+    ],
+    "y": 0.9,
+    "color": "antenna"
+  },
   "props": [
-    { "shape": "box", "size": [4, 3.4, 3.6], "color": "casing",
-      "place": "scatter", "count": 12, "ring": [115, 205], "arc": [0.12, 0.88],
-      "y": 1.7, "yawJitter": 0.5, "tiltJitter": 0.1, "scaleJitter": 0.3,
+    {
+      "shape": "box",
+      "size": [
+        4,
+        3.4,
+        3.6
+      ],
+      "color": "casing",
+      "place": "scatter",
+      "count": 12,
+      "ring": [
+        115,
+        205
+      ],
+      "arc": [
+        0.12,
+        0.88
+      ],
+      "y": 1.7,
+      "yawJitter": 0.5,
+      "tiltJitter": 0.1,
+      "scaleJitter": 0.3,
       "children": [
-        { "shape": "box", "size": [2.6, 2, 0.2], "color": "screen", "glow": true,
-          "count": 1, "pos": [0, 0.1, 1.85] }
-      ] },
-
-    { "shape": "box", "size": [4, 3.4, 3.6], "color": "casing",
-      "place": "scatter", "count": 6, "ring": [130, 195], "arc": [0.25, 0.75],
-      "y": 5, "yawJitter": 0.8, "tiltJitter": 0.18, "scaleJitter": 0.3,
+        {
+          "shape": "box",
+          "size": [
+            2.6,
+            2,
+            0.2
+          ],
+          "color": "screen",
+          "glow": true,
+          "count": 1,
+          "pos": [
+            0,
+            0.1,
+            1.85
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "box",
+      "size": [
+        4,
+        3.4,
+        3.6
+      ],
+      "color": "casing",
+      "place": "scatter",
+      "count": 6,
+      "ring": [
+        130,
+        195
+      ],
+      "arc": [
+        0.25,
+        0.75
+      ],
+      "y": 5,
+      "yawJitter": 0.8,
+      "tiltJitter": 0.18,
+      "scaleJitter": 0.3,
       "children": [
-        { "shape": "box", "size": [2.6, 2, 0.2], "color": "static", "glow": true,
-          "count": 1, "pos": [0, 0.1, 1.85] }
-      ] },
-
-    { "shape": "cylinder", "size": [0.3, 0.55, 46], "segments": 5, "color": "antenna",
-      "place": "ring", "count": 6, "radius": 180, "y": 23, "arc": [0.1, 0.9],
-      "tiltJitter": 0.05, "scaleJitter": 0.2,
+        {
+          "shape": "box",
+          "size": [
+            2.6,
+            2,
+            0.2
+          ],
+          "color": "static",
+          "glow": true,
+          "count": 1,
+          "pos": [
+            0,
+            0.1,
+            1.85
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "cylinder",
+      "size": [
+        0.3,
+        0.55,
+        46
+      ],
+      "segments": 5,
+      "color": "antenna",
+      "place": "ring",
+      "count": 6,
+      "radius": 180,
+      "y": 23,
+      "arc": [
+        0.1,
+        0.9
+      ],
+      "tiltJitter": 0.05,
+      "scaleJitter": 0.2,
       "children": [
-        { "shape": "box", "size": [7, 0.3, 0.3], "color": "antenna",
-          "count": 3, "pos": [0, 12, 0], "stack": 4.5, "rotJitter": [0, 0.8, 0] },
-        { "shape": "sphere", "size": [0.7], "segments": 5, "color": "barcyan", "glow": true,
-          "count": 1, "pos": [0, 23.5, 0] }
-      ] },
-
-    { "shape": "cylinder", "size": [17, 17, 1.4], "segments": 12, "color": "static", "glow": true,
-      "place": "single", "pos": [58, 104, -245], "rot": [1.5708, 0, 0],
+        {
+          "shape": "box",
+          "size": [
+            7,
+            0.3,
+            0.3
+          ],
+          "color": "antenna",
+          "count": 3,
+          "pos": [
+            0,
+            12,
+            0
+          ],
+          "stack": 4.5,
+          "rotJitter": [
+            0,
+            0.8,
+            0
+          ]
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.7
+          ],
+          "segments": 5,
+          "color": "barcyan",
+          "glow": true,
+          "count": 1,
+          "pos": [
+            0,
+            23.5,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "cylinder",
+      "size": [
+        17,
+        17,
+        1.4
+      ],
+      "segments": 12,
+      "color": "static",
+      "glow": true,
+      "place": "single",
+      "pos": [
+        58,
+        104,
+        -245
+      ],
+      "rot": [
+        1.5708,
+        0,
+        0
+      ],
       "children": [
-        { "shape": "box", "size": [5, 26, 0.6], "color": "barcyan", "glow": true,
-          "count": 1, "pos": [-8, 0, 0], "rot": [1.5708, 0, 0] },
-        { "shape": "box", "size": [5, 26, 0.6], "color": "baryellow", "glow": true,
-          "count": 1, "pos": [0, 0, 0], "rot": [1.5708, 0, 0] },
-        { "shape": "box", "size": [5, 26, 0.6], "color": "barmagenta", "glow": true,
-          "count": 1, "pos": [8, 0, 0], "rot": [1.5708, 0, 0] }
-      ] },
-
-    { "shape": "box", "size": [9, 8, 8], "color": "casing",
-      "place": "single", "pos": [-72, 4, -230], "yawJitter": 0.2,
+        {
+          "shape": "box",
+          "size": [
+            5,
+            26,
+            0.6
+          ],
+          "color": "barcyan",
+          "glow": true,
+          "count": 1,
+          "pos": [
+            -8,
+            0,
+            0
+          ],
+          "rot": [
+            1.5708,
+            0,
+            0
+          ]
+        },
+        {
+          "shape": "box",
+          "size": [
+            5,
+            26,
+            0.6
+          ],
+          "color": "baryellow",
+          "glow": true,
+          "count": 1,
+          "pos": [
+            0,
+            0,
+            0
+          ],
+          "rot": [
+            1.5708,
+            0,
+            0
+          ]
+        },
+        {
+          "shape": "box",
+          "size": [
+            5,
+            26,
+            0.6
+          ],
+          "color": "barmagenta",
+          "glow": true,
+          "count": 1,
+          "pos": [
+            8,
+            0,
+            0
+          ],
+          "rot": [
+            1.5708,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "box",
+      "size": [
+        9,
+        8,
+        8
+      ],
+      "color": "casing",
+      "place": "single",
+      "pos": [
+        -72,
+        4,
+        -230
+      ],
+      "yawJitter": 0.2,
       "children": [
-        { "shape": "box", "size": [6.4, 5, 0.4], "color": "screen", "glow": true,
-          "count": 1, "pos": [0, 0.2, 4.1] },
-        { "shape": "box", "size": [7.5, 6.8, 6.8], "color": "casing",
-          "count": 2, "pos": [0, 7.2, -0.5], "stack": 6.4, "rotJitter": [0, 0.3, 0.06] },
-        { "shape": "cylinder", "size": [0.14, 0.14, 12], "segments": 4, "color": "antenna",
-          "count": 2, "pos": [0, 24, 0], "rotJitter": [0, 0, 0.5] }
-      ] },
-
-    { "shape": "box", "size": [0.6, 0.5, 0.2], "color": "screen", "glow": true,
-      "place": "scatter", "count": 12, "ring": [120, 210], "arc": [0.1, 0.9],
-      "y": 0.7, "yawJitter": 1.2, "scaleJitter": 0.4 },
-
-    { "shape": "box", "size": [0.7, 0.25, 1.7], "color": "casing",
-      "place": "scatter", "count": 55, "ring": [95, 132], "arc": [0.1, 0.9],
-      "y": 0.15, "yawJitter": 1.6, "scaleJitter": 0.35 },
-
-    { "shape": "box", "size": [0.35, 0.1, 0.35], "color": "static", "glow": true,
-      "place": "scatter", "count": 40, "ring": [96, 140], "arc": [0.1, 0.9],
-      "y": 0.1, "yawJitter": 1.6, "scaleJitter": 0.5 },
-
-    { "shape": "box", "size": [2.2, 2.6, 0.15], "color": "cable", "glow": false,
-      "place": "scatter", "count": 30, "ring": [98, 135], "arc": [0.12, 0.88],
-      "y": 0.08, "rot": [1.5708, 0, 0], "yawJitter": 1.6, "scaleJitter": 0.45 },
-
-    { "shape": "plane", "size": [3.2, 4], "color": "baryellow", "glow": true,
-      "place": "scatter", "count": 14, "ring": [140, 220], "arc": [0.15, 0.85],
-      "y": 32, "yawJitter": 0.6, "tiltJitter": 0.2, "scaleJitter": 0.4 },
-
-    { "shape": "cylinder", "size": [0.35, 0.45, 7], "segments": 5, "color": "antenna",
-      "place": "ring", "count": 5, "radius": 126, "y": 3.5, "arc": [0.14, 0.86],
-      "lookCenter": true, "tiltJitter": 0.06, "scaleJitter": 0.15,
+        {
+          "shape": "box",
+          "size": [
+            6.4,
+            5,
+            0.4
+          ],
+          "color": "screen",
+          "glow": true,
+          "count": 1,
+          "pos": [
+            0,
+            0.2,
+            4.1
+          ]
+        },
+        {
+          "shape": "box",
+          "size": [
+            7.5,
+            6.8,
+            6.8
+          ],
+          "color": "casing",
+          "count": 2,
+          "pos": [
+            0,
+            7.2,
+            -0.5
+          ],
+          "stack": 6.4,
+          "rotJitter": [
+            0,
+            0.3,
+            0.06
+          ]
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.14,
+            0.14,
+            12
+          ],
+          "segments": 4,
+          "color": "antenna",
+          "count": 2,
+          "pos": [
+            0,
+            24,
+            0
+          ],
+          "rotJitter": [
+            0,
+            0,
+            0.5
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "box",
+      "size": [
+        0.6,
+        0.5,
+        0.2
+      ],
+      "color": "screen",
+      "glow": true,
+      "place": "scatter",
+      "count": 12,
+      "ring": [
+        120,
+        210
+      ],
+      "arc": [
+        0.1,
+        0.9
+      ],
+      "y": 0.7,
+      "yawJitter": 1.2,
+      "scaleJitter": 0.4
+    },
+    {
+      "shape": "box",
+      "size": [
+        0.7,
+        0.25,
+        1.7
+      ],
+      "color": "casing",
+      "place": "scatter",
+      "count": 55,
+      "ring": [
+        95,
+        132
+      ],
+      "arc": [
+        0.1,
+        0.9
+      ],
+      "y": 0.15,
+      "yawJitter": 1.6,
+      "scaleJitter": 0.35
+    },
+    {
+      "shape": "box",
+      "size": [
+        0.35,
+        0.1,
+        0.35
+      ],
+      "color": "static",
+      "glow": true,
+      "place": "scatter",
+      "count": 40,
+      "ring": [
+        96,
+        140
+      ],
+      "arc": [
+        0.1,
+        0.9
+      ],
+      "y": 0.1,
+      "yawJitter": 1.6,
+      "scaleJitter": 0.5
+    },
+    {
+      "shape": "box",
+      "size": [
+        2.2,
+        2.6,
+        0.15
+      ],
+      "color": "cable",
+      "glow": false,
+      "place": "scatter",
+      "count": 30,
+      "ring": [
+        98,
+        135
+      ],
+      "arc": [
+        0.12,
+        0.88
+      ],
+      "y": 0.08,
+      "rot": [
+        1.5708,
+        0,
+        0
+      ],
+      "yawJitter": 1.6,
+      "scaleJitter": 0.45
+    },
+    {
+      "shape": "plane",
+      "size": [
+        3.2,
+        4
+      ],
+      "color": "baryellow",
+      "glow": true,
+      "place": "scatter",
+      "count": 14,
+      "ring": [
+        140,
+        220
+      ],
+      "arc": [
+        0.15,
+        0.85
+      ],
+      "y": 32,
+      "yawJitter": 0.6,
+      "tiltJitter": 0.2,
+      "scaleJitter": 0.4
+    },
+    {
+      "shape": "cylinder",
+      "size": [
+        0.35,
+        0.45,
+        7
+      ],
+      "segments": 5,
+      "color": "antenna",
+      "place": "ring",
+      "count": 5,
+      "radius": 126,
+      "y": 3.5,
+      "arc": [
+        0.14,
+        0.86
+      ],
+      "lookCenter": true,
+      "tiltJitter": 0.06,
+      "scaleJitter": 0.15,
       "children": [
-        { "shape": "plane", "size": [3.4, 2.6], "color": "barcyan", "glow": true,
-          "count": 1, "pos": [0, 5.2, 0.4] }
-      ] },
-
-    { "shape": "cylinder", "size": [0.8, 1.2, 3], "segments": 6, "color": "antenna",
-      "place": "scatter", "count": 4, "ring": [125, 185], "arc": [0.15, 0.85],
-      "y": 1.5, "yawJitter": 1.2, "scaleJitter": 0.25,
+        {
+          "shape": "plane",
+          "size": [
+            3.4,
+            2.6
+          ],
+          "color": "barcyan",
+          "glow": true,
+          "count": 1,
+          "pos": [
+            0,
+            5.2,
+            0.4
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "cylinder",
+      "size": [
+        0.8,
+        1.2,
+        3
+      ],
+      "segments": 6,
+      "color": "antenna",
+      "place": "scatter",
+      "count": 4,
+      "ring": [
+        125,
+        185
+      ],
+      "arc": [
+        0.15,
+        0.85
+      ],
+      "y": 1.5,
+      "yawJitter": 1.2,
+      "scaleJitter": 0.25,
       "children": [
-        { "shape": "cone", "size": [4.5, 2.2], "segments": 8, "color": "vanwhite",
-          "count": 1, "pos": [0, 3.4, 0], "rot": [0.7, 0, 0], "rotJitter": [0.2, 1.4, 0] },
-        { "shape": "cylinder", "size": [0.12, 0.12, 3.6], "segments": 4, "color": "antenna",
-          "count": 1, "pos": [0, 4.6, 1.2], "rot": [0.7, 0, 0] }
-      ] },
-
-    { "shape": "cylinder", "size": [0.4, 0.6, 20], "segments": 5, "color": "cable",
-      "place": "ring", "count": 4, "radius": 155, "y": 10, "arc": [0.18, 0.82],
-      "tiltJitter": 0.05, "scaleJitter": 0.12,
+        {
+          "shape": "cone",
+          "size": [
+            4.5,
+            2.2
+          ],
+          "segments": 8,
+          "color": "vanwhite",
+          "count": 1,
+          "pos": [
+            0,
+            3.4,
+            0
+          ],
+          "rot": [
+            0.7,
+            0,
+            0
+          ],
+          "rotJitter": [
+            0.2,
+            1.4,
+            0
+          ]
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.12,
+            0.12,
+            3.6
+          ],
+          "segments": 4,
+          "color": "antenna",
+          "count": 1,
+          "pos": [
+            0,
+            4.6,
+            1.2
+          ],
+          "rot": [
+            0.7,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "cylinder",
+      "size": [
+        0.4,
+        0.6,
+        20
+      ],
+      "segments": 5,
+      "color": "cable",
+      "place": "ring",
+      "count": 4,
+      "radius": 155,
+      "y": 10,
+      "arc": [
+        0.18,
+        0.82
+      ],
+      "tiltJitter": 0.05,
+      "scaleJitter": 0.12,
       "children": [
-        { "shape": "box", "size": [6, 0.35, 0.35], "color": "cable",
-          "count": 1, "pos": [0, 8.6, 0] },
-        { "shape": "box", "size": [26, 0.14, 0.14], "color": "cable",
-          "count": 2, "pos": [0, 7.4, 0], "posJitter": [0, 0.8, 0], "rotJitter": [0, 0.15, 0.1] }
-      ] },
-
-    { "shape": "box", "size": [14, 5.5, 6], "color": "vanwhite",
-      "place": "single", "pos": [86, 3, -196], "rot": [0, -0.5, 1.45],
+        {
+          "shape": "box",
+          "size": [
+            6,
+            0.35,
+            0.35
+          ],
+          "color": "cable",
+          "count": 1,
+          "pos": [
+            0,
+            8.6,
+            0
+          ]
+        },
+        {
+          "shape": "box",
+          "size": [
+            26,
+            0.14,
+            0.14
+          ],
+          "color": "cable",
+          "count": 2,
+          "pos": [
+            0,
+            7.4,
+            0
+          ],
+          "posJitter": [
+            0,
+            0.8,
+            0
+          ],
+          "rotJitter": [
+            0,
+            0.15,
+            0.1
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "box",
+      "size": [
+        14,
+        5.5,
+        6
+      ],
+      "color": "vanwhite",
+      "place": "single",
+      "pos": [
+        86,
+        3,
+        -196
+      ],
+      "rot": [
+        0,
+        -0.5,
+        1.45
+      ],
       "children": [
-        { "shape": "cylinder", "size": [1.3, 1.3, 1], "segments": 8, "color": "cable",
-          "count": 2, "pos": [-4, 3.2, 0], "stack": 0, "posJitter": [0, 0, 0], "rot": [1.5708, 0, 0] },
-        { "shape": "cone", "size": [3, 1.6], "segments": 8, "color": "antenna",
-          "count": 1, "pos": [5, 4.2, 0], "rot": [0, 0, 2.2] },
-        { "shape": "box", "size": [14.2, 1.2, 0.3], "color": "barmagenta", "glow": true,
-          "count": 1, "pos": [0, 0.6, 3] },
-        { "shape": "cylinder", "size": [0.12, 0.12, 8], "segments": 4, "color": "antenna",
-          "count": 1, "pos": [6, 2, -2], "rot": [0, 0, 1.2] }
-      ] },
-
-    { "shape": "box", "size": [3.6, 3, 3.2], "color": "casing",
-      "place": "scatter", "count": 3, "ring": [110, 160], "arc": [0.2, 0.8],
-      "y": 1.5, "yawJitter": 1.2, "scaleJitter": 0.2,
+        {
+          "shape": "cylinder",
+          "size": [
+            1.3,
+            1.3,
+            1
+          ],
+          "segments": 8,
+          "color": "cable",
+          "count": 2,
+          "pos": [
+            -4,
+            3.2,
+            0
+          ],
+          "stack": 0,
+          "posJitter": [
+            0,
+            0,
+            0
+          ],
+          "rot": [
+            1.5708,
+            0,
+            0
+          ]
+        },
+        {
+          "shape": "cone",
+          "size": [
+            3,
+            1.6
+          ],
+          "segments": 8,
+          "color": "antenna",
+          "count": 1,
+          "pos": [
+            5,
+            4.2,
+            0
+          ],
+          "rot": [
+            0,
+            0,
+            2.2
+          ]
+        },
+        {
+          "shape": "box",
+          "size": [
+            14.2,
+            1.2,
+            0.3
+          ],
+          "color": "barmagenta",
+          "glow": true,
+          "count": 1,
+          "pos": [
+            0,
+            0.6,
+            3
+          ]
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.12,
+            0.12,
+            8
+          ],
+          "segments": 4,
+          "color": "antenna",
+          "count": 1,
+          "pos": [
+            6,
+            2,
+            -2
+          ],
+          "rot": [
+            0,
+            0,
+            1.2
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "box",
+      "size": [
+        3.6,
+        3,
+        3.2
+      ],
+      "color": "casing",
+      "place": "scatter",
+      "count": 3,
+      "ring": [
+        110,
+        160
+      ],
+      "arc": [
+        0.2,
+        0.8
+      ],
+      "y": 1.5,
+      "yawJitter": 1.2,
+      "scaleJitter": 0.2,
       "children": [
-        { "shape": "box", "size": [2.4, 1.8, 0.2], "color": "baryellow", "glow": true,
-          "count": 1, "pos": [0, 0.1, 1.65] },
-        { "shape": "box", "size": [3.2, 2.8, 3], "color": "casing",
-          "count": 1, "pos": [3.4, -0.1, 1], "rot": [0, 0.9, 0.1] },
-        { "shape": "sphere", "size": [1.6], "segments": 5, "color": "screen", "glow": true,
-          "count": 1, "pos": [1.4, 0.4, 2.6] }
-      ] },
-
-    { "shape": "cylinder", "size": [0.7, 1.6, 64], "segments": 5, "color": "antenna",
-      "place": "single", "pos": [-30, 32, -252],
+        {
+          "shape": "box",
+          "size": [
+            2.4,
+            1.8,
+            0.2
+          ],
+          "color": "baryellow",
+          "glow": true,
+          "count": 1,
+          "pos": [
+            0,
+            0.1,
+            1.65
+          ]
+        },
+        {
+          "shape": "box",
+          "size": [
+            3.2,
+            2.8,
+            3
+          ],
+          "color": "casing",
+          "count": 1,
+          "pos": [
+            3.4,
+            -0.1,
+            1
+          ],
+          "rot": [
+            0,
+            0.9,
+            0.1
+          ]
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            1.6
+          ],
+          "segments": 5,
+          "color": "screen",
+          "glow": true,
+          "count": 1,
+          "pos": [
+            1.4,
+            0.4,
+            2.6
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "cylinder",
+      "size": [
+        0.7,
+        1.6,
+        64
+      ],
+      "segments": 5,
+      "color": "antenna",
+      "place": "single",
+      "pos": [
+        -30,
+        32,
+        -252
+      ],
       "children": [
-        { "shape": "box", "size": [10, 0.4, 0.4], "color": "antenna",
-          "count": 2, "pos": [0, 10, 0], "stack": 16, "rotJitter": [0, 0.7, 0] },
-        { "shape": "sphere", "size": [1.1], "segments": 5, "color": "beaconred", "glow": true,
-          "count": 3, "pos": [0, 22, 0], "stack": 6.5 }
-      ] },
-
-    { "shape": "box", "size": [7, 6, 5], "color": "casing",
-      "place": "single", "pos": [96, 3, -170], "rot": [0, 0.6, 0],
+        {
+          "shape": "box",
+          "size": [
+            10,
+            0.4,
+            0.4
+          ],
+          "color": "antenna",
+          "count": 2,
+          "pos": [
+            0,
+            10,
+            0
+          ],
+          "stack": 16,
+          "rotJitter": [
+            0,
+            0.7,
+            0
+          ]
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            1.1
+          ],
+          "segments": 5,
+          "color": "beaconred",
+          "glow": true,
+          "count": 3,
+          "pos": [
+            0,
+            22,
+            0
+          ],
+          "stack": 6.5
+        }
+      ]
+    },
+    {
+      "shape": "box",
+      "size": [
+        7,
+        6,
+        5
+      ],
+      "color": "casing",
+      "place": "single",
+      "pos": [
+        96,
+        3,
+        -170
+      ],
+      "rot": [
+        0,
+        0.6,
+        0
+      ],
       "children": [
-        { "shape": "cylinder", "size": [0.18, 0.3, 15], "segments": 4, "color": "antenna",
-          "count": 2, "pos": [0, 9, 0], "rotJitter": [0, 0, 0.45] },
-        { "shape": "sphere", "size": [0.8], "segments": 5, "color": "barcyan", "glow": true,
-          "count": 2, "pos": [0, 15.5, 0], "posJitter": [4.5, 1, 0] }
-      ] }
+        {
+          "shape": "cylinder",
+          "size": [
+            0.18,
+            0.3,
+            15
+          ],
+          "segments": 4,
+          "color": "antenna",
+          "count": 2,
+          "pos": [
+            0,
+            9,
+            0
+          ],
+          "rotJitter": [
+            0,
+            0,
+            0.45
+          ]
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.8
+          ],
+          "segments": 5,
+          "color": "barcyan",
+          "glow": true,
+          "count": 2,
+          "pos": [
+            0,
+            15.5,
+            0
+          ],
+          "posJitter": [
+            4.5,
+            1,
+            0
+          ]
+        }
+      ]
+    }
   ]
 }

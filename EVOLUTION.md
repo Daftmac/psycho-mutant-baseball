@@ -219,6 +219,13 @@ unchecked items — never build them mid-increment.
       basepaths and base cutouts, raised mound (pitcher stands on it), home
       circle. Runner speed and hit-resolve retimed for the race.
 
+- [x] **F10. Bright on-brand grass + real aerodynamics.** ✅ All twelve parks
+      got hand-picked vivid grass (radioactive lawn, frosted mint, drowned
+      seaweed, regulation office carpet...). Batted balls now fly with air
+      drag (verified 60→48 u/s decay mid-flight) and hops that bleed pace;
+      throws are true solved projectiles — hot release, gravity arc,
+      decelerating into the glove. Race-to-first timing re-verified.
+
 ## Parking lot (ideas noticed, not yet scheduled)
 - Signature abilities for the 60 new mutants (C.ABILITIES only covers the
   original twelve)

@@ -4,7 +4,7 @@
   "palette": {
     "sky": "#140f08",
     "fog": "#2a2012",
-    "grass": "#2c2a18",
+    "grass": "#5b8f4a",
     "dirt": "#3c3020",
     "chalk": "#d8ceb4",
     "wallwood": "#3a2c1c",
@@ -35,145 +35,929 @@
     ]
   },
   "lights": {
-    "hemi": { "sky": "#8a744a", "ground": "#160f08", "intensity": 0.65 },
-    "dir":  { "color": "#ffcf7a", "intensity": 0.7, "pos": [-40, 90, -140] }
+    "hemi": {
+      "sky": "#8a744a",
+      "ground": "#160f08",
+      "intensity": 0.65
+    },
+    "dir": {
+      "color": "#ffcf7a",
+      "intensity": 0.7,
+      "pos": [
+        -40,
+        90,
+        -140
+      ]
+    }
   },
-  "crowd": { "count": 80, "ring": [100, 138], "arc": [0.12, 0.88], "y": 0.9, "color": "plinth" },
+  "crowd": {
+    "count": 80,
+    "ring": [
+      100,
+      138
+    ],
+    "arc": [
+      0.12,
+      0.88
+    ],
+    "y": 0.9,
+    "color": "plinth"
+  },
   "props": [
-    { "shape": "cylinder", "size": [235, 235, 170], "segments": 12, "color": "wallwood",
-      "inside": true, "open": true,
-      "place": "single", "pos": [0, 60, -95] },
-
-    { "shape": "box", "size": [26, 18, 12], "color": "fur",
-      "place": "single", "pos": [0, 22, -240],
+    {
+      "shape": "cylinder",
+      "size": [
+        235,
+        235,
+        170
+      ],
+      "segments": 12,
+      "color": "wallwood",
+      "inside": true,
+      "open": true,
+      "place": "single",
+      "pos": [
+        0,
+        60,
+        -95
+      ]
+    },
+    {
+      "shape": "box",
+      "size": [
+        26,
+        18,
+        12
+      ],
+      "color": "fur",
+      "place": "single",
+      "pos": [
+        0,
+        22,
+        -240
+      ],
       "children": [
-        { "shape": "box", "size": [14, 10, 14], "color": "plinth",
-          "count": 1, "pos": [0, -13, 0] },
-        { "shape": "cone", "size": [5, 14], "segments": 5, "color": "fur",
-          "count": 1, "pos": [0, 12, 7], "rot": [0.7, 0, 0] },
-        { "shape": "cylinder", "size": [0.6, 1.4, 16], "segments": 4, "color": "chalk",
-          "count": 2, "pos": [0, 24, 9], "posJitter": [6, 0, 0], "rotJitter": [0.4, 0, 0.6] },
-        { "shape": "sphere", "size": [1.2], "segments": 5, "color": "amber", "glow": true,
-          "count": 2, "pos": [0, 16, 12], "posJitter": [3, 0, 0] },
-        { "shape": "plane", "size": [10, 3], "color": "brass", "glow": true,
-          "count": 1, "pos": [0, -14, 7.2] }
-      ] },
-
-    { "shape": "box", "size": [6, 3.2, 6], "color": "plinth",
-      "place": "scatter", "count": 8, "ring": [118, 190], "arc": [0.12, 0.88],
-      "y": 1.6, "yawJitter": 0.6, "scaleJitter": 0.25,
+        {
+          "shape": "box",
+          "size": [
+            14,
+            10,
+            14
+          ],
+          "color": "plinth",
+          "count": 1,
+          "pos": [
+            0,
+            -13,
+            0
+          ]
+        },
+        {
+          "shape": "cone",
+          "size": [
+            5,
+            14
+          ],
+          "segments": 5,
+          "color": "fur",
+          "count": 1,
+          "pos": [
+            0,
+            12,
+            7
+          ],
+          "rot": [
+            0.7,
+            0,
+            0
+          ]
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.6,
+            1.4,
+            16
+          ],
+          "segments": 4,
+          "color": "chalk",
+          "count": 2,
+          "pos": [
+            0,
+            24,
+            9
+          ],
+          "posJitter": [
+            6,
+            0,
+            0
+          ],
+          "rotJitter": [
+            0.4,
+            0,
+            0.6
+          ]
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            1.2
+          ],
+          "segments": 5,
+          "color": "amber",
+          "glow": true,
+          "count": 2,
+          "pos": [
+            0,
+            16,
+            12
+          ],
+          "posJitter": [
+            3,
+            0,
+            0
+          ]
+        },
+        {
+          "shape": "plane",
+          "size": [
+            10,
+            3
+          ],
+          "color": "brass",
+          "glow": true,
+          "count": 1,
+          "pos": [
+            0,
+            -14,
+            7.2
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "box",
+      "size": [
+        6,
+        3.2,
+        6
+      ],
+      "color": "plinth",
+      "place": "scatter",
+      "count": 8,
+      "ring": [
+        118,
+        190
+      ],
+      "arc": [
+        0.12,
+        0.88
+      ],
+      "y": 1.6,
+      "yawJitter": 0.6,
+      "scaleJitter": 0.25,
       "children": [
-        { "shape": "box", "size": [4.6, 3.8, 2.2], "color": "fur",
-          "count": 1, "pos": [0, 3.5, 0] },
-        { "shape": "cone", "size": [1.4, 3.6], "segments": 5, "color": "fur",
-          "count": 1, "pos": [0, 6.4, 1.2], "rot": [0.5, 0, 0], "rotJitter": [0.3, 0.4, 0] },
-        { "shape": "cylinder", "size": [0.14, 0.3, 4.5], "segments": 4, "color": "chalk",
-          "count": 2, "pos": [0, 9, 1.4], "posJitter": [1.6, 0.5, 0], "rotJitter": [0.4, 0, 0.7] },
-        { "shape": "sphere", "size": [0.35], "segments": 4, "color": "amber", "glow": true,
-          "count": 2, "pos": [0, 7, 2.4], "posJitter": [1, 0, 0] }
-      ] },
-
-    { "shape": "plane", "size": [3.4, 1.4], "color": "brass", "glow": true,
-      "place": "ring", "count": 10, "radius": 150, "y": 3, "arc": [0.1, 0.9],
-      "lookCenter": true, "scaleJitter": 0.15 },
-
-    { "shape": "cone", "size": [9, 65], "segments": 6, "color": "dust", "glow": true,
-      "place": "scatter", "count": 3, "ring": [125, 180], "arc": [0.3, 0.7],
-      "y": 34, "rot": [3.1416, 0, 0], "tiltJitter": 0.06, "scaleJitter": 0.2 },
-
-    { "shape": "cylinder", "size": [3, 3.6, 60], "segments": 6, "color": "wallwood",
-      "place": "ring", "count": 8, "radius": 210, "y": 30, "arc": [0.05, 0.95],
-      "scaleJitter": 0.1 },
-
-    { "shape": "sphere", "size": [0.28], "segments": 4, "color": "candle", "glow": true,
-      "place": "scatter", "count": 60, "ring": [98, 190], "arc": [0.1, 0.9],
-      "y": 14, "scaleJitter": 0.5 },
-
-    { "shape": "cylinder", "size": [0.35, 0.5, 3], "segments": 5, "color": "brass",
-      "place": "ring", "count": 26, "radius": 108, "y": 1.5, "arc": [0.1, 0.9],
-      "scaleJitter": 0.1 },
-
-    { "shape": "box", "size": [7.6, 0.28, 0.28], "color": "velvet",
-      "place": "ring", "count": 26, "radius": 108, "y": 2.4, "arc": [0.115, 0.915],
-      "lookCenter": false, "tiltJitter": 0.05, "rot": [0, 1.5708, 0], "yawJitter": 0.12 },
-
-    { "shape": "plane", "size": [1.6, 0.8], "color": "amber", "glow": true,
-      "place": "scatter", "count": 14, "ring": [100, 150], "arc": [0.12, 0.88],
-      "y": 1.4, "yawJitter": 0.8, "scaleJitter": 0.2 },
-
-    { "shape": "plane", "size": [10, 120], "color": "rug",
-      "place": "single", "pos": [0, 0.12, -95], "rot": [-1.5708, 0, 0] },
-
-    { "shape": "box", "size": [0.5, 0.35, 0.35], "color": "fur",
-      "place": "ring", "count": 18, "radius": 165, "y": 44, "arc": [0.2, 0.8],
-      "yawJitter": 0.4, "scaleJitter": 0.35 },
-
-    { "shape": "box", "size": [40, 0.18, 0.18], "color": "wire",
-      "place": "ring", "count": 4, "radius": 165, "y": 43.6, "arc": [0.24, 0.76],
-      "rot": [0, 1.5708, 0], "tiltJitter": 0.04 },
-
-    { "shape": "box", "size": [4.5, 5, 4.5], "color": "glass", "glow": true,
-      "place": "scatter", "count": 6, "ring": [112, 165], "arc": [0.15, 0.85],
-      "y": 4.6, "yawJitter": 0.5, "scaleJitter": 0.2,
+        {
+          "shape": "box",
+          "size": [
+            4.6,
+            3.8,
+            2.2
+          ],
+          "color": "fur",
+          "count": 1,
+          "pos": [
+            0,
+            3.5,
+            0
+          ]
+        },
+        {
+          "shape": "cone",
+          "size": [
+            1.4,
+            3.6
+          ],
+          "segments": 5,
+          "color": "fur",
+          "count": 1,
+          "pos": [
+            0,
+            6.4,
+            1.2
+          ],
+          "rot": [
+            0.5,
+            0,
+            0
+          ],
+          "rotJitter": [
+            0.3,
+            0.4,
+            0
+          ]
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.14,
+            0.3,
+            4.5
+          ],
+          "segments": 4,
+          "color": "chalk",
+          "count": 2,
+          "pos": [
+            0,
+            9,
+            1.4
+          ],
+          "posJitter": [
+            1.6,
+            0.5,
+            0
+          ],
+          "rotJitter": [
+            0.4,
+            0,
+            0.7
+          ]
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.35
+          ],
+          "segments": 4,
+          "color": "amber",
+          "glow": true,
+          "count": 2,
+          "pos": [
+            0,
+            7,
+            2.4
+          ],
+          "posJitter": [
+            1,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "plane",
+      "size": [
+        3.4,
+        1.4
+      ],
+      "color": "brass",
+      "glow": true,
+      "place": "ring",
+      "count": 10,
+      "radius": 150,
+      "y": 3,
+      "arc": [
+        0.1,
+        0.9
+      ],
+      "lookCenter": true,
+      "scaleJitter": 0.15
+    },
+    {
+      "shape": "cone",
+      "size": [
+        9,
+        65
+      ],
+      "segments": 6,
+      "color": "dust",
+      "glow": true,
+      "place": "scatter",
+      "count": 3,
+      "ring": [
+        125,
+        180
+      ],
+      "arc": [
+        0.3,
+        0.7
+      ],
+      "y": 34,
+      "rot": [
+        3.1416,
+        0,
+        0
+      ],
+      "tiltJitter": 0.06,
+      "scaleJitter": 0.2
+    },
+    {
+      "shape": "cylinder",
+      "size": [
+        3,
+        3.6,
+        60
+      ],
+      "segments": 6,
+      "color": "wallwood",
+      "place": "ring",
+      "count": 8,
+      "radius": 210,
+      "y": 30,
+      "arc": [
+        0.05,
+        0.95
+      ],
+      "scaleJitter": 0.1
+    },
+    {
+      "shape": "sphere",
+      "size": [
+        0.28
+      ],
+      "segments": 4,
+      "color": "candle",
+      "glow": true,
+      "place": "scatter",
+      "count": 60,
+      "ring": [
+        98,
+        190
+      ],
+      "arc": [
+        0.1,
+        0.9
+      ],
+      "y": 14,
+      "scaleJitter": 0.5
+    },
+    {
+      "shape": "cylinder",
+      "size": [
+        0.35,
+        0.5,
+        3
+      ],
+      "segments": 5,
+      "color": "brass",
+      "place": "ring",
+      "count": 26,
+      "radius": 108,
+      "y": 1.5,
+      "arc": [
+        0.1,
+        0.9
+      ],
+      "scaleJitter": 0.1
+    },
+    {
+      "shape": "box",
+      "size": [
+        7.6,
+        0.28,
+        0.28
+      ],
+      "color": "velvet",
+      "place": "ring",
+      "count": 26,
+      "radius": 108,
+      "y": 2.4,
+      "arc": [
+        0.115,
+        0.915
+      ],
+      "lookCenter": false,
+      "tiltJitter": 0.05,
+      "rot": [
+        0,
+        1.5708,
+        0
+      ],
+      "yawJitter": 0.12
+    },
+    {
+      "shape": "plane",
+      "size": [
+        1.6,
+        0.8
+      ],
+      "color": "amber",
+      "glow": true,
+      "place": "scatter",
+      "count": 14,
+      "ring": [
+        100,
+        150
+      ],
+      "arc": [
+        0.12,
+        0.88
+      ],
+      "y": 1.4,
+      "yawJitter": 0.8,
+      "scaleJitter": 0.2
+    },
+    {
+      "shape": "plane",
+      "size": [
+        10,
+        120
+      ],
+      "color": "rug",
+      "place": "single",
+      "pos": [
+        0,
+        0.12,
+        -95
+      ],
+      "rot": [
+        -1.5708,
+        0,
+        0
+      ]
+    },
+    {
+      "shape": "box",
+      "size": [
+        0.5,
+        0.35,
+        0.35
+      ],
+      "color": "fur",
+      "place": "ring",
+      "count": 18,
+      "radius": 165,
+      "y": 44,
+      "arc": [
+        0.2,
+        0.8
+      ],
+      "yawJitter": 0.4,
+      "scaleJitter": 0.35
+    },
+    {
+      "shape": "box",
+      "size": [
+        40,
+        0.18,
+        0.18
+      ],
+      "color": "wire",
+      "place": "ring",
+      "count": 4,
+      "radius": 165,
+      "y": 43.6,
+      "arc": [
+        0.24,
+        0.76
+      ],
+      "rot": [
+        0,
+        1.5708,
+        0
+      ],
+      "tiltJitter": 0.04
+    },
+    {
+      "shape": "box",
+      "size": [
+        4.5,
+        5,
+        4.5
+      ],
+      "color": "glass",
+      "glow": true,
+      "place": "scatter",
+      "count": 6,
+      "ring": [
+        112,
+        165
+      ],
+      "arc": [
+        0.15,
+        0.85
+      ],
+      "y": 4.6,
+      "yawJitter": 0.5,
+      "scaleJitter": 0.2,
       "children": [
-        { "shape": "box", "size": [5.2, 2.2, 5.2], "color": "plinth",
-          "count": 1, "pos": [0, -3.4, 0] },
-        { "shape": "sphere", "size": [1.3], "segments": 5, "color": "fur",
-          "count": 1, "pos": [0, -0.6, 0], "posJitter": [0.8, 0.4, 0.8] }
-      ] },
-
-    { "shape": "cylinder", "size": [0.18, 0.18, 14], "segments": 4, "color": "brass",
-      "place": "ring", "count": 2, "radius": 70, "y": 44, "arc": [0.32, 0.72],
+        {
+          "shape": "box",
+          "size": [
+            5.2,
+            2.2,
+            5.2
+          ],
+          "color": "plinth",
+          "count": 1,
+          "pos": [
+            0,
+            -3.4,
+            0
+          ]
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            1.3
+          ],
+          "segments": 5,
+          "color": "fur",
+          "count": 1,
+          "pos": [
+            0,
+            -0.6,
+            0
+          ],
+          "posJitter": [
+            0.8,
+            0.4,
+            0.8
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "cylinder",
+      "size": [
+        0.18,
+        0.18,
+        14
+      ],
+      "segments": 4,
+      "color": "brass",
+      "place": "ring",
+      "count": 2,
+      "radius": 70,
+      "y": 44,
+      "arc": [
+        0.32,
+        0.72
+      ],
       "children": [
-        { "shape": "cylinder", "size": [4.5, 5.5, 2], "segments": 8, "color": "brass",
-          "count": 1, "pos": [0, -8, 0] },
-        { "shape": "sphere", "size": [0.6], "segments": 4, "color": "candle", "glow": true,
-          "count": 6, "pos": [0, -6.4, 0], "posJitter": [4.6, 0.3, 4.6] }
-      ] },
-
-    { "shape": "box", "size": [12, 8, 10], "color": "fur",
-      "place": "single", "pos": [-88, 14, -205], "rot": [0, 0.55, 0],
+        {
+          "shape": "cylinder",
+          "size": [
+            4.5,
+            5.5,
+            2
+          ],
+          "segments": 8,
+          "color": "brass",
+          "count": 1,
+          "pos": [
+            0,
+            -8,
+            0
+          ]
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.6
+          ],
+          "segments": 4,
+          "color": "candle",
+          "glow": true,
+          "count": 6,
+          "pos": [
+            0,
+            -6.4,
+            0
+          ],
+          "posJitter": [
+            4.6,
+            0.3,
+            4.6
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "box",
+      "size": [
+        12,
+        8,
+        10
+      ],
+      "color": "fur",
+      "place": "single",
+      "pos": [
+        -88,
+        14,
+        -205
+      ],
+      "rot": [
+        0,
+        0.55,
+        0
+      ],
       "children": [
-        { "shape": "box", "size": [7, 12, 6], "color": "fur",
-          "count": 1, "pos": [0, 8, 2], "rot": [-0.25, 0, 0] },
-        { "shape": "sphere", "size": [3.4], "segments": 6, "color": "fur",
-          "count": 1, "pos": [0, 15.5, 3.5] },
-        { "shape": "box", "size": [2.4, 9, 2.4], "color": "fur",
-          "count": 2, "pos": [0, 12, 4], "posJitter": [5, 0, 0], "rotJitter": [0.5, 0, 0.5] },
-        { "shape": "sphere", "size": [0.5], "segments": 4, "color": "amber", "glow": true,
-          "count": 2, "pos": [0, 16, 6.4], "posJitter": [1.4, 0, 0] },
-        { "shape": "box", "size": [16, 10, 14], "color": "plinth",
-          "count": 1, "pos": [0, -9, 0] },
-        { "shape": "plane", "size": [8, 2.4], "color": "brass", "glow": true,
-          "count": 1, "pos": [0, -8, 7.2] }
-      ] },
-
-    { "shape": "box", "size": [8, 6, 8], "color": "plinth",
-      "place": "single", "pos": [92, 3, -186], "rot": [0, -0.7, 0],
+        {
+          "shape": "box",
+          "size": [
+            7,
+            12,
+            6
+          ],
+          "color": "fur",
+          "count": 1,
+          "pos": [
+            0,
+            8,
+            2
+          ],
+          "rot": [
+            -0.25,
+            0,
+            0
+          ]
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            3.4
+          ],
+          "segments": 6,
+          "color": "fur",
+          "count": 1,
+          "pos": [
+            0,
+            15.5,
+            3.5
+          ]
+        },
+        {
+          "shape": "box",
+          "size": [
+            2.4,
+            9,
+            2.4
+          ],
+          "color": "fur",
+          "count": 2,
+          "pos": [
+            0,
+            12,
+            4
+          ],
+          "posJitter": [
+            5,
+            0,
+            0
+          ],
+          "rotJitter": [
+            0.5,
+            0,
+            0.5
+          ]
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.5
+          ],
+          "segments": 4,
+          "color": "amber",
+          "glow": true,
+          "count": 2,
+          "pos": [
+            0,
+            16,
+            6.4
+          ],
+          "posJitter": [
+            1.4,
+            0,
+            0
+          ]
+        },
+        {
+          "shape": "box",
+          "size": [
+            16,
+            10,
+            14
+          ],
+          "color": "plinth",
+          "count": 1,
+          "pos": [
+            0,
+            -9,
+            0
+          ]
+        },
+        {
+          "shape": "plane",
+          "size": [
+            8,
+            2.4
+          ],
+          "color": "brass",
+          "glow": true,
+          "count": 1,
+          "pos": [
+            0,
+            -8,
+            7.2
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "box",
+      "size": [
+        8,
+        6,
+        8
+      ],
+      "color": "plinth",
+      "place": "single",
+      "pos": [
+        92,
+        3,
+        -186
+      ],
+      "rot": [
+        0,
+        -0.7,
+        0
+      ],
       "children": [
-        { "shape": "sphere", "size": [2.6], "segments": 6, "color": "fur",
-          "count": 1, "pos": [0, 5, 0] },
-        { "shape": "sphere", "size": [1.5], "segments": 5, "color": "fur",
-          "count": 1, "pos": [0, 7.6, 1.6] },
-        { "shape": "cylinder", "size": [0.12, 0.35, 4], "segments": 4, "color": "chalk",
-          "count": 2, "pos": [0, 10.5, 1.2], "posJitter": [1.2, 0, 0], "rotJitter": [0.3, 0, 0.5] },
-        { "shape": "sphere", "size": [0.35], "segments": 4, "color": "amber", "glow": true,
-          "count": 2, "pos": [0, 8, 3], "posJitter": [0.8, 0, 0] },
-        { "shape": "plane", "size": [5, 1.6], "color": "brass", "glow": true,
-          "count": 1, "pos": [0, 1, 4.1] }
-      ] },
-
-    { "shape": "box", "size": [10, 4, 5], "color": "wallwood",
-      "place": "single", "pos": [-52, 2, -138], "rot": [0, 0.35, 0],
+        {
+          "shape": "sphere",
+          "size": [
+            2.6
+          ],
+          "segments": 6,
+          "color": "fur",
+          "count": 1,
+          "pos": [
+            0,
+            5,
+            0
+          ]
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            1.5
+          ],
+          "segments": 5,
+          "color": "fur",
+          "count": 1,
+          "pos": [
+            0,
+            7.6,
+            1.6
+          ]
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.12,
+            0.35,
+            4
+          ],
+          "segments": 4,
+          "color": "chalk",
+          "count": 2,
+          "pos": [
+            0,
+            10.5,
+            1.2
+          ],
+          "posJitter": [
+            1.2,
+            0,
+            0
+          ],
+          "rotJitter": [
+            0.3,
+            0,
+            0.5
+          ]
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.35
+          ],
+          "segments": 4,
+          "color": "amber",
+          "glow": true,
+          "count": 2,
+          "pos": [
+            0,
+            8,
+            3
+          ],
+          "posJitter": [
+            0.8,
+            0,
+            0
+          ]
+        },
+        {
+          "shape": "plane",
+          "size": [
+            5,
+            1.6
+          ],
+          "color": "brass",
+          "glow": true,
+          "count": 1,
+          "pos": [
+            0,
+            1,
+            4.1
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "box",
+      "size": [
+        10,
+        4,
+        5
+      ],
+      "color": "wallwood",
+      "place": "single",
+      "pos": [
+        -52,
+        2,
+        -138
+      ],
+      "rot": [
+        0,
+        0.35,
+        0
+      ],
       "children": [
-        { "shape": "cylinder", "size": [0.15, 0.2, 3.4], "segments": 4, "color": "brass",
-          "count": 1, "pos": [3, 3.6, 0] },
-        { "shape": "cone", "size": [1.4, 1.4], "segments": 6, "color": "velvet",
-          "count": 1, "pos": [3, 5.4, 0] },
-        { "shape": "sphere", "size": [0.7], "segments": 4, "color": "candle", "glow": true,
-          "count": 1, "pos": [3, 4.8, 0] },
-        { "shape": "box", "size": [2.6, 3.4, 2.6], "color": "plinth",
-          "count": 1, "pos": [-6.5, -0.4, 2.8] }
-      ] }
+        {
+          "shape": "cylinder",
+          "size": [
+            0.15,
+            0.2,
+            3.4
+          ],
+          "segments": 4,
+          "color": "brass",
+          "count": 1,
+          "pos": [
+            3,
+            3.6,
+            0
+          ]
+        },
+        {
+          "shape": "cone",
+          "size": [
+            1.4,
+            1.4
+          ],
+          "segments": 6,
+          "color": "velvet",
+          "count": 1,
+          "pos": [
+            3,
+            5.4,
+            0
+          ]
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.7
+          ],
+          "segments": 4,
+          "color": "candle",
+          "glow": true,
+          "count": 1,
+          "pos": [
+            3,
+            4.8,
+            0
+          ]
+        },
+        {
+          "shape": "box",
+          "size": [
+            2.6,
+            3.4,
+            2.6
+          ],
+          "color": "plinth",
+          "count": 1,
+          "pos": [
+            -6.5,
+            -0.4,
+            2.8
+          ]
+        }
+      ]
+    }
   ]
 }

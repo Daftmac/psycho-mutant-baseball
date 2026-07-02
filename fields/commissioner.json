@@ -5,7 +5,7 @@
   "palette": {
     "sky": "#141210",
     "fog": "#26221c",
-    "grass": "#3a3428",
+    "grass": "#567a42",
     "dirt": "#4a4034",
     "chalk": "#d8d2c0",
     "carpet": "#3a3428",
@@ -23,8 +23,20 @@
   },
   "fogDensity": 0.014,
   "lights": {
-    "hemi": { "sky": "#b8b8a0", "ground": "#1a1610", "intensity": 0.55 },
-    "dir":  { "color": "#e8f0d8", "intensity": 0.6, "pos": [0, 120, -100] }
+    "hemi": {
+      "sky": "#b8b8a0",
+      "ground": "#1a1610",
+      "intensity": 0.55
+    },
+    "dir": {
+      "color": "#e8f0d8",
+      "intensity": 0.6,
+      "pos": [
+        0,
+        120,
+        -100
+      ]
+    }
   },
   "announcer": {
     "ambient": [
@@ -40,105 +52,649 @@
       "OFF THE DESK! He is going to be SO angry when he's off the phone!"
     ]
   },
-  "crowd": { "count": 60, "ring": [110, 150], "arc": [0.15, 0.85], "y": 0.8, "color": "paper" },
+  "crowd": {
+    "count": 60,
+    "ring": [
+      110,
+      150
+    ],
+    "arc": [
+      0.15,
+      0.85
+    ],
+    "y": 0.8,
+    "color": "paper"
+  },
   "props": [
-    { "shape": "plane", "size": [90, 44], "color": "fluorescent", "glow": true,
-      "place": "single", "pos": [0, 130, -140], "rot": [1.5708, 0, 0] },
-
-    { "shape": "box", "size": [130, 46, 30], "color": "woodDark",
-      "place": "single", "pos": [0, 23, -235],
+    {
+      "shape": "plane",
+      "size": [
+        90,
+        44
+      ],
+      "color": "fluorescent",
+      "glow": true,
+      "place": "single",
+      "pos": [
+        0,
+        130,
+        -140
+      ],
+      "rot": [
+        1.5708,
+        0,
+        0
+      ]
+    },
+    {
+      "shape": "box",
+      "size": [
+        130,
+        46,
+        30
+      ],
+      "color": "woodDark",
+      "place": "single",
+      "pos": [
+        0,
+        23,
+        -235
+      ],
       "children": [
-        { "shape": "box", "size": [136, 5, 34], "color": "wood", "count": 1, "pos": [0, 25, 0] },
-        { "shape": "box", "size": [16, 10, 12], "color": "ash", "count": 1, "pos": [-38, 33, 2] },
-        { "shape": "box", "size": [12, 7, 9], "color": "redphone", "count": 1, "pos": [34, 31.5, 3] },
-        { "shape": "box", "size": [10, 14, 8], "color": "paper", "count": 3, "pos": [0, 35, 0], "posJitter": [12, 0, 3], "rotJitter": [0, 0.4, 0.05] }
-      ] },
-
-    { "shape": "box", "size": [16, 60, 12], "color": "ash",
-      "place": "ring", "count": 9, "radius": 190, "y": 30, "arc": [0.05, 0.95],
-      "lookCenter": true, "tiltJitter": 0.04, "scaleJitter": 0.15,
+        {
+          "shape": "box",
+          "size": [
+            136,
+            5,
+            34
+          ],
+          "color": "wood",
+          "count": 1,
+          "pos": [
+            0,
+            25,
+            0
+          ]
+        },
+        {
+          "shape": "box",
+          "size": [
+            16,
+            10,
+            12
+          ],
+          "color": "ash",
+          "count": 1,
+          "pos": [
+            -38,
+            33,
+            2
+          ]
+        },
+        {
+          "shape": "box",
+          "size": [
+            12,
+            7,
+            9
+          ],
+          "color": "redphone",
+          "count": 1,
+          "pos": [
+            34,
+            31.5,
+            3
+          ]
+        },
+        {
+          "shape": "box",
+          "size": [
+            10,
+            14,
+            8
+          ],
+          "color": "paper",
+          "count": 3,
+          "pos": [
+            0,
+            35,
+            0
+          ],
+          "posJitter": [
+            12,
+            0,
+            3
+          ],
+          "rotJitter": [
+            0,
+            0.4,
+            0.05
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "box",
+      "size": [
+        16,
+        60,
+        12
+      ],
+      "color": "ash",
+      "place": "ring",
+      "count": 9,
+      "radius": 190,
+      "y": 30,
+      "arc": [
+        0.05,
+        0.95
+      ],
+      "lookCenter": true,
+      "tiltJitter": 0.04,
+      "scaleJitter": 0.15,
       "children": [
-        { "shape": "box", "size": [13, 2, 1], "color": "paper", "count": 4, "pos": [0, -18, 6.2], "stack": 12 }
-      ] },
-
-    { "shape": "cylinder", "size": [5, 6, 22], "segments": 8, "color": "ash",
-      "place": "scatter", "count": 4, "ring": [115, 165], "arc": [0.2, 0.8],
-      "y": 11, "scaleJitter": 0.2,
+        {
+          "shape": "box",
+          "size": [
+            13,
+            2,
+            1
+          ],
+          "color": "paper",
+          "count": 4,
+          "pos": [
+            0,
+            -18,
+            6.2
+          ],
+          "stack": 12
+        }
+      ]
+    },
+    {
+      "shape": "cylinder",
+      "size": [
+        5,
+        6,
+        22
+      ],
+      "segments": 8,
+      "color": "ash",
+      "place": "scatter",
+      "count": 4,
+      "ring": [
+        115,
+        165
+      ],
+      "arc": [
+        0.2,
+        0.8
+      ],
+      "y": 11,
+      "scaleJitter": 0.2,
       "children": [
-        { "shape": "box", "size": [4, 1.5, 4], "color": "paper", "count": 2, "pos": [0, 10, 0], "posJitter": [2, 1, 2], "rotJitter": [0.3, 0.8, 0.3] }
-      ] },
-
-    { "shape": "box", "size": [22, 30, 2], "color": "wood",
-      "place": "scatter", "count": 3, "ring": [140, 180], "arc": [0.1, 0.35],
-      "y": 40, "yawJitter": 0.2, "tiltJitter": 0.08,
+        {
+          "shape": "box",
+          "size": [
+            4,
+            1.5,
+            4
+          ],
+          "color": "paper",
+          "count": 2,
+          "pos": [
+            0,
+            10,
+            0
+          ],
+          "posJitter": [
+            2,
+            1,
+            2
+          ],
+          "rotJitter": [
+            0.3,
+            0.8,
+            0.3
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "box",
+      "size": [
+        22,
+        30,
+        2
+      ],
+      "color": "wood",
+      "place": "scatter",
+      "count": 3,
+      "ring": [
+        140,
+        180
+      ],
+      "arc": [
+        0.1,
+        0.35
+      ],
+      "y": 40,
+      "yawJitter": 0.2,
+      "tiltJitter": 0.08,
       "children": [
-        { "shape": "plane", "size": [17, 23], "color": "paper", "count": 1, "pos": [0, 0, 1.2] }
-      ] },
-
-    { "shape": "sphere", "size": [12], "segments": 10, "color": "redphone", "glow": true,
-      "place": "single", "pos": [70, 95, -215] },
-
-    { "shape": "box", "size": [2.4, 0.35, 3.2], "color": "paper",
-      "place": "scatter", "count": 60, "ring": [95, 140], "arc": [0.13, 0.87],
-      "y": 0.25, "yawJitter": 1.5, "tiltJitter": 0.06, "scaleJitter": 0.35 },
-
-    { "shape": "sphere", "size": [0.7], "segments": 4, "color": "paper",
-      "place": "scatter", "count": 40, "ring": [95, 135], "arc": [0.15, 0.85],
-      "y": 0.55, "scaleJitter": 0.4 },
-
-    { "shape": "box", "size": [3, 1.4, 4.2], "color": "binder",
-      "place": "scatter", "count": 26, "ring": [105, 160], "arc": [0.14, 0.86],
-      "y": 0.8, "yawJitter": 0.8, "scaleJitter": 0.3 },
-
-    { "shape": "cylinder", "size": [2, 2.6, 3], "segments": 7, "color": "ash",
-      "place": "scatter", "count": 6, "ring": [110, 155], "arc": [0.18, 0.82],
-      "y": 1.5, "tiltJitter": 0.08, "scaleJitter": 0.2,
+        {
+          "shape": "plane",
+          "size": [
+            17,
+            23
+          ],
+          "color": "paper",
+          "count": 1,
+          "pos": [
+            0,
+            0,
+            1.2
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "sphere",
+      "size": [
+        12
+      ],
+      "segments": 10,
+      "color": "redphone",
+      "glow": true,
+      "place": "single",
+      "pos": [
+        70,
+        95,
+        -215
+      ]
+    },
+    {
+      "shape": "box",
+      "size": [
+        2.4,
+        0.35,
+        3.2
+      ],
+      "color": "paper",
+      "place": "scatter",
+      "count": 60,
+      "ring": [
+        95,
+        140
+      ],
+      "arc": [
+        0.13,
+        0.87
+      ],
+      "y": 0.25,
+      "yawJitter": 1.5,
+      "tiltJitter": 0.06,
+      "scaleJitter": 0.35
+    },
+    {
+      "shape": "sphere",
+      "size": [
+        0.7
+      ],
+      "segments": 4,
+      "color": "paper",
+      "place": "scatter",
+      "count": 40,
+      "ring": [
+        95,
+        135
+      ],
+      "arc": [
+        0.15,
+        0.85
+      ],
+      "y": 0.55,
+      "scaleJitter": 0.4
+    },
+    {
+      "shape": "box",
+      "size": [
+        3,
+        1.4,
+        4.2
+      ],
+      "color": "binder",
+      "place": "scatter",
+      "count": 26,
+      "ring": [
+        105,
+        160
+      ],
+      "arc": [
+        0.14,
+        0.86
+      ],
+      "y": 0.8,
+      "yawJitter": 0.8,
+      "scaleJitter": 0.3
+    },
+    {
+      "shape": "cylinder",
+      "size": [
+        2,
+        2.6,
+        3
+      ],
+      "segments": 7,
+      "color": "ash",
+      "place": "scatter",
+      "count": 6,
+      "ring": [
+        110,
+        155
+      ],
+      "arc": [
+        0.18,
+        0.82
+      ],
+      "y": 1.5,
+      "tiltJitter": 0.08,
+      "scaleJitter": 0.2,
       "children": [
-        { "shape": "cone", "size": [2.3, 6.5], "segments": 5, "color": "deadplant",
-          "count": 1, "pos": [0, 4.2, 0], "rotJitter": [0.25, 1.5, 0.25] }
-      ] },
-
-    { "shape": "plane", "size": [8, 10], "color": "paper", "glow": true,
-      "place": "ring", "count": 9, "radius": 186, "y": 46, "arc": [0.05, 0.95],
-      "lookCenter": true, "tiltJitter": 0.06, "scaleJitter": 0.12 },
-
-    { "shape": "cylinder", "size": [1.2, 1.2, 5], "segments": 6, "color": "woodDark",
-      "place": "ring", "count": 3, "radius": 70, "y": 112, "arc": [0.2, 0.8],
+        {
+          "shape": "cone",
+          "size": [
+            2.3,
+            6.5
+          ],
+          "segments": 5,
+          "color": "deadplant",
+          "count": 1,
+          "pos": [
+            0,
+            4.2,
+            0
+          ],
+          "rotJitter": [
+            0.25,
+            1.5,
+            0.25
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "plane",
+      "size": [
+        8,
+        10
+      ],
+      "color": "paper",
+      "glow": true,
+      "place": "ring",
+      "count": 9,
+      "radius": 186,
+      "y": 46,
+      "arc": [
+        0.05,
+        0.95
+      ],
+      "lookCenter": true,
+      "tiltJitter": 0.06,
+      "scaleJitter": 0.12
+    },
+    {
+      "shape": "cylinder",
+      "size": [
+        1.2,
+        1.2,
+        5
+      ],
+      "segments": 6,
+      "color": "woodDark",
+      "place": "ring",
+      "count": 3,
+      "radius": 70,
+      "y": 112,
+      "arc": [
+        0.2,
+        0.8
+      ],
       "children": [
-        { "shape": "box", "size": [17, 0.5, 2.6], "color": "ash",
-          "count": 2, "pos": [0, -2.6, 0], "rot": [0, 0, 0], "rotJitter": [0, 3.1, 0] },
-        { "shape": "cylinder", "size": [0.3, 0.3, 14], "segments": 4, "color": "woodDark",
-          "count": 1, "pos": [0, 9, 0] }
-      ] },
-
-    { "shape": "box", "size": [5, 10, 5], "color": "chalk",
-      "place": "single", "pos": [-95, 5, -150], "rot": [0, 0.4, 0],
+        {
+          "shape": "box",
+          "size": [
+            17,
+            0.5,
+            2.6
+          ],
+          "color": "ash",
+          "count": 2,
+          "pos": [
+            0,
+            -2.6,
+            0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "rotJitter": [
+            0,
+            3.1,
+            0
+          ]
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.3,
+            0.3,
+            14
+          ],
+          "segments": 4,
+          "color": "woodDark",
+          "count": 1,
+          "pos": [
+            0,
+            9,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "box",
+      "size": [
+        5,
+        10,
+        5
+      ],
+      "color": "chalk",
+      "place": "single",
+      "pos": [
+        -95,
+        5,
+        -150
+      ],
+      "rot": [
+        0,
+        0.4,
+        0
+      ],
       "children": [
-        { "shape": "box", "size": [3.6, 5, 3.6], "color": "coolerblue", "glow": true,
-          "count": 1, "pos": [0, 7.2, 0] }
-      ] },
-
-    { "shape": "cylinder", "size": [6, 6, 1], "segments": 10, "color": "clockface", "glow": true,
-      "place": "single", "pos": [0, 72, -186], "rot": [1.5708, 0, 0],
+        {
+          "shape": "box",
+          "size": [
+            3.6,
+            5,
+            3.6
+          ],
+          "color": "coolerblue",
+          "glow": true,
+          "count": 1,
+          "pos": [
+            0,
+            7.2,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "cylinder",
+      "size": [
+        6,
+        6,
+        1
+      ],
+      "segments": 10,
+      "color": "clockface",
+      "glow": true,
+      "place": "single",
+      "pos": [
+        0,
+        72,
+        -186
+      ],
+      "rot": [
+        1.5708,
+        0,
+        0
+      ],
       "children": [
-        { "shape": "box", "size": [0.7, 0.9, 4.6], "color": "woodDark",
-          "count": 1, "pos": [-1.4, 0.7, -1.4], "rot": [0, 0.75, 0] },
-        { "shape": "box", "size": [0.7, 0.9, 3], "color": "woodDark",
-          "count": 1, "pos": [1, 0.7, 0.6], "rot": [0, -1, 0] }
-      ] },
-
-    { "shape": "plane", "size": [46, 9], "color": "banner", "glow": true,
-      "place": "single", "pos": [0, 98, -200], "rot": [0, 0, 0.02] },
-
-    { "shape": "box", "size": [14, 24, 9], "color": "woodDark",
-      "place": "single", "pos": [92, 12, -190], "rot": [0, -0.3, 0],
+        {
+          "shape": "box",
+          "size": [
+            0.7,
+            0.9,
+            4.6
+          ],
+          "color": "woodDark",
+          "count": 1,
+          "pos": [
+            -1.4,
+            0.7,
+            -1.4
+          ],
+          "rot": [
+            0,
+            0.75,
+            0
+          ]
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.7,
+            0.9,
+            3
+          ],
+          "color": "woodDark",
+          "count": 1,
+          "pos": [
+            1,
+            0.7,
+            0.6
+          ],
+          "rot": [
+            0,
+            -1,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "plane",
+      "size": [
+        46,
+        9
+      ],
+      "color": "banner",
+      "glow": true,
+      "place": "single",
+      "pos": [
+        0,
+        98,
+        -200
+      ],
+      "rot": [
+        0,
+        0,
+        0.02
+      ]
+    },
+    {
+      "shape": "box",
+      "size": [
+        14,
+        24,
+        9
+      ],
+      "color": "woodDark",
+      "place": "single",
+      "pos": [
+        92,
+        12,
+        -190
+      ],
+      "rot": [
+        0,
+        -0.3,
+        0
+      ],
       "children": [
-        { "shape": "box", "size": [10, 1, 7], "color": "paper",
-          "count": 4, "pos": [0, 6, 0], "stack": 2.2, "posJitter": [1.5, 0, 1], "rotJitter": [0, 0.3, 0.04] }
-      ] },
-
-    { "shape": "cylinder", "size": [0.9, 0.9, 3], "segments": 6, "color": "redphone",
-      "place": "scatter", "count": 5, "ring": [228, 242], "arc": [0.47, 0.53],
-      "y": 51.5, "scaleJitter": 0.25 }
+        {
+          "shape": "box",
+          "size": [
+            10,
+            1,
+            7
+          ],
+          "color": "paper",
+          "count": 4,
+          "pos": [
+            0,
+            6,
+            0
+          ],
+          "stack": 2.2,
+          "posJitter": [
+            1.5,
+            0,
+            1
+          ],
+          "rotJitter": [
+            0,
+            0.3,
+            0.04
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "cylinder",
+      "size": [
+        0.9,
+        0.9,
+        3
+      ],
+      "segments": 6,
+      "color": "redphone",
+      "place": "scatter",
+      "count": 5,
+      "ring": [
+        228,
+        242
+      ],
+      "arc": [
+        0.47,
+        0.53
+      ],
+      "y": 51.5,
+      "scaleJitter": 0.25
+    }
   ]
 }

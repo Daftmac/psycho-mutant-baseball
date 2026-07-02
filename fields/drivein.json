@@ -4,7 +4,7 @@
   "palette": {
     "sky": "#0a0e1e",
     "fog": "#161f38",
-    "grass": "#4b453a",
+    "grass": "#6f8c4a",
     "dirt": "#2c2c32",
     "chalk": "#d8d2c4",
     "static": "#9fb4c8",
@@ -33,119 +33,656 @@
     ]
   },
   "lights": {
-    "hemi": { "sky": "#6a7a9a", "ground": "#141018", "intensity": 0.65 },
-    "dir":  { "color": "#9fb4c8", "intensity": 0.7, "pos": [0, 60, -220] }
+    "hemi": {
+      "sky": "#6a7a9a",
+      "ground": "#141018",
+      "intensity": 0.65
+    },
+    "dir": {
+      "color": "#9fb4c8",
+      "intensity": 0.7,
+      "pos": [
+        0,
+        60,
+        -220
+      ]
+    }
   },
-  "crowd": { "count": 100, "ring": [147, 164], "arc": [0.12, 0.88], "y": 4.6, "color": "beam" },
+  "crowd": {
+    "count": 100,
+    "ring": [
+      147,
+      164
+    ],
+    "arc": [
+      0.12,
+      0.88
+    ],
+    "y": 4.6,
+    "color": "beam"
+  },
   "props": [
-    { "shape": "box", "size": [96, 54, 3], "color": "carbody",
-      "place": "single", "pos": [0, 36, -242],
+    {
+      "shape": "box",
+      "size": [
+        96,
+        54,
+        3
+      ],
+      "color": "carbody",
+      "place": "single",
+      "pos": [
+        0,
+        36,
+        -242
+      ],
       "children": [
-        { "shape": "cylinder", "size": [1.2, 1.6, 36], "segments": 6, "color": "rust",
-          "count": 1, "pos": [-40, -18, 0] },
-        { "shape": "cylinder", "size": [1.2, 1.6, 36], "segments": 6, "color": "rust",
-          "count": 1, "pos": [40, -18, 0] }
-      ] },
-    { "shape": "plane", "size": [86, 46], "color": "static", "glow": true,
-      "place": "single", "pos": [0, 38, -239.5] },
-
-    { "shape": "box", "size": [2.5, 2.5, 230], "color": "beam", "glow": true,
-      "place": "single", "pos": [0, 42, -120], "rot": [0.05, 0, 0] },
-
-    { "shape": "box", "size": [1.2, 14, 1.2], "color": "rust",
-      "place": "single", "pos": [85, 7, -70], "rot": [0, 0, 0.08],
+        {
+          "shape": "cylinder",
+          "size": [
+            1.2,
+            1.6,
+            36
+          ],
+          "segments": 6,
+          "color": "rust",
+          "count": 1,
+          "pos": [
+            -40,
+            -18,
+            0
+          ]
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            1.2,
+            1.6,
+            36
+          ],
+          "segments": 6,
+          "color": "rust",
+          "count": 1,
+          "pos": [
+            40,
+            -18,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "plane",
+      "size": [
+        86,
+        46
+      ],
+      "color": "static",
+      "glow": true,
+      "place": "single",
+      "pos": [
+        0,
+        38,
+        -239.5
+      ]
+    },
+    {
+      "shape": "box",
+      "size": [
+        2.5,
+        2.5,
+        230
+      ],
+      "color": "beam",
+      "glow": true,
+      "place": "single",
+      "pos": [
+        0,
+        42,
+        -120
+      ],
+      "rot": [
+        0.05,
+        0,
+        0
+      ]
+    },
+    {
+      "shape": "box",
+      "size": [
+        1.2,
+        14,
+        1.2
+      ],
+      "color": "rust",
+      "place": "single",
+      "pos": [
+        85,
+        7,
+        -70
+      ],
+      "rot": [
+        0,
+        0,
+        0.08
+      ],
       "children": [
-        { "shape": "plane", "size": [10, 6], "color": "pink", "glow": true,
-          "count": 1, "pos": [0, 8.5, 0], "rot": [0, -0.5, 0] }
-      ] },
-
-    { "shape": "box", "size": [8, 2.4, 4.4], "color": "carbody",
-      "place": "ring", "count": 12, "radius": 155, "y": 1.3, "arc": [0.12, 0.88],
-      "lookCenter": true, "yawJitter": 0.25, "tiltJitter": 0.04, "scaleJitter": 0.15,
+        {
+          "shape": "plane",
+          "size": [
+            10,
+            6
+          ],
+          "color": "pink",
+          "glow": true,
+          "count": 1,
+          "pos": [
+            0,
+            8.5,
+            0
+          ],
+          "rot": [
+            0,
+            -0.5,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "box",
+      "size": [
+        8,
+        2.4,
+        4.4
+      ],
+      "color": "carbody",
+      "place": "ring",
+      "count": 12,
+      "radius": 155,
+      "y": 1.3,
+      "arc": [
+        0.12,
+        0.88
+      ],
+      "lookCenter": true,
+      "yawJitter": 0.25,
+      "tiltJitter": 0.04,
+      "scaleJitter": 0.15,
       "children": [
-        { "shape": "box", "size": [4.6, 1.9, 3.6], "color": "carbody",
-          "count": 1, "pos": [0.4, 2.1, 0] },
-        { "shape": "box", "size": [3.6, 1.0, 3.9], "color": "static", "glow": true,
-          "count": 1, "pos": [0.4, 2.15, 0] }
-      ] },
-
-    { "shape": "cylinder", "size": [0.2, 0.28, 7], "segments": 5, "color": "rust",
-      "place": "scatter", "count": 10, "ring": [115, 175], "arc": [0.15, 0.85],
-      "y": 3.5, "tiltJitter": 0.06, "scaleJitter": 0.15,
+        {
+          "shape": "box",
+          "size": [
+            4.6,
+            1.9,
+            3.6
+          ],
+          "color": "carbody",
+          "count": 1,
+          "pos": [
+            0.4,
+            2.1,
+            0
+          ]
+        },
+        {
+          "shape": "box",
+          "size": [
+            3.6,
+            1,
+            3.9
+          ],
+          "color": "static",
+          "glow": true,
+          "count": 1,
+          "pos": [
+            0.4,
+            2.15,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "cylinder",
+      "size": [
+        0.2,
+        0.28,
+        7
+      ],
+      "segments": 5,
+      "color": "rust",
+      "place": "scatter",
+      "count": 10,
+      "ring": [
+        115,
+        175
+      ],
+      "arc": [
+        0.15,
+        0.85
+      ],
+      "y": 3.5,
+      "tiltJitter": 0.06,
+      "scaleJitter": 0.15,
       "children": [
-        { "shape": "box", "size": [1.5, 1, 0.7], "color": "carbody",
-          "count": 1, "pos": [0, 3.9, 0], "rotJitter": [0, 0.8, 0] }
-      ] },
-
-    { "shape": "box", "size": [2.4, 1.2, 1.8], "color": "rust",
-      "place": "scatter", "count": 8, "ring": [120, 190], "arc": [0.1, 0.9],
-      "y": 0.6, "yawJitter": 0.8, "tiltJitter": 0.12, "scaleJitter": 0.3 },
-
-    { "shape": "sphere", "size": [20], "segments": 12, "color": "moon", "glow": true,
-      "place": "single", "pos": [95, 100, -230] },
-
-    { "shape": "box", "size": [7.5, 2.3, 4.2], "color": "carbody",
-      "place": "ring", "count": 18, "radius": 188, "y": 1.2, "arc": [0.1, 0.9],
-      "lookCenter": true, "yawJitter": 0.3, "tiltJitter": 0.05, "scaleJitter": 0.18 },
-
-    { "shape": "box", "size": [7.5, 2.2, 4.2], "color": "carbody",
-      "place": "ring", "count": 16, "radius": 214, "y": 1.2, "arc": [0.12, 0.88],
-      "lookCenter": true, "yawJitter": 0.35, "tiltJitter": 0.05, "scaleJitter": 0.2 },
-
-    { "shape": "box", "size": [16, 9, 10], "color": "rust",
-      "place": "single", "pos": [-100, 4.5, -95], "rot": [0, 0.4, 0],
+        {
+          "shape": "box",
+          "size": [
+            1.5,
+            1,
+            0.7
+          ],
+          "color": "carbody",
+          "count": 1,
+          "pos": [
+            0,
+            3.9,
+            0
+          ],
+          "rotJitter": [
+            0,
+            0.8,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "box",
+      "size": [
+        2.4,
+        1.2,
+        1.8
+      ],
+      "color": "rust",
+      "place": "scatter",
+      "count": 8,
+      "ring": [
+        120,
+        190
+      ],
+      "arc": [
+        0.1,
+        0.9
+      ],
+      "y": 0.6,
+      "yawJitter": 0.8,
+      "tiltJitter": 0.12,
+      "scaleJitter": 0.3
+    },
+    {
+      "shape": "sphere",
+      "size": [
+        20
+      ],
+      "segments": 12,
+      "color": "moon",
+      "glow": true,
+      "place": "single",
+      "pos": [
+        95,
+        100,
+        -230
+      ]
+    },
+    {
+      "shape": "box",
+      "size": [
+        7.5,
+        2.3,
+        4.2
+      ],
+      "color": "carbody",
+      "place": "ring",
+      "count": 18,
+      "radius": 188,
+      "y": 1.2,
+      "arc": [
+        0.1,
+        0.9
+      ],
+      "lookCenter": true,
+      "yawJitter": 0.3,
+      "tiltJitter": 0.05,
+      "scaleJitter": 0.18
+    },
+    {
+      "shape": "box",
+      "size": [
+        7.5,
+        2.2,
+        4.2
+      ],
+      "color": "carbody",
+      "place": "ring",
+      "count": 16,
+      "radius": 214,
+      "y": 1.2,
+      "arc": [
+        0.12,
+        0.88
+      ],
+      "lookCenter": true,
+      "yawJitter": 0.35,
+      "tiltJitter": 0.05,
+      "scaleJitter": 0.2
+    },
+    {
+      "shape": "box",
+      "size": [
+        16,
+        9,
+        10
+      ],
+      "color": "rust",
+      "place": "single",
+      "pos": [
+        -100,
+        4.5,
+        -95
+      ],
+      "rot": [
+        0,
+        0.4,
+        0
+      ],
       "children": [
-        { "shape": "box", "size": [18, 1, 12], "color": "carbody",
-          "count": 1, "pos": [0, 5, 0] },
-        { "shape": "plane", "size": [11, 3], "color": "pink", "glow": true,
-          "count": 1, "pos": [0, 6.6, 5.1] }
-      ] },
-
-    { "shape": "box", "size": [4, 6, 4], "color": "rust",
-      "place": "single", "pos": [100, 3, -58], "rot": [0, -0.5, 0],
+        {
+          "shape": "box",
+          "size": [
+            18,
+            1,
+            12
+          ],
+          "color": "carbody",
+          "count": 1,
+          "pos": [
+            0,
+            5,
+            0
+          ]
+        },
+        {
+          "shape": "plane",
+          "size": [
+            11,
+            3
+          ],
+          "color": "pink",
+          "glow": true,
+          "count": 1,
+          "pos": [
+            0,
+            6.6,
+            5.1
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "box",
+      "size": [
+        4,
+        6,
+        4
+      ],
+      "color": "rust",
+      "place": "single",
+      "pos": [
+        100,
+        3,
+        -58
+      ],
+      "rot": [
+        0,
+        -0.5,
+        0
+      ],
       "children": [
-        { "shape": "plane", "size": [2.4, 2], "color": "static", "glow": true,
-          "count": 1, "pos": [0, 0.8, 2.06] }
-      ] },
-
-    { "shape": "sphere", "size": [0.3], "segments": 4, "color": "popcorn", "glow": true,
-      "place": "scatter", "count": 70, "ring": [96, 142], "arc": [0.1, 0.9],
-      "y": 0.25, "scaleJitter": 0.5 },
-
-    { "shape": "cylinder", "size": [1.4, 1.4, 0.5], "segments": 8, "open": true, "color": "rust",
-      "place": "scatter", "count": 12, "ring": [104, 158], "arc": [0.12, 0.88],
-      "y": 0.5, "yawJitter": 1, "scaleJitter": 0.3 },
-
-    { "shape": "box", "size": [50, 28, 2.5], "color": "carbody",
-      "place": "single", "pos": [-165, 10, -165], "rot": [0, 0.9, 0.35],
+        {
+          "shape": "plane",
+          "size": [
+            2.4,
+            2
+          ],
+          "color": "static",
+          "glow": true,
+          "count": 1,
+          "pos": [
+            0,
+            0.8,
+            2.06
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "sphere",
+      "size": [
+        0.3
+      ],
+      "segments": 4,
+      "color": "popcorn",
+      "glow": true,
+      "place": "scatter",
+      "count": 70,
+      "ring": [
+        96,
+        142
+      ],
+      "arc": [
+        0.1,
+        0.9
+      ],
+      "y": 0.25,
+      "scaleJitter": 0.5
+    },
+    {
+      "shape": "cylinder",
+      "size": [
+        1.4,
+        1.4,
+        0.5
+      ],
+      "segments": 8,
+      "open": true,
+      "color": "rust",
+      "place": "scatter",
+      "count": 12,
+      "ring": [
+        104,
+        158
+      ],
+      "arc": [
+        0.12,
+        0.88
+      ],
+      "y": 0.5,
+      "yawJitter": 1,
+      "scaleJitter": 0.3
+    },
+    {
+      "shape": "box",
+      "size": [
+        50,
+        28,
+        2.5
+      ],
+      "color": "carbody",
+      "place": "single",
+      "pos": [
+        -165,
+        10,
+        -165
+      ],
+      "rot": [
+        0,
+        0.9,
+        0.35
+      ],
       "children": [
-        { "shape": "plane", "size": [40, 20], "color": "beam", "glow": true,
-          "count": 1, "pos": [0, 0, 1.5] },
-        { "shape": "cylinder", "size": [1, 1.3, 20], "segments": 5, "color": "rust",
-          "count": 1, "pos": [-20, -14, 0], "rot": [0, 0, 0.7] }
-      ] },
-
-    { "shape": "box", "size": [0.35, 0.35, 0.35], "color": "bulb", "glow": true,
-      "place": "ring", "count": 40, "radius": 132, "y": 8.5, "arc": [0.1, 0.9],
-      "scaleJitter": 0.25 },
-
-    { "shape": "box", "size": [0.3, 0.3, 0.3], "color": "pink", "glow": true,
-      "place": "ring", "count": 34, "radius": 160, "y": 11, "arc": [0.12, 0.88],
-      "scaleJitter": 0.25 },
-
-    { "shape": "box", "size": [0.6, 9, 0.6], "color": "rust",
-      "place": "single", "pos": [-92, 4.5, -62], "rot": [0, 0.3, 0.06],
+        {
+          "shape": "plane",
+          "size": [
+            40,
+            20
+          ],
+          "color": "beam",
+          "glow": true,
+          "count": 1,
+          "pos": [
+            0,
+            0,
+            1.5
+          ]
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            1,
+            1.3,
+            20
+          ],
+          "segments": 5,
+          "color": "rust",
+          "count": 1,
+          "pos": [
+            -20,
+            -14,
+            0
+          ],
+          "rot": [
+            0,
+            0,
+            0.7
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "box",
+      "size": [
+        0.35,
+        0.35,
+        0.35
+      ],
+      "color": "bulb",
+      "glow": true,
+      "place": "ring",
+      "count": 40,
+      "radius": 132,
+      "y": 8.5,
+      "arc": [
+        0.1,
+        0.9
+      ],
+      "scaleJitter": 0.25
+    },
+    {
+      "shape": "box",
+      "size": [
+        0.3,
+        0.3,
+        0.3
+      ],
+      "color": "pink",
+      "glow": true,
+      "place": "ring",
+      "count": 34,
+      "radius": 160,
+      "y": 11,
+      "arc": [
+        0.12,
+        0.88
+      ],
+      "scaleJitter": 0.25
+    },
+    {
+      "shape": "box",
+      "size": [
+        0.6,
+        9,
+        0.6
+      ],
+      "color": "rust",
+      "place": "single",
+      "pos": [
+        -92,
+        4.5,
+        -62
+      ],
+      "rot": [
+        0,
+        0.3,
+        0.06
+      ],
       "children": [
-        { "shape": "plane", "size": [5, 2], "color": "exit", "glow": true,
-          "count": 1, "pos": [0, 5, 0], "rot": [0, 0, 3.1416] }
-      ] },
-
-    { "shape": "sphere", "size": [0.22], "segments": 4, "color": "static", "glow": true,
-      "place": "scatter", "count": 18, "ring": [110, 165], "arc": [0.1, 0.9],
-      "y": 7.5, "scaleJitter": 0.5 },
-
-    { "shape": "box", "size": [0.7, 0.5, 0.7], "color": "chalk",
-      "place": "scatter", "count": 30, "ring": [98, 150], "arc": [0.1, 0.9],
-      "y": 0.25, "yawJitter": 1, "tiltJitter": 0.3, "scaleJitter": 0.4 }
+        {
+          "shape": "plane",
+          "size": [
+            5,
+            2
+          ],
+          "color": "exit",
+          "glow": true,
+          "count": 1,
+          "pos": [
+            0,
+            5,
+            0
+          ],
+          "rot": [
+            0,
+            0,
+            3.1416
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "sphere",
+      "size": [
+        0.22
+      ],
+      "segments": 4,
+      "color": "static",
+      "glow": true,
+      "place": "scatter",
+      "count": 18,
+      "ring": [
+        110,
+        165
+      ],
+      "arc": [
+        0.1,
+        0.9
+      ],
+      "y": 7.5,
+      "scaleJitter": 0.5
+    },
+    {
+      "shape": "box",
+      "size": [
+        0.7,
+        0.5,
+        0.7
+      ],
+      "color": "chalk",
+      "place": "scatter",
+      "count": 30,
+      "ring": [
+        98,
+        150
+      ],
+      "arc": [
+        0.1,
+        0.9
+      ],
+      "y": 0.25,
+      "yawJitter": 1,
+      "tiltJitter": 0.3,
+      "scaleJitter": 0.4
+    }
   ]
 }

@@ -988,7 +988,7 @@ addEventListener('contextmenu', (e) => { if (appState === 'playing') e.preventDe
 // ---------- ball placement ----------
 // hit balls fly a real (cosmetic) ballistic arc with a bounce
 let hitFly = null;
-const HIT_GRAVITY = 26, BALL_REST_Y = 0.45;
+const HIT_GRAVITY = 26, BALL_REST_Y = 0.45, BALL_DRAG = 0.32; // per-second air drag
 
 function positionBall() {
   const s = game.state;
@@ -1026,13 +1026,15 @@ function positionBall() {
     const dt = 1 / 60;
     hitFly.age++;
     if (hitFly.stage === 'fly') {
+      // real aerodynamics: gravity + air drag — screams off the bat, dies late
       hitFly.vel.y -= HIT_GRAVITY * dt;
+      hitFly.vel.multiplyScalar(1 - BALL_DRAG * dt);
       hitFly.pos.addScaledVector(hitFly.vel, dt);
       if (hitFly.pos.y < BALL_REST_Y && hitFly.vel.y < 0) {
         hitFly.pos.y = BALL_REST_Y;
         hitFly.vel.y *= -0.42;
-        hitFly.vel.x *= 0.72;
-        hitFly.vel.z *= 0.72;
+        hitFly.vel.x *= 0.66; // grass eats pace on every hop
+        hitFly.vel.z *= 0.66;
         hitFly.bounced = true;
       }
       // fielding beats: catches settle into gloves, grounders get scooped
@@ -1053,26 +1055,33 @@ function positionBall() {
       hitFly.pos.set(c.x + 0.9, c.y + 3.1, c.z + 0.9);
       if (--hitFly.gather <= 0) {
         if (hitFly.groundOut) {
+          // a REAL throw: solve the projectile so it leaves hot, arcs under
+          // gravity, and bleeds speed to the bag
           const first = window.__bases[0].position;
-          hitFly.throwFrom = hitFly.pos.clone();
-          const dist = Math.hypot(first.x - hitFly.pos.x, first.z - hitFly.pos.z);
-          hitFly.throwTicks = Math.max(12, Math.round(dist / (85 / 60))); // 85 u/s rope
-          hitFly.throwT = 0;
+          const dx = first.x - hitFly.pos.x;
+          const dz = first.z - hitFly.pos.z;
+          const dy = (first.y + 1.2) - hitFly.pos.y;
+          const dist = Math.hypot(dx, dz);
+          const T = Math.max(0.3, dist / 88); // arm strength: ~88 u/s release
+          hitFly.vel.set(dx / T, dy / T + 0.5 * HIT_GRAVITY * T, dz / T);
+          hitFly.throwAge = 0;
+          hitFly.throwTime = T;
           hitFly.stage = 'throw';
         } else {
           hitFly.stage = 'held'; // hits: too late, hold it and stew
         }
       }
     } else if (hitFly.stage === 'throw') {
-      hitFly.throwT += 1 / hitFly.throwTicks;
-      const t = Math.min(1, hitFly.throwT);
+      hitFly.vel.y -= HIT_GRAVITY * dt;
+      hitFly.vel.multiplyScalar(1 - BALL_DRAG * 0.5 * dt); // spinning throws cut the air better
+      hitFly.pos.addScaledVector(hitFly.vel, dt);
+      hitFly.throwAge += dt;
       const first = window.__bases[0].position;
-      hitFly.pos.set(
-        THREE.MathUtils.lerp(hitFly.throwFrom.x, first.x, t),
-        THREE.MathUtils.lerp(hitFly.throwFrom.y, first.y + 1.2, t) + Math.sin(t * Math.PI) * 5,
-        THREE.MathUtils.lerp(hitFly.throwFrom.z, first.z, t),
-      );
-      if (t >= 1) hitFly.stage = 'beat'; // the ball is waiting at the bag
+      const closing = Math.hypot(hitFly.pos.x - first.x, hitFly.pos.z - first.z);
+      if (closing < 2.5 || hitFly.throwAge > hitFly.throwTime * 1.35) {
+        hitFly.pos.set(first.x, first.y + 0.6, first.z); // smack into the bag-side glove
+        hitFly.stage = 'beat';
+      }
     } else if (hitFly.stage === 'held') {
       const c = hitFly.carrier.mesh.position;
       hitFly.pos.set(c.x + 0.9, c.y + 3.1, c.z + 0.9);

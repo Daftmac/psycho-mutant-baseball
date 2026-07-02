@@ -34,11 +34,11 @@ unchecked items — never build them mid-increment.
       buttons plus R/Enter keys. Derby jump from postgame deferred (menu has it).
 
 ## Phase B — Presentation & cameras (The Show's broadcast grammar)
-- [ ] **B1. Camera suite.** Named cameras with cuts, not lerps: BATTING (now),
-      PITCHER-DUEL (over-shoulder from mound during windup), BALL-CHASE (follow
-      a hit ball out to the field, MVP-style), HOMER-CAM (low angle, slow tilt
-      up as the ball sails toward the landmark), BEAUTY (slow pan across the
-      field's signature prop between half-innings).
+- [x] **B1. Camera suite.** ✅ Shipped: named cameras with hard cuts in
+      updateCamera() — DUEL (CF broadcast shot during the windup, cuts back to
+      BATTING just before release), BALL-CHASE (swoops after hits/outs),
+      HOMER-CAM (low angle tracking the blast), BEAUTY (slow pan on side
+      retired). All five verified via forced-state camera-mode probes.
 - [ ] **B2. Instant replay.** Ring-buffer the last ~4s of ball + actor
       transforms; on homers and inning-ending outs, replay once from HOMER-CAM
       or BALL-CHASE with a "REPLAY" corner tag and scanline shimmer.

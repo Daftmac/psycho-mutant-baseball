@@ -425,6 +425,7 @@ function startMatch() {
   controlsEl.classList.remove('hidden');
   camera.position.set(0, 7.5, 14);
   camera.lookAt(0, 2.5, -40);
+  camMode = 'none'; // force a fresh cut on the first frame
 }
 
 function teamAgg(teamKey) {
@@ -620,6 +621,52 @@ function positionBall() {
   if (s.phase === 'windup') ball.position.set(0.8, 3.2, -D + 0.5); // in pitcher's claw
 }
 
+// ---------- broadcast camera suite (renderer-only) ----------
+// Named cameras with hard cuts, The Show style:
+//   duel    — over the mound during the windup, sizing up the batter
+//   batting — behind the plate, the playable view (pitch in flight)
+//   chase   — swoops after a struck ball
+//   homer   — low angle near the plate, tilting up as it sails
+//   beauty  — slow field pan between half-innings
+let camMode = 'none';
+const _camTarget = new THREE.Vector3();
+
+function updateCamera() {
+  const s = game.state;
+  let want = 'batting';
+  if (s.phase === 'windup') {
+    want = s.phaseTicks > 22 ? 'duel' : 'batting'; // cut back just before release
+  } else if (s.phase === 'resolve' && s.lastPlay) {
+    if (s.lastPlay.kind === 'homer') want = 'homer';
+    else if (s.lastPlay.kind === 'hit' || s.lastPlay.kind === 'out') want = 'chase';
+    else if (s.lastPlay.kind === 'sideout') want = 'beauty';
+  }
+
+  if (want !== camMode) {
+    camMode = want;
+    if (camMode === 'batting') camera.position.set(0, 7.5, 14);
+    else if (camMode === 'duel') camera.position.set(6.5, 8.5, -D - 18); // CF broadcast cam
+    else if (camMode === 'homer') camera.position.set(9, 1.3, -10);
+    // chase starts wherever the last cut left it and swoops from there
+  }
+
+  if (camMode === 'batting') {
+    camera.lookAt(0, 2.5, -40);
+  } else if (camMode === 'duel') {
+    camera.lookAt(-0.8, 2.6, 2);
+  } else if (camMode === 'homer') {
+    camera.lookAt(ball.position);
+  } else if (camMode === 'chase') {
+    _camTarget.set(ball.position.x * 0.6, ball.position.y * 0.5 + 7, ball.position.z + 26);
+    camera.position.lerp(_camTarget, 0.08);
+    camera.lookAt(ball.position);
+  } else if (camMode === 'beauty') {
+    const a = game.tick * 0.004;
+    camera.position.set(Math.sin(a) * 46, 15, Math.cos(a) * 46 - 38);
+    camera.lookAt(0, 5, -55);
+  }
+}
+
 // ---------- bat animation (renderer-only) ----------
 let swingAnim = 0;
 const SWING_TICKS = 12;
@@ -715,7 +762,9 @@ function frame(now) {
     else menuT += 1 / C.TICKS_PER_SEC;
     acc -= STEP_MS;
   }
-  if (podiumShot) {
+  if (appState === 'playing' && game) {
+    updateCamera();
+  } else if (podiumShot) {
     // static podium shot; the mutant turns slowly on the slab
     if (previewMutant) previewMutant.rotation.y += 0.012;
   } else if (appState !== 'playing') {
@@ -743,6 +792,8 @@ if (bootParams.get('play') === '1') {
 }
 frame(performance.now());
 
-// debug handle for harness/devtools poking (not used by game code)
+// debug handles for harness/devtools poking (not used by game code)
 Object.defineProperty(window, '__game', { get: () => game });
 window.__startMatch = startMatch; // debug: skip the menu
+window.__cam = camera;
+window.__camMode = () => camMode;

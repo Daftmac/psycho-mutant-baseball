@@ -16,7 +16,16 @@
       "Bash(git log*)",
       "Bash(git add*)",
       "Bash(git commit*)",
-      "Bash(git push*)"
+      "Bash(git push*)",
+      "Bash(export PATH=\"/opt/homebrew/bin:$PATH\" && npm *)",
+      "Bash(export PATH=\"/opt/homebrew/bin:$PATH\" && node *)",
+      "Bash(export PATH=\"/opt/homebrew/bin:$PATH\" && for *)",
+      "Bash(export PATH=\"/opt/homebrew/bin:$PATH\" && gh *)",
+      "Bash(echo *)",
+      "Bash(tail *)",
+      "Bash(jq *)",
+      "Bash(ls *)",
+      "Bash(cat *)"
     ],
     "deny": [
       "Bash(rm -rf*)",

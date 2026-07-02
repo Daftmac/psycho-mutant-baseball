@@ -236,21 +236,28 @@ function makeMutant({ skin, extraArms = 0, headScale = 1 }) {
   for (const dx of [-0.25, 0.25]) {
     const eye = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.16, 0.1), new THREE.MeshBasicMaterial({ color: 0xffcc22 }));
     eye.position.set(dx * headScale, 4.2, 0.56 * headScale);
-    g.add(eye);
+    head.attach ? head.add(eye) : g.add(eye);
+    eye.position.set(dx * headScale, 0.1, 0.56 * headScale);
   }
   const legs = new THREE.Mesh(new THREE.BoxGeometry(1.4, 1.2, 0.9), mat(0x1c1622));
   legs.position.y = 0.6;
   g.add(legs);
+  const arms = [];
   for (let i = 0; i <= extraArms; i++) {
     for (const side of [-1, 1]) {
       const arm = new THREE.Mesh(new THREE.BoxGeometry(0.4, 1.8, 0.4), mat(skin));
       arm.position.set(side * 1.15, 2.6 - i * 0.8, 0);
       arm.rotation.z = side * 0.25;
       g.add(arm);
+      arms.push(arm);
     }
   }
+  g.userData.parts = { body, head, legs, arms };
   return g;
 }
+
+// quantize pose time so limbs snap between chunky keyframes (lofi charm)
+const chunky = (v, steps = 6) => Math.round(v * steps) / steps;
 
 const batter = makeMutant({ skin: 0x6fae5c, extraArms: 1 }); // sickly green, four arms
 batter.position.set(-2.6, 0, 1.2);
@@ -300,13 +307,16 @@ function updateFielders() {
     const dx = target.x - f.mesh.position.x;
     const dz = target.z - f.mesh.position.z;
     const d = Math.hypot(dx, dz);
+    const parts = f.mesh.userData.parts;
     if (d > 1.5) {
       f.mesh.position.x += (dx / d) * step;
       f.mesh.position.z += (dz / d) * step;
       f.mesh.rotation.y = Math.atan2(dx, dz);
       f.mesh.position.y = Math.abs(Math.sin(game.tick * 0.35 + f.phase)) * 0.5; // chunky run bob
+      parts.arms.forEach((a, i) => { a.rotation.x = Math.sin(game.tick * 0.35 + f.phase + i * Math.PI) * 0.9; }); // arm pump
     } else {
       f.mesh.position.y *= 0.8;
+      parts.arms.forEach((a) => { a.rotation.x *= 0.8; });
       if (target === f.home) f.mesh.rotation.y = Math.PI;
     }
   }
@@ -1068,6 +1078,63 @@ function updateBroadcastBeats() {
   lastRunTotal = runs;
 }
 
+// ---------- chunky keyframe poses (renderer-only) ----------
+// The windup in seven snaps: idle sway -> gather back -> leg kick -> whip.
+function posePitcher() {
+  const parts = pitcher.userData.parts;
+  const s = game.state;
+  if (s.phase === 'windup') {
+    const p = chunky(1 - s.phaseTicks / Math.max(1, C.WINDUP_TICKS), 7);
+    if (p < 0.4) {
+      // rocking, sizing up the batter
+      pitcher.rotation.z = Math.sin(game.tick * 0.15) * 0.12;
+      parts.body.rotation.x = 0;
+      parts.legs.rotation.x = 0;
+      parts.arms.forEach((a) => { a.rotation.x = 0; });
+    } else if (p < 0.8) {
+      // gather: lean back, glove up, leg coiled
+      pitcher.rotation.z = 0;
+      parts.body.rotation.x = -0.35;
+      parts.legs.rotation.x = -0.9; // the kick
+      parts.arms.forEach((a, i) => { a.rotation.x = i % 2 ? -2.4 : -0.6; });
+    } else {
+      // whip: everything forward
+      parts.body.rotation.x = 0.5;
+      parts.legs.rotation.x = 0.3;
+      parts.arms.forEach((a, i) => { a.rotation.x = i % 2 ? 1.1 : 0.4; });
+    }
+  } else {
+    pitcher.rotation.z = 0;
+    parts.body.rotation.x *= 0.85;
+    parts.legs.rotation.x *= 0.85;
+    parts.arms.forEach((a) => { a.rotation.x *= 0.85; });
+  }
+}
+
+// batter: idle sway -> coil as the ball comes -> stride into the swing
+function poseBatter() {
+  const parts = batter.userData.parts;
+  const s = game.state;
+  batter.position.y = Math.sin(game.tick * 0.08) * 0.06;
+  batter.position.x = -2.6 + aim.x * 0.12;
+  if (swingAnim > 0) {
+    // follow through: hips fire
+    const k = chunky(1 - swingAnim / SWING_TICKS, 4);
+    batter.rotation.y = Math.PI / 2 - k * 1.1;
+    parts.body.rotation.y = k * 0.5;
+  } else if (s.phase === 'pitch' && s.pitch.t > 0.5) {
+    // coil + stride, snapped to two keyframes
+    const c = chunky((s.pitch.t - 0.5) / 0.5, 2);
+    batter.rotation.y = Math.PI / 2 + c * 0.18;
+    parts.body.rotation.y = -c * 0.22;
+    parts.legs.rotation.y = c * 0.15;
+  } else {
+    batter.rotation.y = Math.PI / 2;
+    parts.body.rotation.y *= 0.8;
+    parts.legs.rotation.y *= 0.8;
+  }
+}
+
 // ---------- batter walk-ups (renderer-only) ----------
 // The Show ritual, mutant flavor: name card slides in on each new batter,
 // batter does a little flourish while the pitcher glowers.
@@ -1303,13 +1370,8 @@ function stepGame() {
 
   updateBat();
 
-  // pitcher windup wobble
-  pitcher.rotation.z = game.state.phase === 'windup'
-    ? Math.sin(game.tick * 0.15) * 0.12
-    : 0;
-  // batter idle sway + lean toward the aim
-  batter.position.y = Math.sin(game.tick * 0.08) * 0.06;
-  batter.position.x = -2.6 + aim.x * 0.12;
+  posePitcher();
+  poseBatter();
 
   // zone + reticle live only while a pitch is coming
   updateReticle();

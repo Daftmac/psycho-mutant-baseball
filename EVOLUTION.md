@@ -122,9 +122,11 @@ unchecked items — never build them mid-increment.
       top of any live camera, preallocated 36-point dirt burst at contact
       (ecto-green splat on ectoball fouls), 7-ghost afterimage trail on
       hitScore > .85 screamers.
-- [ ] **D3. Animation upgrade.** Real windup (leg kick, arm whip), batter
-      stride + follow-through, fielder run cycle — all chunky 4-6 keyframe
-      poses, no smoothing that kills the lofi charm.
+- [x] **D3. Animation upgrade.** ✅ Shipped: makeMutant exposes body/head/legs/
+      arms parts; pitcher windup in seven quantized snaps (rock → gather with
+      leg kick + glove up → whip), batter coil-and-stride into a hip-fired
+      follow-through, fielder arm pump on the run. All poses snapped to chunky
+      keyframes via a quantizer — no smooth tweens. Phase D complete.
 - [x] **D4. HUD reskin.** ✅ Shipped: corner broadcast score bug (abbrs, scores,
       inning arrow, mini base diamond, count + out dots, derby variant), slim
       center HUD, pitch-type flash on release ("ECTOBALL..."), and stamp

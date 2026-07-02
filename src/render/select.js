@@ -3,10 +3,11 @@
 // Pure renderer UI: no game rules, no Three.js. main.js supplies the 3D
 // mutant podium preview via the onBrowse callback.
 
-const blocks = (v) => {
+export const statBlocks = (v) => {
   const n = Math.max(0, Math.min(10, Math.round(v * 10)));
   return '▰'.repeat(n) + '▱'.repeat(10 - n);
 };
+const blocks = statBlocks;
 
 export function createTeamSelect({ rosters, onConfirm, onBack, onBrowse }) {
   const root = document.getElementById('teamselect');

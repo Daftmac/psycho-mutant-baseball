@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { Game } from '../core/game.js';
 import { C, ROSTERS } from '../core/constants.js';
 import { createMenu } from './menu.js';
-import { createTeamSelect, createFieldSelect } from './select.js';
+import { createTeamSelect, createFieldSelect, statBlocks } from './select.js';
 import { createOptions } from './options.js';
 import { createAnnouncer } from './announcer.js';
 
@@ -432,6 +432,8 @@ function startMatch() {
   camMode = 'none'; // force a fresh cut on the first frame
   resetReplay();
   announcer.show();
+  lastBatterName = null;
+  walkupEl.classList.remove('in');
 }
 
 function teamAgg(teamKey) {
@@ -543,6 +545,7 @@ function toMenu() {
   pendingMode = 'match';
   resetReplay();
   announcer.hide();
+  walkupEl.classList.remove('in');
   ball.visible = false;
   zone.visible = false;
   reticle.visible = false;
@@ -731,6 +734,47 @@ function updateCamera() {
   }
 }
 
+// ---------- batter walk-ups (renderer-only) ----------
+// The Show ritual, mutant flavor: name card slides in on each new batter,
+// batter does a little flourish while the pitcher glowers.
+const walkupEl = document.getElementById('walkup');
+let lastBatterName = null;
+let walkupHideAt = -1;
+let walkupFlourish = 0;
+
+function updateWalkup() {
+  const s = game.state;
+  if (s.phase === 'windup') {
+    const b = game.currentBatter();
+    if (b.name !== lastBatterName) {
+      lastBatterName = b.name;
+      const teamName = game.mode === 'derby'
+        ? ROSTERS[game.derbyTeam].name : ROSTERS[game.battingTeam()].name;
+      walkupEl.innerHTML =
+        `<div class="wu-team">NOW BATTING — ${teamName.toUpperCase()}</div>` +
+        `<div class="wu-name">${b.name.toUpperCase()}</div>` +
+        `<div class="wu-gk">${b.gimmick ?? ''}</div>` +
+        `<div class="wu-st"><span class="lb">PWR</span><span class="pwr">${statBlocks(b.power)}</span></div>` +
+        `<div class="wu-st"><span class="lb">CON</span><span class="con">${statBlocks(b.contact)}</span></div>` +
+        `<div class="wu-st"><span class="lb">CHA</span><span class="cha">${statBlocks(b.chaos)}</span></div>`;
+      walkupEl.classList.add('in');
+      walkupHideAt = game.tick + 150; // ~2.5s on screen
+      walkupFlourish = 60;
+    }
+  }
+  if (walkupHideAt > 0 && game.tick >= walkupHideAt) {
+    walkupEl.classList.remove('in');
+    walkupHideAt = -1;
+  }
+  if (walkupFlourish > 0) {
+    walkupFlourish--;
+    const k = walkupFlourish / 60;
+    batter.rotation.z = Math.sin(k * Math.PI * 4) * 0.12 * k; // knuckle-crack shimmy
+  } else {
+    batter.rotation.z = 0;
+  }
+}
+
 // ---------- bat animation (renderer-only) ----------
 let swingAnim = 0;
 const SWING_TICKS = 12;
@@ -806,6 +850,7 @@ function stepGame() {
     }
   }
   announcer.tick(true);
+  updateWalkup();
   if (replayArmed && game.state.phase === 'resolve' && game.state.phaseTicks <= 2) {
     replay = { from: Math.max(replayArmed.from, replayWrite - REPLAY_TICKS + 1), to: replayWrite, i: 0 };
     replayArmed = null;

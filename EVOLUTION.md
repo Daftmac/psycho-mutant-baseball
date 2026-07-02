@@ -50,9 +50,10 @@ unchecked items — never build them mid-increment.
       field-flavored homer calls + ambient color commentary from a new
       "announcer" block in each field JSON (the Undergut announcer is indeed
       holding his nose). New src/render/announcer.js.
-- [ ] **B4. Batter walk-ups.** Name card slides in with stat bars and gimmick
-      line; batter does a 1s idle flourish (extra arms crack knuckles in
-      sequence). The Show ritual, mutant flavor.
+- [x] **B4. Batter walk-ups.** ✅ Shipped: gold-edged name card slides in on
+      every new batter (team, name, gimmick, stat bars — statBlocks shared
+      from select.js), auto-hides after ~2.5s; batter does a knuckle-crack
+      shimmy during the windup. Works in derby too (one card for the slugger).
 - [ ] **B5. Crowd.** Billboard-sprite mutant crowd rows where the field wants
       them (drive-in car roofs, web cocoons that sway). Two states: murmur
       sway, roar bounce on hits/homers. Budget: one instanced mesh per field.

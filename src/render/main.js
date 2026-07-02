@@ -12,6 +12,7 @@ import { createOptions } from './options.js';
 import { createAnnouncer } from './announcer.js';
 import { audio } from './audio.js';
 import { loadSeason, saveSeason, newSeason, recordGame, createSeasonScreen, SEASON_GAMES } from './season.js';
+import { loadRecords, noteMatch, noteDerby, createRecordsScreen } from './records.js';
 
 // ---------- field loading ----------
 // Fields are pure data (fields/*.json — schema in fields/README.md).
@@ -486,12 +487,22 @@ function openSeason() {
   seasonScreen.show(season);
 }
 
+const recordsScreen = createRecordsScreen({
+  onBack: () => { recordsScreen.hide(); toMenu(); },
+});
+function openRecords() {
+  appState = 'records';
+  menu.hide();
+  recordsScreen.show();
+}
+
 const menu = createMenu({
   onQuickMatch: () => openTeamSelect('match'),
   onDerby: () => openTeamSelect('derby'),
   onFieldSelect: () => openFieldSelect('lobby'),
   onOptions: openOptions,
   onSeason: openSeason,
+  onRecords: openRecords,
 });
 
 const teamSelect = createTeamSelect({
@@ -646,6 +657,11 @@ function showPostgame() {
   }
   mkBtn('BACK TO THE LOBBY', toMenu);
 
+  // the groundskeeper takes notes
+  const rec = loadRecords();
+  if (game.mode === 'derby') noteDerby(rec, game);
+  else noteMatch(rec, game);
+
   if (game.mode === 'derby') {
     const d = game.state.derby;
     headlineEl.textContent = `${d.homers} HOMER${d.homers === 1 ? '' : 'S'} — LONGEST ${d.longest} GRAVES`;
@@ -727,6 +743,7 @@ function toMenu() {
   fieldSelect.hide();
   optionsScreen.hide();
   seasonScreen.hide();
+  recordsScreen.hide();
   hidePreview();
   postgameEl.classList.add('hidden');
   hud.classList.add('hidden');

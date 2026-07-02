@@ -146,8 +146,11 @@ unchecked items — never build them mid-increment.
 - [ ] **E2. Unlockables.** Hidden mutants and fields earned by feats (win a
       derby in the Undergut without a single splash-zone foul...). Griffey-era
       cheat-code energy; store progress in localStorage.
-- [ ] **E3. Stats & records.** Career homer distances, per-mutant batting
-      averages, a RECORDS screen written like gravestone epitaphs.
+- [x] **E3. Stats & records.** ✅ Shipped: the groundskeeper's book
+      (src/render/records.js, localStorage) — longest derby ball in graves,
+      most homers in one game, career grave digger, games witnessed — shown as
+      tombstone epitaph cards from a new RECORDS menu item; auto-noted from
+      every match and derby postgame.
 
 ## Parking lot (ideas noticed, not yet scheduled)
 - balance-analyst: the .250–.380 BA band is tighter than seed variance allows

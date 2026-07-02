@@ -292,6 +292,21 @@
     .sn-lt { font-size: 11px; color: #776f8a; letter-spacing: 3px; margin-bottom: 4px; }
     .sn-ldr { font-size: 13px; color: #e8e2d0; text-shadow: 1px 1px 0 #000; line-height: 1.5; }
     #sn-buttons { display: flex; gap: 16px; }
+    #records {
+      position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 16px; font-family: 'Courier New', monospace; text-align: center;
+      background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.6) 100%);
+    }
+    #rec-stones { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; max-width: 860px; }
+    .stone {
+      width: 185px; padding: 18px 10px 12px; background: rgba(40, 38, 48, 0.92);
+      border: 2px solid #1c1a24; border-radius: 46% 46% 0 0 / 30% 30% 0 0;
+      box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+    }
+    .stone .st-top { font-size: 10px; letter-spacing: 1px; color: #9a917f; min-height: 26px; }
+    .stone .st-mid { font-size: 24px; font-weight: bold; color: #e8e2d0; text-shadow: 2px 2px 0 #000; margin: 4px 0; }
+    .stone .st-bot { font-size: 10px; font-style: italic; color: #776f8a; min-height: 24px; }
+    #rec-buttons { display: flex; gap: 16px; }
     #crt {
       position: fixed; inset: 0; pointer-events: none; z-index: 50;
       background: repeating-linear-gradient(0deg,
@@ -329,6 +344,7 @@
   <div id="fieldselect" class="hidden"></div>
   <div id="options" class="hidden"></div>
   <div id="season" class="hidden"></div>
+  <div id="records" class="hidden"></div>
   <div id="crt" class="hidden"></div>
   <div id="postgame" class="hidden">
     <div class="headline"></div>

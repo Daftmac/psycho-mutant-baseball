@@ -79,9 +79,10 @@ unchecked items — never build them mid-increment.
       Four gray fielder mutants hold posts and the two nearest converge on
       struck balls with a chunky run bob. Side effect: all 5 check seeds now
       inside the .279–.365 BA band. Beat-out-by-speed deferred to C4 (speed stat).
-- [ ] **C3. Swing types.** Tap = contact swing, hold = power swing (bigger
-      hitScore ceiling, tighter timing window), down+swing = bunt. Griffey
-      simplicity, MVP depth.
+- [x] **C3. Swing types.** ✅ Shipped: SPACE/click = contact, X/right-click =
+      power cut (hitScore x1.22, timing window x0.68), B = bunt (huge window,
+      resolves as a sacrifice with runners on and <2 outs — runners advance,
+      third scores — else an easy out). C.SWING_TYPES tunable.
 - [ ] **C4. Baserunning.** Speed stat; force-advance logic upgraded to real
       runner decisions (auto with prompts on 50/50 balls: SEND / HOLD flash).
       Steals as a pre-pitch gamble.

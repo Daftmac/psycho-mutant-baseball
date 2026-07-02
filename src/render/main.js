@@ -674,6 +674,9 @@ addEventListener('pointermove', (e) => {
 });
 
 let swingQueued = false;
+let swingTypeQueued = 'contact';
+function queueSwing(type) { swingQueued = true; swingTypeQueued = type; }
+
 addEventListener('keydown', (e) => {
   if (appState !== 'playing') return;
   if (pitchCall) {
@@ -682,7 +685,9 @@ addEventListener('keydown', (e) => {
     else if (e.code === 'Space' || e.code === 'Enter') { pitchCallAdvanceStage(); e.preventDefault(); }
     return;
   }
-  if (e.code === 'Space') { swingQueued = true; e.preventDefault(); }
+  if (e.code === 'Space') { queueSwing('contact'); e.preventDefault(); }
+  else if (e.code === 'KeyX') { queueSwing('power'); e.preventDefault(); }
+  else if (e.code === 'KeyB') { queueSwing('bunt'); e.preventDefault(); }
 });
 addEventListener('pointerdown', (e) => {
   if (appState !== 'playing') return;
@@ -691,8 +696,9 @@ addEventListener('pointerdown', (e) => {
     if (!e.target.closest('#pitchcall')) pitchCallAdvanceStage();
     return;
   }
-  swingQueued = true; // tap/click to swing
+  queueSwing(e.button === 2 ? 'power' : 'contact'); // right-click = power cut
 });
+addEventListener('contextmenu', (e) => { if (appState === 'playing') e.preventDefault(); });
 
 // ---------- ball placement ----------
 // hit balls fly a real (cosmetic) ballistic arc with a bounce
@@ -1076,7 +1082,7 @@ function stepGame() {
     if (pendingPitchPlan) { input.pitch = pendingPitchPlan; pendingPitchPlan = null; }
     swingQueued = false;
   } else {
-    input = { swing: swingQueued, aimX: aim.x, aimY: aim.y };
+    input = { swing: swingQueued, swingType: swingTypeQueued, aimX: aim.x, aimY: aim.y };
     if (swingQueued && game.state.phase === 'pitch' && !game.state.swing) swingAnim = SWING_TICKS;
     swingQueued = false;
   }
@@ -1179,7 +1185,7 @@ window.__startMatch = startMatch; // debug: skip the menu
 window.__cam = camera;
 window.__camMode = () => camMode;
 window.__advance = (n = 1) => { for (let i = 0; i < n; i++) advanceOneTick(); }; // synchronous stepping
-window.__swing = (x, y) => { aim.x = x; aim.y = y; swingQueued = true; };
+window.__swing = (x, y, type = 'contact') => { aim.x = x; aim.y = y; queueSwing(type); };
 window.__replayActive = () => !!replay;
 window.__pitchCall = () => pitchCall && { ...pitchCall };
 window.__aimAt = (x, y) => { aim.x = x; aim.y = y; };

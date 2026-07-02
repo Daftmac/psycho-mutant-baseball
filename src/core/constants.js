@@ -53,6 +53,13 @@ export const C = {
   ZONE: { HALF_W: 1.7, BOT: 1.5, TOP: 4.3 },
   MISS_MARGIN: 1.2,           // balls target up to this far outside a zone edge
 
+  // swing types: tap for contact, commit for power, deaden it for the bunt
+  SWING_TYPES: {
+    contact: { windowMult: 1.0,  hitMult: 1.0 },
+    power:   { windowMult: 0.68, hitMult: 1.22 }, // big cut, needle timing
+    bunt:    { windowMult: 1.8,  hitMult: 0 },    // resolves as a sacrifice play
+  },
+
   // batting
   CONTACT_POINT: 0.88,        // ball flight t where perfect contact happens
   TIMING_WINDOW: 0.14,        // +/- t tolerance scaled by batter contact stat

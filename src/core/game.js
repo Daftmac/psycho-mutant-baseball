@@ -87,7 +87,8 @@ export class Game {
 
       if (input.swing && !s.swing) {
         const zMid = (C.ZONE.BOT + C.ZONE.TOP) / 2;
-        s.swing = { atT: p.t, aimX: input.aimX ?? 0, aimY: input.aimY ?? zMid };
+        const type = C.SWING_TYPES[input.swingType] ? input.swingType : 'contact';
+        s.swing = { atT: p.t, aimX: input.aimX ?? 0, aimY: input.aimY ?? zMid, type };
         s.stats.swings++;
         this._resolveSwing();
         return;
@@ -225,8 +226,9 @@ export class Game {
     const batter = this.currentBatter();
 
     // timing: how close to the ideal contact moment
+    const st = C.SWING_TYPES[s.swing.type ?? 'contact'];
     const timingError = Math.abs(s.swing.atT - C.CONTACT_POINT);
-    const window = C.TIMING_WINDOW * this.diff.windowMult * (0.6 + batter.contact * 0.8);
+    const window = C.TIMING_WINDOW * this.diff.windowMult * st.windowMult * (0.6 + batter.contact * 0.8);
     const difficulty = 1 + s.pitch.breakAmt * 0.25; // breaking stuff still bites a little
     const timingQ = Math.max(0, 1 - (timingError * difficulty) / window);
 
@@ -248,12 +250,13 @@ export class Game {
     };
 
     if (this.mode === 'derby') return this._resolveDerbySwing(quality, batter);
+    if (s.swing.type === 'bunt') return this._resolveBunt(quality);
 
     if (quality < C.WHIFF_THRESHOLD) return this._strike('swinging strike');
     if (quality < C.FOUL_THRESHOLD) return this._foul();
 
     // contact! compute hit outcome
-    let hitScore = quality * (0.5 + batter.power * 0.7) * (0.7 + this.rng() * 0.6);
+    let hitScore = quality * (0.5 + batter.power * 0.7) * (0.7 + this.rng() * 0.6) * st.hitMult;
     let chaos = false;
     if (this.rng() < C.CHAOS_PROC_CHANCE * (batter.chaos * 2)) {
       hitScore += C.CHAOS_BOOST;
@@ -285,6 +288,31 @@ export class Game {
     if (hitScore < C.HIT_TRIPLE) return this._advance(3, `${batter.name} legs out a triple${chaos ? ' — CHAOS!' : ''}`, hitScore);
     s.stats.homers++;
     return this._advance(4, `${batter.name} CRUSHES A HOME RUN${chaos ? ' — CHAOS!' : ''}`, hitScore);
+  }
+
+  // Bunt: deaden it. With runners on and less than two outs it's a sacrifice;
+  // otherwise it's a gift to the defense.
+  _resolveBunt(quality) {
+    const s = this.state;
+    const batter = this.currentBatter();
+    if (quality < C.WHIFF_THRESHOLD) return this._strike('whiffs the bunt');
+    if (s.bases.some(Boolean) && s.outs < 2) {
+      let runs = 0;
+      for (let i = 2; i >= 0; i--) {
+        if (!s.bases[i]) continue;
+        s.bases[i] = false;
+        if (i === 2) runs++;
+        else s.bases[i + 1] = true;
+      }
+      if (runs) {
+        const team = this.battingTeam();
+        s.score[team] += runs;
+        const ls = s.lineScore[team];
+        ls[s.inning - 1] = (ls[s.inning - 1] ?? 0) + runs;
+      }
+      return this._out(`${batter.name} lays one down — sacrifice${runs ? ', a run crawls home!' : ''}`, 0.1);
+    }
+    return this._out(`${batter.name} bunts into an easy out`, 0.05);
   }
 
   // Derby: only swings count. Homer or out, nothing in between.

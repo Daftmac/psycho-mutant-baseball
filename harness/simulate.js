@@ -8,36 +8,10 @@ import { C } from '../src/core/constants.js';
 
 const seed = Number(process.argv[2] ?? 42);
 const game = new Game({ seed });
-const rng = (() => { let a = seed ^ 0xBEEF; return () => { a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; })();
 
-// Auto-batter: plans a swing timing AND a bat aim per pitch with human-ish
-// error, influenced by the batter's contact stat. Lays off some junk.
-// It aims at the pitch's true crossing point plus error — a model of a
-// batter reading the pitch out of the hand.
-let plan = null;
-
-function autoInput() {
-  const s = game.state;
-  if (s.phase !== 'pitch') { plan = null; return {}; }
-  if (!plan) {
-    const batter = game.currentBatter();
-    const takes = (!s.pitch.isStrike && rng() < 0.5) || rng() < 0.08; // sometimes lays off balls
-    if (takes) { plan = { take: true }; return {}; }
-    const sloppy = 1.3 - batter.contact;
-    const gauss = () => rng() + rng() - 1; // ~gaussian, [-1, 1]
-    plan = {
-      swingT: C.CONTACT_POINT + gauss() * 0.13 * sloppy,
-      aimX: s.pitch.target.x + gauss() * 0.7 * sloppy,
-      aimY: s.pitch.target.y + gauss() * 0.7 * sloppy,
-      swung: false,
-    };
-  }
-  if (!plan.take && !plan.swung && s.pitch.t >= plan.swingT) {
-    plan.swung = true;
-    return { swing: true, aimX: plan.aimX, aimY: plan.aimY };
-  }
-  return {};
-}
+// The CPU batter lives in core (game.autoBatterInput) so the harness and
+// live player-pitching games share one brain. Tuned via C.CPU_BATTER.
+const autoInput = () => game.autoBatterInput();
 
 const MAX_TICKS = 60 * 60 * 30; // 30 min cap — a game must finish well before this
 const t0 = process.hrtime.bigint();

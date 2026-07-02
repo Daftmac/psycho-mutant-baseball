@@ -65,10 +65,13 @@ unchecked items — never build them mid-increment.
       smaller, and it completes the between-innings loop with B1's beauty cam.)
 
 ## Phase C — Mechanics depth (MVP 2005's hands)
-- [ ] **C1. Player pitching.** Choose pitch type + aim in the zone, then an
-      MVP-style two-click meter (power → accuracy) drawn as a twitching eyeball
-      gauge. Miss the accuracy click and the pitch sails. CPU batter already
-      exists (harness auto-batter moves into core as the AI).
+- [x] **C1. Player pitching.** ✅ Shipped: when your team fields, the sim holds
+      while you call the pitch — aim with the mouse, 1/2/3 picks the pitch,
+      then a two-click eyeball meter (power sweep, then land on the pupil for
+      accuracy; misses scatter the target via core rng). Core accepts a
+      pitch plan input; the CPU batter moved INTO core (game.autoBatterInput,
+      tuned via C.CPU_BATTER) and now drives both the harness and live
+      opponents. Balance recentered (~.33 mean BA across 7 seeds).
 - [ ] **C2. Fielding v1 (roadmap #1).** Fly balls catchable from hitScore +
       loft + spray; chunky fielder mutants converge with simple run cycles;
       catch probability + error chance (chaos stat) resolved in core, animated
@@ -116,6 +119,9 @@ unchecked items — never build them mid-increment.
       averages, a RECORDS screen written like gravestone epitaphs.
 
 ## Parking lot (ideas noticed, not yet scheduled)
+- balance-analyst: the .250–.380 BA band is tighter than seed variance allows
+  (~40 swings/game → ±.07 std). Build a multi-seed averaging harness mode and
+  re-express the target as a mean across ≥10 seeds.
 - In-game batter/pitcher models should use the select-screen appearance mapping
   (appearanceFor in main.js) so the mutant at the plate is the roster mutant
 - A third team ("The Flooded Chapel Choir"?) now that team select exists

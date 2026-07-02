@@ -166,6 +166,32 @@
     .opt-row.sel { color: #ffd24a; }
     #opt-controls { font-size: 13px; color: #9a8fb8; text-shadow: 1px 1px 0 #000; line-height: 1.7; }
     #opt-controls .ctl-title { color: #9fe870; font-weight: bold; letter-spacing: 2px; margin-bottom: 2px; }
+    #pitchcall {
+      position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+      width: 380px; font-family: 'Courier New', monospace; text-align: center;
+      border: 2px solid #3a3350; background: rgba(10, 6, 18, 0.88);
+      padding: 10px 14px; z-index: 25;
+    }
+    #pitchcall .pc-chips { display: flex; gap: 8px; justify-content: center; margin-bottom: 8px; }
+    #pitchcall .pc-chip {
+      border: 2px solid #3a3350; padding: 2px 10px; font-size: 12px; letter-spacing: 1px;
+      color: #776f8a; cursor: pointer; text-shadow: 1px 1px 0 #000;
+    }
+    #pitchcall .pc-chip.sel { border-color: #9fe870; color: #9fe870; }
+    #pitchcall .pc-meter {
+      position: relative; height: 18px; margin: 6px 0;
+      background: linear-gradient(90deg, #1a1024, #3a145e 60%, #a41f2b);
+      border: 2px solid #3a3350;
+    }
+    #pitchcall .pc-pupil {
+      position: absolute; top: -2px; bottom: -2px; width: 10px; left: 10%;
+      background: #ffd24a; border: 2px solid #000; box-sizing: border-box;
+    }
+    #pitchcall .pc-needle {
+      position: absolute; top: -5px; bottom: -5px; width: 4px; left: 0;
+      background: #fff; box-shadow: 2px 2px 0 #000;
+    }
+    #pitchcall .pc-hint { font-size: 12px; color: #b8b0cc; text-shadow: 1px 1px 0 #000; min-height: 16px; }
     #wipe {
       position: fixed; inset: 0; pointer-events: none; z-index: 40;
       display: flex; align-items: center; justify-content: center; overflow: hidden;
@@ -258,6 +284,11 @@
   <div id="ticker" class="hidden"><span class="tk-chip">☠ PMB SPORTS</span><span class="tk-text"></span></div>
   <div id="walkup"></div>
   <div id="wipe"><div class="band"></div><div class="wipe-text"></div></div>
+  <div id="pitchcall" class="hidden">
+    <div class="pc-chips"></div>
+    <div class="pc-meter"><div class="pc-pupil"></div><div class="pc-needle"></div></div>
+    <div class="pc-hint"></div>
+  </div>
   <script type="module" src="/src/render/main.js"></script>
 </body>
 </html>

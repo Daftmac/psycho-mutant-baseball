@@ -65,14 +65,17 @@ export class Game {
     return roster[this.state.batterIndex[team] % roster.length];
   }
 
-  // input: { swing, aimX, aimY } — swing is edge-triggered by caller;
-  // aimX/aimY is where the batter is holding the bat in the hitting plane.
+  // input: { swing, aimX, aimY, pitch } — swing is edge-triggered by caller;
+  // aimX/aimY is where the batter is holding the bat in the hitting plane;
+  // pitch = { type, tx, ty, power, accuracy } calls the next pitch (player
+  // pitching) — consumed at the moment of release.
   update(input = {}) {
     const s = this.state;
     if (s.phase === 'gameover') return;
     this.tick++;
 
     if (s.phase === 'windup') {
+      if (input.pitch) this._pitchPlan = input.pitch;
       if (--s.phaseTicks <= 0) this._throwPitch();
       return;
     }
@@ -109,32 +112,77 @@ export class Game {
     return Math.abs(x) <= Z.HALF_W && y >= Z.BOT && y <= Z.TOP;
   }
 
+  // CPU batter: plans a swing timing AND a bat aim per pitch with human-ish
+  // error scaled by the batter's contact stat. Deterministic (this.rng), used
+  // by the harness and by live games when the player is pitching.
+  // Call once per tick; returns the input object for update().
+  autoBatterInput() {
+    const s = this.state;
+    if (s.phase !== 'pitch') { this._cpuPlan = null; return {}; }
+    if (!this._cpuPlan) {
+      const batter = this.currentBatter();
+      const cb = C.CPU_BATTER;
+      const takes = (!s.pitch.isStrike && this.rng() < cb.TAKE_BALL_PROB) || this.rng() < cb.SWING_ANY_PROB;
+      if (takes) { this._cpuPlan = { take: true }; return {}; }
+      const sloppy = 1.3 - batter.contact;
+      const gauss = () => this.rng() + this.rng() - 1;
+      this._cpuPlan = {
+        swingT: C.CONTACT_POINT + gauss() * cb.TIMING_ERR * sloppy,
+        aimX: s.pitch.target.x + gauss() * cb.AIM_ERR * sloppy,
+        aimY: s.pitch.target.y + gauss() * cb.AIM_ERR * sloppy,
+        swung: false,
+      };
+    }
+    const p = this._cpuPlan;
+    if (!p.take && !p.swung && s.pitch.t >= p.swingT) {
+      p.swung = true;
+      return { swing: true, aimX: p.aimX, aimY: p.aimY };
+    }
+    return {};
+  }
+
   _throwPitch() {
     const s = this.state;
-    const names = Object.keys(C.PITCH_TYPES);
-    const type = names[Math.floor(this.rng() * names.length)];
-    const def = C.PITCH_TYPES[type];
     const Z = C.ZONE, P = C.PITCH;
+    const plan = this._pitchPlan;
+    this._pitchPlan = null;
 
-    // pitcher picks a real crossing point: in the zone, or just off an edge
-    // (derby pitchers groove far more strikes)
-    const strikeProb = this.mode === 'derby' ? Math.max(def.strikeProb, C.DERBY.STRIKE_PROB) : def.strikeProb;
-    let tx, ty;
-    if (this.rng() < strikeProb) {
-      tx = (this.rng() * 2 - 1) * (Z.HALF_W * 0.85);
-      ty = Z.BOT + 0.15 + this.rng() * (Z.TOP - Z.BOT - 0.3);
+    let type, def, tx, ty, flightTicks;
+    if (plan && C.PITCH_TYPES[plan.type]) {
+      // player-called pitch: aim + meter results, scattered by (1 - accuracy)
+      type = plan.type;
+      def = C.PITCH_TYPES[type];
+      const PP = C.PLAYER_PITCH;
+      const scatter = (1 - Math.max(0, Math.min(1, plan.accuracy))) * PP.ACCURACY_SCATTER;
+      tx = plan.tx + (this.rng() * 2 - 1) * scatter;
+      ty = Math.max(0.35, plan.ty + (this.rng() * 2 - 1) * scatter);
+      const power = Math.max(0, Math.min(1, plan.power));
+      flightTicks = Math.round(def.flightTicks * this.diff.flightMult *
+        (PP.POWER_FLIGHT_MAX - power * (PP.POWER_FLIGHT_MAX - PP.POWER_FLIGHT_MIN)));
     } else {
-      const m = 0.15 + this.rng() * C.MISS_MARGIN;
-      const edge = this.rng();
-      if (edge < 0.4)      { tx = (this.rng() < 0.5 ? -1 : 1) * (Z.HALF_W + m); ty = Z.BOT + this.rng() * (Z.TOP - Z.BOT); }
-      else if (edge < 0.7) { ty = Z.TOP + m; tx = (this.rng() * 2 - 1) * Z.HALF_W; }
-      else                 { ty = Math.max(0.35, Z.BOT - m); tx = (this.rng() * 2 - 1) * Z.HALF_W; }
+      // CPU pitcher picks a real crossing point: in the zone, or just off an
+      // edge (derby pitchers groove far more strikes)
+      const names = Object.keys(C.PITCH_TYPES);
+      type = names[Math.floor(this.rng() * names.length)];
+      def = C.PITCH_TYPES[type];
+      const strikeProb = this.mode === 'derby' ? Math.max(def.strikeProb, C.DERBY.STRIKE_PROB) : def.strikeProb;
+      if (this.rng() < strikeProb) {
+        tx = (this.rng() * 2 - 1) * (Z.HALF_W * 0.85);
+        ty = Z.BOT + 0.15 + this.rng() * (Z.TOP - Z.BOT - 0.3);
+      } else {
+        const m = 0.15 + this.rng() * C.MISS_MARGIN;
+        const edge = this.rng();
+        if (edge < 0.4)      { tx = (this.rng() < 0.5 ? -1 : 1) * (Z.HALF_W + m); ty = Z.BOT + this.rng() * (Z.TOP - Z.BOT); }
+        else if (edge < 0.7) { ty = Z.TOP + m; tx = (this.rng() * 2 - 1) * Z.HALF_W; }
+        else                 { ty = Math.max(0.35, Z.BOT - m); tx = (this.rng() * 2 - 1) * Z.HALF_W; }
+      }
+      flightTicks = Math.round(def.flightTicks * this.diff.flightMult * (1 + (this.rng() * 2 - 1) * P.FLIGHT_JITTER));
     }
 
     s.pitch = {
       type,
       t: 0,
-      flightTicks: Math.round(def.flightTicks * this.diff.flightMult * (1 + (this.rng() * 2 - 1) * P.FLIGHT_JITTER)),
+      flightTicks,
       breakAmt: def.breakAmt,
       breakDir: this.rng() < 0.5 ? -1 : 1,
       wobble: def.wobble,

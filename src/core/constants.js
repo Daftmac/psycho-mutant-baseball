@@ -33,6 +33,22 @@ export const C = {
     FLIGHT_JITTER: 0.12,      // +/- fraction of flightTicks variance per pitch
   },
 
+  // player pitching (two-click meter feeds power + accuracy into the plan)
+  PLAYER_PITCH: {
+    POWER_FLIGHT_MIN: 0.90,   // full power: flightTicks scaled down to this
+    POWER_FLIGHT_MAX: 1.16,   // no power: a slow lob
+    ACCURACY_SCATTER: 2.6,    // world units of max target scatter at accuracy 0
+    METER_TICKS: 55,          // needle sweep duration per pass (renderer uses this)
+  },
+
+  // core CPU batter (bats against the player's pitching; also drives the harness)
+  CPU_BATTER: {
+    TAKE_BALL_PROB: 0.5,      // lays off balls this often
+    SWING_ANY_PROB: 0.08,     // sometimes chases junk
+    TIMING_ERR: 0.155,        // gaussian timing error scale (x sloppiness)
+    AIM_ERR: 0.98,            // gaussian aim error scale (x sloppiness)
+  },
+
   // strike zone at the plate (world units, x centered on plate, y up)
   ZONE: { HALF_W: 1.7, BOT: 1.5, TOP: 4.3 },
   MISS_MARGIN: 1.2,           // balls target up to this far outside a zone edge

@@ -479,6 +479,9 @@ function startMatch() {
   lastRunTotal = 0;
   scorePulseUntil = -1;
   wipeEl.classList.remove('go');
+  closePitchCall();
+  pendingPitchPlan = null;
+  pitchPlanSent = false;
 }
 
 function teamAgg(teamKey) {
@@ -591,6 +594,9 @@ function toMenu() {
   resetReplay();
   announcer.hide();
   walkupEl.classList.remove('in');
+  closePitchCall();
+  pendingPitchPlan = null;
+  pitchPlanSent = false;
   ball.visible = false;
   zone.visible = false;
   reticle.visible = false;
@@ -629,9 +635,24 @@ addEventListener('pointermove', (e) => {
 
 let swingQueued = false;
 addEventListener('keydown', (e) => {
-  if (appState === 'playing' && e.code === 'Space') { swingQueued = true; e.preventDefault(); }
+  if (appState !== 'playing') return;
+  if (pitchCall) {
+    const digit = { Digit1: 0, Digit2: 1, Digit3: 2 }[e.code];
+    if (digit !== undefined && PITCH_NAMES[digit]) { pitchCall.type = PITCH_NAMES[digit]; renderPitchCall(); e.preventDefault(); }
+    else if (e.code === 'Space' || e.code === 'Enter') { pitchCallAdvanceStage(); e.preventDefault(); }
+    return;
+  }
+  if (e.code === 'Space') { swingQueued = true; e.preventDefault(); }
 });
-addEventListener('pointerdown', () => { if (appState === 'playing') swingQueued = true; }); // tap/click to swing
+addEventListener('pointerdown', (e) => {
+  if (appState !== 'playing') return;
+  if (pitchCall) {
+    // clicks on the panel itself (type chips) don't lock the meter
+    if (!e.target.closest('#pitchcall')) pitchCallAdvanceStage();
+    return;
+  }
+  swingQueued = true; // tap/click to swing
+});
 
 // ---------- ball placement ----------
 // hit balls fly a real (cosmetic) ballistic arc with a bounce
@@ -779,6 +800,90 @@ function updateCamera() {
   }
 }
 
+// ---------- player pitching: the eyeball meter (renderer-only UI) ----------
+// MVP 2005's two-click meter wearing a mutant skin: aim in the zone, first
+// click locks power as the glare fills, second click lands on the pupil for
+// accuracy. The sim holds during the call; core gets { pitch: plan } once.
+const pitchCallEl = document.getElementById('pitchcall');
+const pcChipsEl = pitchCallEl.querySelector('.pc-chips');
+const pcNeedleEl = pitchCallEl.querySelector('.pc-needle');
+const pcHintEl = pitchCallEl.querySelector('.pc-hint');
+const PITCH_NAMES = Object.keys(C.PITCH_TYPES);
+const PC_PUPIL = 0.12; // accuracy target position on the meter
+
+let pitchCall = null;       // { stage, type, needle, dir, power }
+let pendingPitchPlan = null; // handed to core on the next update
+let pitchPlanSent = false;
+
+const pcChipEls = PITCH_NAMES.map((name) => {
+  const el = document.createElement('div');
+  el.className = 'pc-chip';
+  el.textContent = name.toUpperCase();
+  el.addEventListener('click', (e) => { e.stopPropagation(); if (pitchCall) { pitchCall.type = name; renderPitchCall(); } });
+  pcChipsEl.appendChild(el);
+  return el;
+});
+
+function playerFields() {
+  return !!game && game.mode === 'match' && !!playerTeam && game.battingTeam() !== playerTeam;
+}
+
+function renderPitchCall() {
+  PITCH_NAMES.forEach((name, i) => {
+    pcChipEls[i].className = 'pc-chip' + (pitchCall && pitchCall.type === name ? ' sel' : '');
+  });
+  if (!pitchCall) return;
+  pcNeedleEl.style.left = `${(pitchCall.needle * 100).toFixed(1)}%`;
+  pcHintEl.textContent = pitchCall.stage === 'aim'
+    ? 'AIM with the mouse • 1/2/3 pitch • SPACE to wind up'
+    : pitchCall.stage === 'power'
+      ? 'SPACE at full glare for heat'
+      : 'SPACE on the pupil to hit your spot';
+}
+
+function openPitchCall() {
+  pitchCall = { stage: 'aim', type: PITCH_NAMES[0], needle: 0, dir: 1, power: 0 };
+  pitchCallEl.classList.remove('hidden');
+  controlsEl.classList.add('hidden'); // batting hint yields to the call panel
+  zone.visible = true;
+  reticle.visible = true;
+  renderPitchCall();
+}
+
+function closePitchCall() {
+  pitchCall = null;
+  pitchCallEl.classList.add('hidden');
+}
+
+function pitchCallAdvanceStage() {
+  if (!pitchCall) return;
+  if (pitchCall.stage === 'aim') {
+    pitchCall.stage = 'power';
+    pitchCall.needle = 0;
+    pitchCall.dir = 1;
+  } else if (pitchCall.stage === 'power') {
+    pitchCall.power = pitchCall.needle;
+    pitchCall.stage = 'accuracy';
+    pitchCall.dir = -1;
+  } else {
+    const accuracy = Math.max(0, 1 - Math.abs(pitchCall.needle - PC_PUPIL) / 0.5);
+    pendingPitchPlan = { type: pitchCall.type, tx: aim.x, ty: aim.y, power: pitchCall.power, accuracy };
+    pitchPlanSent = true;
+    closePitchCall();
+  }
+  renderPitchCall();
+}
+
+function pitchCallTick() {
+  if (pitchCall.stage === 'power' || pitchCall.stage === 'accuracy') {
+    pitchCall.needle += pitchCall.dir / C.PLAYER_PITCH.METER_TICKS;
+    if (pitchCall.needle >= 1) { pitchCall.needle = 1; pitchCall.dir = -1; }
+    if (pitchCall.needle <= 0) { pitchCall.needle = 0; pitchCall.dir = 1; }
+  }
+  updateReticle();
+  renderPitchCall();
+}
+
 // ---------- broadcast wipes + score pulse (renderer-only) ----------
 const wipeEl = document.getElementById('wipe');
 wipeEl.style.setProperty('--wipe-a', field.palette.fog);
@@ -907,11 +1012,40 @@ const STEP_MS = 1000 / C.TICKS_PER_SEC;
 let acc = 0;
 let last = performance.now();
 
+function updateReticle() {
+  const active = game.state.phase === 'windup' || game.state.phase === 'pitch';
+  zone.visible = active;
+  reticle.visible = active;
+  reticle.position.x += (aim.x - reticle.position.x) * 0.4;
+  reticle.position.y += (aim.y - reticle.position.y) * 0.4;
+  const closing = game.state.phase === 'pitch' && game.state.pitch.t > 0.72;
+  reticle.scale.setScalar(closing ? 1 + Math.sin(game.tick * 0.6) * 0.12 : 1);
+}
+
 function stepGame() {
-  const input = { swing: swingQueued, aimX: aim.x, aimY: aim.y };
-  if (swingQueued && game.state.phase === 'pitch' && !game.state.swing) swingAnim = SWING_TICKS;
-  swingQueued = false;
+  // player on the mound: hold the sim and open the call UI at each windup
+  if (playerFields() && game.state.phase === 'windup' && !pitchPlanSent && !pitchCall) {
+    openPitchCall();
+    return;
+  }
+
+  let input;
+  if (playerFields()) {
+    // CPU bats against the player's pitching; the call plan rides along once
+    input = game.autoBatterInput();
+    if (pendingPitchPlan) { input.pitch = pendingPitchPlan; pendingPitchPlan = null; }
+    swingQueued = false;
+  } else {
+    input = { swing: swingQueued, aimX: aim.x, aimY: aim.y };
+    if (swingQueued && game.state.phase === 'pitch' && !game.state.swing) swingAnim = SWING_TICKS;
+    swingQueued = false;
+  }
   game.update(input);
+  if (game.state.phase === 'pitch' && pitchPlanSent) {
+    pitchPlanSent = false; // re-arm for the next windup
+  } else if (game.state.phase === 'pitch' && !playerFields() && controlsEl.classList.contains('hidden') && appState === 'playing') {
+    controlsEl.classList.remove('hidden'); // batting hint returns for our half
+  }
   if (game.state.phase === 'gameover') return showPostgame();
 
   // arm/launch instant replays + feed the booth
@@ -945,13 +1079,7 @@ function stepGame() {
   batter.position.x = -2.6 + aim.x * 0.12;
 
   // zone + reticle live only while a pitch is coming
-  const active = game.state.phase === 'windup' || game.state.phase === 'pitch';
-  zone.visible = active;
-  reticle.visible = active;
-  reticle.position.x += (aim.x - reticle.position.x) * 0.4;
-  reticle.position.y += (aim.y - reticle.position.y) * 0.4;
-  const closing = game.state.phase === 'pitch' && game.state.pitch.t > 0.72;
-  reticle.scale.setScalar(closing ? 1 + Math.sin(game.tick * 0.6) * 0.12 : 1);
+  updateReticle();
 
   positionBall();
   recordFrame();
@@ -959,6 +1087,7 @@ function stepGame() {
 
 function advanceOneTick() {
   if (replay) playReplayStep();                 // the sim holds its breath
+  else if (appState === 'playing' && game && pitchCall) pitchCallTick(); // calling the pitch
   else if (appState === 'playing' && game) stepGame();
   else menuT += 1 / C.TICKS_PER_SEC;
   updateCrowd(); // the crowd never stops (even in the lobby)
@@ -1011,3 +1140,5 @@ window.__camMode = () => camMode;
 window.__advance = (n = 1) => { for (let i = 0; i < n; i++) advanceOneTick(); }; // synchronous stepping
 window.__swing = (x, y) => { aim.x = x; aim.y = y; swingQueued = true; };
 window.__replayActive = () => !!replay;
+window.__pitchCall = () => pitchCall && { ...pitchCall };
+window.__aimAt = (x, y) => { aim.x = x; aim.y = y; };

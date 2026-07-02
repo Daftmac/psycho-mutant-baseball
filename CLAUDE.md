@@ -41,6 +41,12 @@ Stack: vanilla JS + Three.js, built with Vite, deployed to Netlify.
 - Game length: 3–8 minutes of sim time.
 - Known gap: walks almost never happen — pitch-taking and ball/strike tension need work.
 
+## Quality evolution
+The long-form quality backlog lives in `EVOLUTION.md`, worked one increment at
+a time via the `/evolve` command (`.claude/commands/evolve.md`). Prefer it over
+this roadmap for "what next" decisions — the roadmap below is the original
+sketch and is being absorbed into EVOLUTION.md phases.
+
 ## Roadmap (in rough order)
 1. Fielding as a real system (fly balls can be caught, grounders beaten out)
 2. Player-controlled pitching (pick pitch type + location) with mutant pitch gimmicks

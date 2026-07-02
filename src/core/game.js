@@ -43,6 +43,7 @@ export class Game {
       pitch: null,                  // { type, t, flightTicks, target, pos, ... } — see _throwPitch
       swing: null,                  // { atT, aimX, aimY } — set on swing input
       lastPlay: null,               // { text, kind, hitScore } for HUD/renderer
+      stamina: { home: 1, away: 1 },      // pitcher gas tanks, decay per pitch
       stats: { pitches: 0, swings: 0, hits: 0, homers: 0, strikeouts: 0, walks: 0, chaosProcs: 0 },
       lineScore: { away: [], home: [] },  // runs per inning (index = inning-1)
       playerStats: {},                    // name -> { ab, hits, homers, score } for the box score/MVP
@@ -124,7 +125,9 @@ export class Game {
     if (!this._cpuPlan) {
       const batter = this.currentBatter();
       const cb = C.CPU_BATTER;
-      const takes = (!s.pitch.isStrike && this.rng() < cb.TAKE_BALL_PROB) || this.rng() < cb.SWING_ANY_PROB;
+      const takeProb = s.balls === 3 ? cb.TAKE_3BALL_PROB : s.strikes === 2 ? cb.TAKE_2STRIKE_PROB : cb.TAKE_BALL_PROB;
+      const takes = (!s.pitch.isStrike && this.rng() < takeProb) ||
+        this.rng() < cb.SWING_ANY_PROB * (s.strikes === 2 ? 0.4 : 1);
       if (takes) { this._cpuPlan = { take: true }; return {}; }
       const sloppy = 1.3 - batter.contact;
       const gauss = () => this.rng() + this.rng() - 1;
@@ -167,7 +170,20 @@ export class Game {
       const names = Object.keys(C.PITCH_TYPES);
       type = names[Math.floor(this.rng() * names.length)];
       def = C.PITCH_TYPES[type];
-      const strikeProb = this.mode === 'derby' ? Math.max(def.strikeProb, C.DERBY.STRIKE_PROB) : def.strikeProb;
+      let strikeProb;
+      if (this.mode === 'derby') {
+        strikeProb = Math.max(def.strikeProb, C.DERBY.STRIKE_PROB);
+      } else {
+        // fatigue + count strategy: tired arms miss, ahead-counts chase,
+        // three-ball counts force a groove
+        const PT = C.PITCHING;
+        const thrower = this.battingTeam() === 'away' ? 'home' : 'away';
+        const gas = s.stamina[thrower];
+        s.stamina[thrower] = Math.max(0.3, gas - PT.STAMINA_DECAY);
+        strikeProb = def.strikeProb * (PT.STAMINA_FLOOR + (1 - PT.STAMINA_FLOOR) * gas);
+        if (s.strikes > s.balls) strikeProb *= PT.AHEAD_CHASE;
+        if (s.balls === 3) strikeProb = Math.min(0.92, strikeProb * PT.FULL_GROOVE);
+      }
       if (this.rng() < strikeProb) {
         tx = (this.rng() * 2 - 1) * (Z.HALF_W * 0.85);
         ty = Z.BOT + 0.15 + this.rng() * (Z.TOP - Z.BOT - 0.3);

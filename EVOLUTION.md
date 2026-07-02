@@ -96,9 +96,12 @@ unchecked items — never build them mid-increment.
       WORMFIELD doubles errors/kills robs on Wormfather ABs. Old Gasper's
       MOONFIRE homers set the whole sky burning (fog/background lerp).
       Verified: all proc types fire across 30 sim games.
-- [ ] **C6. Count tension (known gap).** Pitcher stamina + strategic ball
-      mixing so walks actually happen; batter's eye highlight flashes on
-      probable balls at high contact stat. Target: 1–4 walks/game across seeds.
+- [x] **C6. Count tension (known gap).** ✅ Shipped: pitcher stamina decays per
+      pitch (tired arms miss the zone), count-aware pitching (chase pitches
+      when ahead, forced grooves at 3 balls), count-aware CPU takes (protects
+      at 2 strikes, spits at 3 balls), and a batter's-eye telegraph — the zone
+      flashes green mid-flight on probable balls, scaled by contact stat.
+      Walks went from ~0 to ~2.3/game mean across 7 seeds (0–7 range).
 - [ ] **C7. Difficulty-aware CPU.** CPU batting/pitching skill scales with the
       Options difficulty; rubber-band lightly in arcade fashion (down 3 in the
       9th... I mean 3rd? chaos stat procs rise).

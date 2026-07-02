@@ -1076,6 +1076,8 @@ const STEP_MS = 1000 / C.TICKS_PER_SEC;
 let acc = 0;
 let last = performance.now();
 
+let eyeReadPitch = -1;
+let eyeReads = false;
 function updateReticle() {
   const active = game.state.phase === 'windup' || game.state.phase === 'pitch';
   zone.visible = active;
@@ -1084,6 +1086,18 @@ function updateReticle() {
   reticle.position.y += (aim.y - reticle.position.y) * 0.4;
   const closing = game.state.phase === 'pitch' && game.state.pitch.t > 0.72;
   reticle.scale.setScalar(closing ? 1 + Math.sin(game.tick * 0.6) * 0.12 : 1);
+
+  // batter's eye: sharp-eyed mutants telegraph probable balls mid-flight
+  if (game.state.phase === 'pitch' && !playerFields()) {
+    if (game.state.stats.pitches !== eyeReadPitch) {
+      eyeReadPitch = game.state.stats.pitches;
+      eyeReads = !game.state.pitch.isStrike &&
+        Math.random() < game.currentBatter().contact * C.BATTER_EYE;
+    }
+    zone.material.color.set(eyeReads && game.state.pitch.t > 0.45 ? 0x66ff88 : 0x7df0c0);
+  } else {
+    zone.material.color.set(0x7df0c0);
+  }
 }
 
 function stepGame() {

@@ -43,11 +43,22 @@ export const C = {
 
   // core CPU batter (bats against the player's pitching; also drives the harness)
   CPU_BATTER: {
-    TAKE_BALL_PROB: 0.5,      // lays off balls this often
+    TAKE_BALL_PROB: 0.72,     // lays off balls this often
+    TAKE_3BALL_PROB: 0.88,    // at three balls, make the pitcher earn it
+    TAKE_2STRIKE_PROB: 0.28,  // protecting the plate, chases more
     SWING_ANY_PROB: 0.08,     // sometimes chases junk
     TIMING_ERR: 0.155,        // gaussian timing error scale (x sloppiness)
     AIM_ERR: 0.98,            // gaussian aim error scale (x sloppiness)
   },
+
+  // pitcher fatigue + count strategy (CPU pitching, match mode)
+  PITCHING: {
+    STAMINA_DECAY: 0.013,     // per pitch thrown; floor at 0.3
+    STAMINA_FLOOR: 0.5,       // strikeProb multiplier when completely gassed
+    AHEAD_CHASE: 0.78,        // ahead in the count: bury one off the plate
+    FULL_GROOVE: 1.45,        // three balls: aim for the zone (capped 0.92)
+  },
+  BATTER_EYE: 0.8,            // x contact = chance the zone telegraphs a ball (renderer)
 
   // strike zone at the plate (world units, x centered on plate, y up)
   ZONE: { HALF_W: 1.7, BOT: 1.5, TOP: 4.3 },

@@ -45,9 +45,11 @@ unchecked items — never build them mid-increment.
       sim pauses; blinking ◉ REPLAY tag + forced scanline shimmer, CRT state
       restored per options after. Also added synchronous debug stepping
       (__advance/__swing) that makes headless browser verification reliable.
-- [ ] **B3. Announcer ticker.** Text play-by-play with personality — a bottom
-      ticker in the HUD. Per-field flavor lines (the Undergut announcer is
-      clearly holding his nose). Event-driven from lastPlay, pure renderer.
+- [x] **B3. Announcer ticker.** ✅ Shipped: ☠ PMB SPORTS bottom strip, booth
+      lines per play kind (homer/hit/walk/out/strike/ball/foul/sideout/final),
+      field-flavored homer calls + ambient color commentary from a new
+      "announcer" block in each field JSON (the Undergut announcer is indeed
+      holding his nose). New src/render/announcer.js.
 - [ ] **B4. Batter walk-ups.** Name card slides in with stat bars and gimmick
       line; batter does a 1s idle flourish (extra arms crack knuckles in
       sequence). The Show ritual, mutant flavor.

@@ -9,6 +9,7 @@ import { C, ROSTERS } from '../core/constants.js';
 import { createMenu } from './menu.js';
 import { createTeamSelect, createFieldSelect } from './select.js';
 import { createOptions } from './options.js';
+import { createAnnouncer } from './announcer.js';
 
 // ---------- field loading ----------
 // Fields are pure data (fields/*.json — schema in fields/README.md).
@@ -326,6 +327,9 @@ function applyOptions() {
 }
 applyOptions();
 
+const announcer = createAnnouncer();
+announcer.setField(field);
+
 const optionsScreen = createOptions({
   values: options,
   onChange: (key, value) => { options[key] = value; applyOptions(); },
@@ -427,6 +431,7 @@ function startMatch() {
   camera.lookAt(0, 2.5, -40);
   camMode = 'none'; // force a fresh cut on the first frame
   resetReplay();
+  announcer.show();
 }
 
 function teamAgg(teamKey) {
@@ -537,6 +542,7 @@ function toMenu() {
   appState = 'menu';
   pendingMode = 'match';
   resetReplay();
+  announcer.hide();
   ball.visible = false;
   zone.visible = false;
   reticle.visible = false;
@@ -790,14 +796,16 @@ function stepGame() {
   game.update(input);
   if (game.state.phase === 'gameover') return showPostgame();
 
-  // arm/launch instant replays
+  // arm/launch instant replays + feed the booth
   const lp = game.state.lastPlay;
   if (lp && lp.tick !== lastSeenPlay) {
     lastSeenPlay = lp.tick;
+    announcer.onPlay(lp);
     if ((lp.kind === 'homer' || lp.kind === 'sideout') && replayWrite > 100) {
       replayArmed = { from: Math.max(0, replayWrite - 80) }; // a beat before contact
     }
   }
+  announcer.tick(true);
   if (replayArmed && game.state.phase === 'resolve' && game.state.phaseTicks <= 2) {
     replay = { from: Math.max(replayArmed.from, replayWrite - REPLAY_TICKS + 1), to: replayWrite, i: 0 };
     replayArmed = null;

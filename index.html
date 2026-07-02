@@ -21,9 +21,27 @@
     #hud .play { color: #ff6a5e; font-weight: bold; }
     #hud .final { color: #ffd24a; font-size: 20px; margin-top: 8px; }
     #controls {
-      position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
+      position: fixed; bottom: 38px; left: 50%; transform: translateX(-50%);
       font-family: 'Courier New', monospace; color: #776f8a; font-size: 13px;
       text-shadow: 1px 1px 0 #000;
+    }
+    #ticker {
+      position: fixed; bottom: 0; left: 0; right: 0; height: 26px;
+      display: flex; align-items: center; gap: 12px;
+      background: rgba(6, 3, 10, 0.85); border-top: 2px solid #3a3350;
+      font-family: 'Courier New', monospace; font-size: 13px;
+      padding: 0 12px; z-index: 20;
+    }
+    #ticker .tk-chip {
+      color: #ffd24a; font-weight: bold; letter-spacing: 1px; white-space: nowrap;
+      text-shadow: 1px 1px 0 #000;
+    }
+    #ticker .tk-text { color: #b8b0cc; text-shadow: 1px 1px 0 #000; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis; }
+    #ticker .tk-text.pop { animation: tickerPop 0.35s ease-out; }
+    @keyframes tickerPop {
+      0% { transform: translateY(14px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
     }
     .hidden { display: none !important; }
     #menu {
@@ -189,6 +207,7 @@
   </div>
   <div id="loading" class="hidden">EXHUMING<span>...</span></div>
   <div id="replay-tag" class="hidden">◉ REPLAY</div>
+  <div id="ticker" class="hidden"><span class="tk-chip">☠ PMB SPORTS</span><span class="tk-text"></span></div>
   <script type="module" src="/src/render/main.js"></script>
 </body>
 </html>

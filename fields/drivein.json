@@ -15,6 +15,18 @@
     "moon": "#c9bfb2"
   },
   "fogDensity": 0.012,
+  "announcer": {
+    "ambient": [
+      "The big screen's still playing static. Critics call it the year's best picture.",
+      "Concessions update: the popcorn is moving on its own again.",
+      "Those cars in the outfield? Season ticket holders. Been here since '58.",
+      "Intermission never ends here, folks. Neither does the ninth."
+    ],
+    "homer": [
+      "THROUGH THE SCREEN! That's the third projectionist we've lost this month!",
+      "HIGH INTO THE NIGHT — hold your speakers, that one's LEAVING THE LOT!"
+    ]
+  },
   "lights": {
     "hemi": { "sky": "#6a7a9a", "ground": "#141018", "intensity": 0.65 },
     "dir":  { "color": "#9fb4c8", "intensity": 0.7, "pos": [0, 60, -220] }

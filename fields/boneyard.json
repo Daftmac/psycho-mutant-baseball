@@ -12,6 +12,18 @@
     "tree": "#150e14"
   },
   "fogDensity": 0.011,
+  "announcer": {
+    "ambient": [
+      "The fog's rolling in thick tonight, fiends.",
+      "That moon has been staring at me the entire game.",
+      "Groundskeeper says the outfield dug itself again. Lovely.",
+      "A hush falls over the Boneyard... a literal hush. It crawled in from left field."
+    ],
+    "homer": [
+      "THAT ONE'S BOUND FOR A SHALLOW GRAVE IN THE NEXT COUNTY!",
+      "GONE! Right over the tombstones — somebody's ancestors are FURIOUS!"
+    ]
+  },
   "props": [
     { "shape": "sphere", "size": [26], "segments": 12, "color": "moon", "glow": true,
       "place": "single", "pos": [-70, 85, -260] },

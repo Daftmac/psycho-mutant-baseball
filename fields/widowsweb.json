@@ -13,6 +13,18 @@
     "void": "#08060c"
   },
   "fogDensity": 0.013,
+  "announcer": {
+    "ambient": [
+      "The egg sacs are simply gorgeous under the silk moon tonight.",
+      "A reminder from stadium management: do NOT touch the strands.",
+      "She is watching from the third-base side this evening. Wave hello!",
+      "Eight legs, folks. I counted again during the seventh. Still eight."
+    ],
+    "homer": [
+      "UP, UP, INTO THE WEB— no, THROUGH IT! She noticed. SHE NOTICED!",
+      "THAT BALL IS WRAPPED IN SILK AND GONE FOREVER!"
+    ]
+  },
   "lights": {
     "hemi": { "sky": "#7a6a9a", "ground": "#100a16", "intensity": 0.6 },
     "dir":  { "color": "#cfc4e8", "intensity": 0.65, "pos": [55, 100, -250] }

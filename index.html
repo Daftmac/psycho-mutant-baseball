@@ -25,12 +25,69 @@
       font-family: 'Courier New', monospace; color: #776f8a; font-size: 13px;
       text-shadow: 1px 1px 0 #000;
     }
+    .hidden { display: none !important; }
+    #menu {
+      position: fixed; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 26px;
+      font-family: 'Courier New', monospace; text-align: center;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%);
+    }
+    #logo {
+      font-size: 54px; font-weight: bold; letter-spacing: 6px; line-height: 0.95;
+      color: #ffd24a;
+      text-shadow: 3px 3px 0 #a41f2b, 6px 6px 0 #12091a, 0 0 24px rgba(164,31,43,0.6);
+      animation: logoWobble 3.2s ease-in-out infinite;
+      user-select: none;
+    }
+    #logo .mid { display: block; color: #9fe870; font-size: 66px;
+      text-shadow: 3px 3px 0 #3a145e, 6px 6px 0 #12091a, 0 0 24px rgba(120,60,200,0.5); }
+    @keyframes logoWobble {
+      0%, 100% { transform: rotate(-1.2deg) translateY(0); }
+      50% { transform: rotate(1.2deg) translateY(-5px); }
+    }
+    #menu-items { font-size: 21px; letter-spacing: 2px; }
+    .menu-item { margin: 9px 0; color: #b8b0cc; text-shadow: 2px 2px 0 #000;
+      cursor: pointer; white-space: pre; }
+    .menu-item.sel { color: #ffd24a; }
+    .menu-item.locked { color: #5e5670; }
+    .menu-item.locked.sel { color: #8a7f9e; }
+    #menu-flash { min-height: 20px; font-size: 14px; color: #ff6a5e;
+      text-shadow: 2px 2px 0 #000; opacity: 0; transition: opacity 0.25s; }
+    #menu-flash.on { opacity: 1; }
+    #menu-hint { font-size: 13px; color: #776f8a; text-shadow: 1px 1px 0 #000; }
+    #postgame {
+      position: fixed; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 18px;
+      font-family: 'Courier New', monospace; text-align: center;
+      background: rgba(4, 1, 8, 0.45);
+    }
+    #postgame .final { font-size: 26px; color: #ffd24a; text-shadow: 3px 3px 0 #a41f2b, 5px 5px 0 #000; }
+    #postgame .prompt { font-size: 15px; color: #b8b0cc; text-shadow: 2px 2px 0 #000;
+      animation: promptBlink 1.2s step-end infinite; }
+    @keyframes promptBlink { 50% { opacity: 0.25; } }
+    #loading {
+      position: fixed; inset: 0; background: #000; display: flex;
+      align-items: center; justify-content: center;
+      font-family: 'Courier New', monospace; font-size: 18px; color: #9fe870;
+      letter-spacing: 4px;
+    }
   </style>
 </head>
 <body>
   <canvas id="game"></canvas>
-  <div id="hud"></div>
-  <div id="controls">MOVE the mouse to aim the bat — CLICK or SPACE to swing as the ball reaches the zone</div>
+  <div id="hud" class="hidden"></div>
+  <div id="controls" class="hidden">MOVE the mouse to aim the bat — CLICK or SPACE to swing as the ball reaches the zone</div>
+  <div id="menu" class="hidden">
+    <div id="logo">PSYCHO<span class="mid">MUTANT</span>BASEBALL</div>
+    <div id="menu-items"></div>
+    <div id="menu-flash"></div>
+    <div id="menu-hint">↑↓ SELECT • ENTER CONFIRM • ◄► CHANGE FIELD</div>
+  </div>
+  <div id="postgame" class="hidden">
+    <div class="final"></div>
+    <div class="prompt">PRESS ENTER — BACK TO THE LOBBY</div>
+  </div>
+  <div id="loading" class="hidden">EXHUMING<span>...</span></div>
   <script type="module" src="/src/render/main.js"></script>
 </body>
 </html>

@@ -6,13 +6,18 @@
 import * as THREE from 'three';
 import { Game } from '../core/game.js';
 import { C, ROSTERS } from '../core/constants.js';
+import { createMenu } from './menu.js';
 
 // ---------- field loading ----------
 // Fields are pure data (fields/*.json — schema in fields/README.md).
-// Pick one with ?field=<name>. Default: boneyard.
+// Pick one with ?field=<name>; with no param the menu boots on a random field.
 const FIELDS = import.meta.glob('../../fields/*.json', { eager: true });
-const fieldName = new URLSearchParams(location.search).get('field') ?? 'boneyard';
-const field = (FIELDS[`../../fields/${fieldName}.json`] ?? FIELDS['../../fields/boneyard.json']).default;
+const FIELD_NAMES = Object.keys(FIELDS).map((k) => k.match(/([^/]+)\.json$/)[1]).sort();
+const urlField = new URLSearchParams(location.search).get('field');
+const fieldName = urlField && FIELDS[`../../fields/${urlField}.json`]
+  ? urlField
+  : FIELD_NAMES[Math.floor(Math.random() * FIELD_NAMES.length)];
+const field = FIELDS[`../../fields/${fieldName}.json`].default;
 
 // ---------- setup ----------
 const LOW_W = 480, LOW_H = 300; // internal PS2-ish resolution
@@ -238,8 +243,65 @@ reticle.add(retDot);
 reticle.position.set(0, (Z.TOP + Z.BOT) / 2, 0.3);
 scene.add(reticle);
 
-// ---------- game + input ----------
-const game = new Game({ seed: Date.now() & 0xffff });
+// ---------- app state machine: menu -> playing -> postgame -> menu ----------
+const hud = document.getElementById('hud');
+const controlsEl = document.getElementById('controls');
+const postgameEl = document.getElementById('postgame');
+const loadingEl = document.getElementById('loading');
+
+let appState = 'menu'; // 'menu' | 'playing' | 'postgame'
+let game = null;
+let menuT = Math.random() * 100; // beauty-orbit clock
+
+const menu = createMenu({
+  fieldNames: FIELD_NAMES,
+  currentField: fieldName,
+  fieldTitle: (name) => (FIELDS[`../../fields/${name}.json`].default.name ?? name).toUpperCase(),
+  onQuickMatch: startMatch,
+  onFieldChange: (name) => {
+    // authentic loading beat: cut to black, reload onto the chosen field's lobby
+    loadingEl.classList.remove('hidden');
+    setTimeout(() => { location.href = `?field=${name}`; }, 350);
+  },
+});
+
+function startMatch() {
+  game = new Game({ seed: Date.now() & 0xffff });
+  appState = 'playing';
+  swingQueued = false;
+  menu.hide();
+  postgameEl.classList.add('hidden');
+  hud.classList.remove('hidden');
+  controlsEl.classList.remove('hidden');
+  camera.position.set(0, 7.5, 14);
+  camera.lookAt(0, 2.5, -40);
+}
+
+function showPostgame() {
+  appState = 'postgame';
+  postgameEl.querySelector('.final').textContent = game.state.lastPlay?.text ?? 'FINAL';
+  postgameEl.classList.remove('hidden');
+  controlsEl.classList.add('hidden');
+}
+
+function toMenu() {
+  game = null;
+  appState = 'menu';
+  ball.visible = false;
+  zone.visible = false;
+  reticle.visible = false;
+  postgameEl.classList.add('hidden');
+  hud.classList.add('hidden');
+  controlsEl.classList.add('hidden');
+  menu.show();
+}
+
+addEventListener('keydown', (e) => {
+  if (appState === 'postgame' && e.code === 'Enter') toMenu();
+});
+addEventListener('pointerdown', () => {
+  if (appState === 'postgame') toMenu();
+});
 
 // move the bat by pointing at the hitting plane over the plate
 const aim = { x: 0, y: (Z.TOP + Z.BOT) / 2 };
@@ -259,9 +321,9 @@ addEventListener('pointermove', (e) => {
 
 let swingQueued = false;
 addEventListener('keydown', (e) => {
-  if (e.code === 'Space') { swingQueued = true; e.preventDefault(); }
+  if (appState === 'playing' && e.code === 'Space') { swingQueued = true; e.preventDefault(); }
 });
-addEventListener('pointerdown', () => { swingQueued = true; }); // tap/click to swing
+addEventListener('pointerdown', () => { if (appState === 'playing') swingQueued = true; }); // tap/click to swing
 
 // ---------- ball placement ----------
 // hit balls fly a real (cosmetic) ballistic arc with a bounce
@@ -334,8 +396,8 @@ function updateBat() {
 }
 
 // ---------- HUD ----------
-const hud = document.getElementById('hud');
 function drawHud() {
+  if (!game) return;
   const s = game.state;
   const batterNow = game.currentBatter();
   const half = s.half === 'top' ? '▲' : '▼';
@@ -345,8 +407,7 @@ function drawHud() {
     `<div class="line score">${teams}</div>` +
     `<div class="line">${half} INN ${Math.min(s.inning, C.INNINGS)}  •  ${s.outs} OUT  •  ${s.balls}-${s.strikes}  •  ${basesTxt}</div>` +
     `<div class="line batter">AT BAT: ${batterNow.name}</div>` +
-    (s.lastPlay ? `<div class="line play">${s.lastPlay.text}</div>` : '') +
-    (s.phase === 'gameover' ? `<div class="line final">GAME OVER — refresh for a rematch</div>` : '');
+    (s.lastPlay ? `<div class="line play">${s.lastPlay.text}</div>` : '');
   // light bases
   window.__bases.forEach((m, i) => m.material.color.set(s.bases[i] ? 0xd8ff55 : 0xcfc9b8));
 }
@@ -363,6 +424,7 @@ function stepGame() {
   if (swingQueued && game.state.phase === 'pitch' && !game.state.swing) swingAnim = SWING_TICKS;
   swingQueued = false;
   game.update(input);
+  if (game.state.phase === 'gameover') return showPostgame();
 
   updateBat();
 
@@ -390,8 +452,15 @@ function frame(now) {
   acc += Math.min(now - last, 1000); // clamp long gaps (tab switches)
   last = now;
   while (acc >= STEP_MS) {
-    stepGame();
+    if (appState === 'playing' && game) stepGame();
+    else menuT += 1 / C.TICKS_PER_SEC;
     acc -= STEP_MS;
+  }
+  if (appState !== 'playing') {
+    // lobby beauty orbit: slow drift around the diamond, landmark in the fog
+    const a = menuT * 0.07;
+    camera.position.set(Math.sin(a) * 46, 15 + Math.sin(menuT * 0.23) * 2.5, Math.cos(a) * 46 - 38);
+    camera.lookAt(0, 5, -55);
   }
   drawHud();
   renderer.render(scene, camera);
@@ -399,7 +468,11 @@ function frame(now) {
   if (document.hidden) setTimeout(() => frame(performance.now()), STEP_MS);
   else requestAnimationFrame(frame);
 }
+
+// boot into the lobby
+toMenu();
 frame(performance.now());
 
 // debug handle for harness/devtools poking (not used by game code)
-window.__game = game;
+Object.defineProperty(window, '__game', { get: () => game });
+window.__startMatch = startMatch; // debug: skip the menu

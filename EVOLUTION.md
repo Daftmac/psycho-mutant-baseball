@@ -6,11 +6,11 @@ When an increment ships, check it off with a one-line note. Add new ideas as
 unchecked items — never build them mid-increment.
 
 ## Phase A — Front end & game modes (the game needs a face)
-- [ ] **A1. Title screen + main menu.** Chunky vertex-wobble logo over a fogged
-      beauty shot of a random field. Menu: Quick Match, Home Run Derby, Field
-      Select, Options, Season (locked, "THE COMMISSIONER FORBIDS IT... FOR NOW").
-      Keyboard + mouse nav, organ-blip feedback (silent until audio ships).
-      Game becomes a state machine: menu → match → post-game → menu.
+- [x] **A1. Title screen + main menu.** ✅ Shipped: wobble logo over a random-field
+      beauty orbit, keyboard+mouse menu (Quick Match live; Derby/Options/Season
+      locked with flavor lines), inline field cycler with loading cut,
+      menu → playing → postgame → menu state machine in src/render/main.js +
+      new src/render/menu.js. Post-game overlay replaces the old refresh flow.
 - [ ] **A2. Team & field select.** Pick your mutants and ballpark. Roster cards
       with stat bars (power/contact/chaos), gimmick taglines, idle 3D preview
       of the selected mutant. Field cards show name + tagline + palette swatch.

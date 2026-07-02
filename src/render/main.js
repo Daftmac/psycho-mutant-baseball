@@ -198,11 +198,29 @@ const D = C.FIELD_SCALE; // mound->plate distance
     flatShading: true,
   });
 
-  // infield skin: a clay disc centered on the mound, arcing behind second
-  const skin = new THREE.Mesh(new THREE.CircleGeometry(D * 1.06, 24), clayMat);
+  // infield skin: the clay arc sweeps first -> behind second -> third, and
+  // stops well short of home (real skins don't run behind the plate)
+  const skin = new THREE.Mesh(new THREE.CircleGeometry(D * 0.82, 24), clayMat);
   skin.rotation.x = -Math.PI / 2;
   skin.position.set(0, 0.03, -D);
   scene.add(skin);
+
+  // dirt basepaths: explicit strips along all four sides of the square
+  {
+    const SIDE = BASE_HALF * Math.SQRT2; // side length of the base square
+    const strip = new THREE.PlaneGeometry(6, SIDE + 10);
+    const mkPath = (x, z, rotZ) => {
+      const p = new THREE.Mesh(strip, clayMat);
+      p.rotation.x = -Math.PI / 2;
+      p.rotation.z = rotZ;
+      p.position.set(x, 0.045, z);
+      scene.add(p);
+    };
+    mkPath(BASE_HALF / 2, -BASE_HALF / 2, Math.PI / 4);        // home -> first
+    mkPath(BASE_HALF / 2, -BASE_HALF * 1.5, -Math.PI / 4);     // first -> second
+    mkPath(-BASE_HALF / 2, -BASE_HALF * 1.5, Math.PI / 4);     // second -> third
+    mkPath(-BASE_HALF / 2, -BASE_HALF / 2, -Math.PI / 4);      // third -> home
+  }
 
   // grass interior inset from the basepaths (the manicured square)
   {
@@ -364,9 +382,17 @@ scene.add(pitcher);
 const ball = new THREE.Mesh(new THREE.SphereGeometry(0.45, 8, 6), new THREE.MeshBasicMaterial({ color: 0xeeeae0 }));
 scene.add(ball);
 
-// ---------- fielders: four gloves in the murk ----------
-const FIELDER_POSTS = [[-38, -95], [0, -112], [38, -95], [15, -52]]
-  .map(([x, z]) => [x * PROP_SCALE, z * PROP_SCALE]); // LF CF RF rover
+// ---------- the defense: a proper nine (minus pitcher and catcher here) ----------
+// 1B, 2B, SS, 3B around the square; LF, CF, RF deep — authored in world units
+const FIELDER_POSTS = [
+  [58, -80],    // first base
+  [30, -105],   // second base
+  [-30, -105],  // shortstop
+  [-58, -80],   // third base
+  [-63, -158],  // left field
+  [0, -187],    // center field
+  [63, -158],   // right field
+];
 const fielders = FIELDER_POSTS.map(([x, z]) => {
   const m = makeMutant({ skin: 0x4a5568 }); // drab away-grays; every mutant fields in gray
   m.position.set(x, 0, z);
@@ -374,6 +400,20 @@ const fielders = FIELDER_POSTS.map(([x, z]) => {
   scene.add(m);
   return { mesh: m, home: { x, z }, phase: Math.random() * Math.PI * 2 };
 });
+
+// the battery's other half and the law: catcher crouched behind the plate,
+// umpire looming behind him — offset right so they never block the zone
+const catcher = makeMutant({ skin: 0x7a4a3a });
+catcher.position.set(1.7, 0, 7.2);
+catcher.scale.set(1, 0.58, 1); // deep crouch
+catcher.rotation.y = Math.PI;  // facing the mound
+scene.add(catcher);
+
+const umpire = makeMutant({ skin: 0x23232c, headScale: 1.2 });
+umpire.position.set(2.9, 0, 10.4);
+umpire.scale.set(1.05, 0.82, 1.05); // hunched over the catcher's shoulder
+umpire.rotation.y = Math.PI;
+scene.add(umpire);
 
 // first and third base coaches, living in their boxes
 const coaches = [0, 2].map((baseIdx) => {
@@ -388,6 +428,9 @@ const coaches = [0, 2].map((baseIdx) => {
 
 function poseCoaches() {
   const excited = crowd && crowd.excite > 0;
+  // catcher sways in the crouch; the ump is a statue with opinions
+  catcher.position.y = Math.sin(game.tick * 0.05) * 0.04;
+  umpire.rotation.z = Math.sin(game.tick * 0.02) * 0.02;
   coaches.forEach((c, i) => {
     c.position.y = Math.sin(game.tick * 0.06 + i * 2) * 0.05;
     c.userData.parts.arms.forEach((a, j) => {

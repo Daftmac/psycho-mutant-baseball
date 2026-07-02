@@ -226,6 +226,13 @@ unchecked items — never build them mid-increment.
       throws are true solved projectiles — hot release, gravity arc,
       decelerating into the glove. Race-to-first timing re-verified.
 
+- [x] **F11. Diamond corrections + the full nine.** ✅ Skin arc rebounded so it
+      sweeps first-around-second-to-third and stops short of home; explicit
+      dirt basepath strips on all four sides. Defense fields a proper unit:
+      1B/2B/SS/3B at real positions, LF/CF/RF deep, a crouched catcher and a
+      hunched umpire behind the plate — offset so the batting camera looks
+      over them broadcast-style without ever blocking the zone.
+
 ## Parking lot (ideas noticed, not yet scheduled)
 - Signature abilities for the 60 new mutants (C.ABILITIES only covers the
   original twelve)

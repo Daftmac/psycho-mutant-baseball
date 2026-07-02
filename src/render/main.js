@@ -434,6 +434,10 @@ function startMatch() {
   announcer.show();
   lastBatterName = null;
   walkupEl.classList.remove('in');
+  lastHalfKey = null;
+  lastRunTotal = 0;
+  scorePulseUntil = -1;
+  wipeEl.classList.remove('go');
 }
 
 function teamAgg(teamKey) {
@@ -734,6 +738,34 @@ function updateCamera() {
   }
 }
 
+// ---------- broadcast wipes + score pulse (renderer-only) ----------
+const wipeEl = document.getElementById('wipe');
+wipeEl.style.setProperty('--wipe-a', field.palette.fog);
+wipeEl.style.setProperty('--wipe-b', field.palette.dirt);
+let lastHalfKey = null;
+let scorePulseUntil = -1;
+let lastRunTotal = 0;
+
+function updateBroadcastBeats() {
+  const s = game.state;
+  const halfKey = `${s.inning}-${s.half}`;
+  if (lastHalfKey === null) {
+    lastHalfKey = halfKey; // no wipe on the very first pitch of a match
+  } else if (halfKey !== lastHalfKey && game.mode !== 'derby') {
+    lastHalfKey = halfKey;
+    if (s.inning <= C.INNINGS) {
+      wipeEl.querySelector('.wipe-text').textContent =
+        `${s.half === 'top' ? 'TOP' : 'BOTTOM'} ${s.inning} — ${field.name.toUpperCase()}`;
+      wipeEl.classList.remove('go');
+      void wipeEl.offsetWidth; // restart the sweep
+      wipeEl.classList.add('go');
+    }
+  }
+  const runs = s.score.home + s.score.away;
+  if (runs > lastRunTotal) scorePulseUntil = game.tick + 45;
+  lastRunTotal = runs;
+}
+
 // ---------- batter walk-ups (renderer-only) ----------
 // The Show ritual, mutant flavor: name card slides in on each new batter,
 // batter does a little flourish while the pitcher glowers.
@@ -817,8 +849,9 @@ function drawHud() {
   const half = s.half === 'top' ? '▲' : '▼';
   const basesTxt = s.bases.map((b) => (b ? '◆' : '◇')).join(' ');
   const teams = `${ROSTERS.away.name} ${s.score.away} — ${s.score.home} ${ROSTERS.home.name}`;
+  const pulse = game.tick < scorePulseUntil ? ' pulse' : '';
   hud.innerHTML =
-    `<div class="line score">${teams}</div>` +
+    `<div class="line score${pulse}">${teams}</div>` +
     `<div class="line">${half} INN ${Math.min(s.inning, C.INNINGS)}  •  ${s.outs} OUT  •  ${s.balls}-${s.strikes}  •  ${basesTxt}</div>` +
     `<div class="line batter">AT BAT: ${batterNow.name}</div>` +
     (s.lastPlay ? `<div class="line play">${s.lastPlay.text}</div>` : '');
@@ -851,6 +884,7 @@ function stepGame() {
   }
   announcer.tick(true);
   updateWalkup();
+  updateBroadcastBeats();
   if (replayArmed && game.state.phase === 'resolve' && game.state.phaseTicks <= 2) {
     replay = { from: Math.max(replayArmed.from, replayWrite - REPLAY_TICKS + 1), to: replayWrite, i: 0 };
     replayArmed = null;

@@ -166,6 +166,39 @@
     .opt-row.sel { color: #ffd24a; }
     #opt-controls { font-size: 13px; color: #9a8fb8; text-shadow: 1px 1px 0 #000; line-height: 1.7; }
     #opt-controls .ctl-title { color: #9fe870; font-weight: bold; letter-spacing: 2px; margin-bottom: 2px; }
+    #wipe {
+      position: fixed; inset: 0; pointer-events: none; z-index: 40;
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    #wipe .band {
+      position: absolute; inset: -10% -40%;
+      background: linear-gradient(100deg, transparent 15%, var(--wipe-a, #241230) 35%,
+        var(--wipe-b, #4a3826) 50%, var(--wipe-a, #241230) 65%, transparent 85%);
+      transform: translateX(-120%) skewX(-8deg);
+    }
+    #wipe.go .band { animation: wipeSweep 1.5s ease-in-out forwards; }
+    @keyframes wipeSweep {
+      0% { transform: translateX(-120%) skewX(-8deg); }
+      45% { transform: translateX(0) skewX(-8deg); }
+      55% { transform: translateX(0) skewX(-8deg); }
+      100% { transform: translateX(120%) skewX(-8deg); }
+    }
+    #wipe .wipe-text {
+      position: relative; font-family: 'Courier New', monospace; font-size: 30px;
+      font-weight: bold; letter-spacing: 6px; color: #ffd24a;
+      text-shadow: 3px 3px 0 #a41f2b, 5px 5px 0 #000; opacity: 0;
+    }
+    #wipe.go .wipe-text { animation: wipeText 1.5s ease-in-out forwards; }
+    @keyframes wipeText {
+      0%, 25% { opacity: 0; transform: translateY(18px); }
+      45%, 60% { opacity: 1; transform: translateY(0); }
+      80%, 100% { opacity: 0; transform: translateY(-14px); }
+    }
+    #hud .score.pulse { animation: scorePulse 0.7s ease-out; }
+    @keyframes scorePulse {
+      0% { transform: scale(1.35); color: #fff; }
+      100% { transform: scale(1); }
+    }
     #walkup {
       position: fixed; left: 20px; bottom: 96px; width: 240px;
       font-family: 'Courier New', monospace; text-align: left;
@@ -224,6 +257,7 @@
   <div id="replay-tag" class="hidden">◉ REPLAY</div>
   <div id="ticker" class="hidden"><span class="tk-chip">☠ PMB SPORTS</span><span class="tk-text"></span></div>
   <div id="walkup"></div>
+  <div id="wipe"><div class="band"></div><div class="wipe-text"></div></div>
   <script type="module" src="/src/render/main.js"></script>
 </body>
 </html>

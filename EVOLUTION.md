@@ -57,8 +57,10 @@ unchecked items — never build them mid-increment.
 - [ ] **B5. Crowd.** Billboard-sprite mutant crowd rows where the field wants
       them (drive-in car roofs, web cocoons that sway). Two states: murmur
       sway, roar bounce on hits/homers. Budget: one instanced mesh per field.
-- [ ] **B6. Broadcast wipes.** Inning-change cards ("TOP 3 — THE UNDERGUT")
-      with a field-palette wipe transition. Score bug pulses on runs.
+- [x] **B6. Broadcast wipes.** ✅ Shipped: skewed field-palette band sweeps the
+      screen on every half-inning change with a "BOTTOM 1 — THE UNDERGUT" card
+      riding it; the HUD score line pulses when runs score. (Taken before B5 —
+      smaller, and it completes the between-innings loop with B1's beauty cam.)
 
 ## Phase C — Mechanics depth (MVP 2005's hands)
 - [ ] **C1. Player pitching.** Choose pitch type + aim in the zone, then an

@@ -280,7 +280,9 @@ export class Game {
     // getting under the ball lofts it, over it chops it down
     this._lastContact = {
       spray: Math.max(-1, Math.min(1, (C.CONTACT_POINT - s.swing.atT) / window)),
-      loft: Math.max(-1, Math.min(1, -dy / reach)),
+      // sharper loft response: getting under the ball by half your reach
+      // already sends it toward the sky
+      loft: Math.max(-1, Math.min(1, -dy / (reach * 0.55))),
     };
 
     if (this.mode === 'derby') return this._resolveDerbySwing(quality, batter);

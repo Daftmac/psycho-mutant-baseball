@@ -10,7 +10,7 @@ export const C = {
   // pitch cycle (ticks)
   WINDUP_TICKS: 60,
   RESOLVE_TICKS: 45,          // balls / strikes / fouls
-  RESOLVE_TICKS_HIT: 105,     // contact — long enough to watch the ball carry the big park
+  RESOLVE_TICKS_HIT: 125,     // contact — long enough to watch a towering fly come down
 
   // Pitch flight: slower and floatier than real baseball, on purpose.
   // flightTicks = mound->plate time. breakAmt drives the lateral banana curve.

@@ -41,7 +41,10 @@ renderer.setSize(LOW_W, LOW_H, false); // CSS upscales; image-rendering: pixelat
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(field.palette.sky);
-scene.fog = new THREE.FogExp2(field.palette.fog, field.fogDensity);
+// fog density is authored against the 60-unit diamond; exponential fog gets
+// murkier as parks grow, so compensate by the scale (plus a clarity trim)
+const FOG_CLARITY = (C.FIELD_BASE_SCALE / C.FIELD_SCALE) * 0.85;
+scene.fog = new THREE.FogExp2(field.palette.fog, field.fogDensity * FOG_CLARITY);
 
 const camera = new THREE.PerspectiveCamera(55, LOW_W / LOW_H, 0.1, 600);
 camera.position.set(0, 7.5, 14);
@@ -188,6 +191,35 @@ const D = C.FIELD_SCALE; // mound->plate distance
   infield.rotation.x = -Math.PI / 2;
   infield.position.set(0, 0.02, -D * 0.7);
   scene.add(infield);
+
+  // the diamond itself: a bright clay kite from home around the bases,
+  // deliberately contrasting whatever murk the ballpark is made of
+  {
+    const fx = 16 * PROP_SCALE, fz = -16 * PROP_SCALE - D * 0.15; // first
+    const sz = -32 * PROP_SCALE - D * 0.15;                       // second
+    const y = 0.06;
+    const kite = new THREE.BufferGeometry();
+    kite.setAttribute('position', new THREE.BufferAttribute(new Float32Array([
+      0, y, 3,   fx, y, fz,   0, y, sz,   // plate -> first -> second
+      0, y, 3,   0, y, sz,   -fx, y, fz,  // plate -> second -> third
+    ]), 3));
+    kite.computeVertexNormals();
+    const diamond = new THREE.Mesh(kite, new THREE.MeshLambertMaterial({
+      color: new THREE.Color(pal(field.palette.diamond ? 'diamond' : '#b98d5a')),
+      flatShading: true,
+    }));
+    scene.add(diamond);
+    // inner grass cutout for that classic manicured look
+    const inner = new THREE.BufferGeometry();
+    const k = 0.62, iy = 0.09, izOff = (1 - k) * (sz - 3) * 0.5;
+    inner.setAttribute('position', new THREE.BufferAttribute(new Float32Array([
+      0, iy, 3 + izOff,  fx * k, iy, fz * k + izOff,  0, iy, sz * k + izOff,
+      0, iy, 3 + izOff,  0, iy, sz * k + izOff,  -fx * k, iy, fz * k + izOff,
+    ]), 3));
+    inner.computeVertexNormals();
+    const innerMesh = new THREE.Mesh(inner, mat(pal('grass')));
+    scene.add(innerMesh);
+  }
 
   // foul lines
   for (const side of [-1, 1]) {
@@ -953,15 +985,18 @@ function positionBall() {
   if (s.phase === 'resolve' && s.lastPlay && ['hit', 'homer', 'out'].includes(s.lastPlay.kind)) {
     if (!hitFly || hitFly.tick !== s.lastPlay.tick) {
       const lp = s.lastPlay;
-      // spray from contact timing (early = pulled), loft from where the bat met the ball
+      // real launch-angle model: loft picks the angle (-8° chopper up to ~72°
+      // towering pop), hitScore picks the exit speed, gravity does the rest
       const ang = THREE.MathUtils.clamp(-lp.spray * 0.55 + (Math.random() - 0.5) * 0.25, -0.68, 0.68);
-      const speed = (16 + lp.hitScore * 55) * PROP_SCALE;
-      const grounder = lp.loft < -0.15;
-      const vy = grounder ? 3 + lp.hitScore * 4 : 7 + Math.max(0, lp.loft) * 13 + lp.hitScore * 13;
+      const launchDeg = -8 + ((THREE.MathUtils.clamp(lp.loft, -1, 1) + 1) / 2) * 80;
+      const launch = THREE.MathUtils.degToRad(launchDeg);
+      const exit = (26 + lp.hitScore * 58) * (0.7 + PROP_SCALE * 0.3);
+      const horiz = Math.cos(launch) * exit;
+      const vy = Math.sin(launch) * exit;
       hitFly = {
         tick: lp.tick,
         pos: new THREE.Vector3(0, 2.0, 0),
-        vel: new THREE.Vector3(Math.sin(ang) * speed, vy, -Math.cos(ang) * speed),
+        vel: new THREE.Vector3(Math.sin(ang) * horiz, vy, -Math.cos(ang) * horiz),
       };
     }
     const dt = 1 / 60;
@@ -1782,4 +1817,5 @@ window.__actors = () => ({
   batter: batter.position.toArray().map((v) => +v.toFixed(1)),
   batVisible: bat.visible,
   coaches: coaches.map((c) => c.position.toArray().map((v) => +v.toFixed(1))),
+  ball: ball.position.toArray().map((v) => +v.toFixed(1)),
 });

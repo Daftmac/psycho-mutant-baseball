@@ -203,6 +203,13 @@ unchecked items — never build them mid-increment.
       Caveat: browsers don't count pad input as a user gesture — one real
       click/keypress is still needed to unlock audio.
 
+- [x] **F8. Launch angles, clear air, the diamond.** ✅ Hit flight rebuilt on a
+      launch-angle model (-8° choppers to ~72° towers; loft response sharpened
+      in core so undercuts genuinely pop it up — verified apexes: chop 3,
+      level 33–64, undercut 72–106). Fog density now compensates for park
+      scale plus a clarity trim (~half the old murk). Every infield gets a
+      bright contrasting clay diamond with an inner grass cutout.
+
 ## Parking lot (ideas noticed, not yet scheduled)
 - Signature abilities for the 60 new mutants (C.ABILITIES only covers the
   original twelve)

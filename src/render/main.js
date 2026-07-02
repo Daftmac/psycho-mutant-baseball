@@ -13,16 +13,24 @@ import { createAnnouncer } from './announcer.js';
 import { audio } from './audio.js';
 import { loadSeason, saveSeason, newSeason, recordGame, createSeasonScreen, SEASON_GAMES } from './season.js';
 import { loadRecords, noteMatch, noteDerby, createRecordsScreen } from './records.js';
+import { UNLOCKS, unlock, visibleFields } from './unlocks.js';
 
 // ---------- field loading ----------
 // Fields are pure data (fields/*.json — schema in fields/README.md).
 // Pick one with ?field=<name>; with no param the menu boots on a random field.
 const FIELDS = import.meta.glob('../../fields/*.json', { eager: true });
 const FIELD_NAMES = Object.keys(FIELDS).map((k) => k.match(/([^/]+)\.json$/)[1]).sort();
+// hidden fields gate themselves behind unlocks (fields/*.json "hidden": true)
+const HIDDEN_BY_FIELD = {};
+for (const key of FIELD_NAMES) {
+  if (FIELDS[`../../fields/${key}.json`].default.hidden) HIDDEN_BY_FIELD[key] = key;
+}
+const unlockedFieldNames = () => visibleFields(FIELD_NAMES, HIDDEN_BY_FIELD);
 const urlField = new URLSearchParams(location.search).get('field');
+const bootPool = unlockedFieldNames();
 const fieldName = urlField && FIELDS[`../../fields/${urlField}.json`]
   ? urlField
-  : FIELD_NAMES[Math.floor(Math.random() * FIELD_NAMES.length)];
+  : bootPool[Math.floor(Math.random() * bootPool.length)];
 const field = FIELDS[`../../fields/${fieldName}.json`].default;
 
 // ---------- setup ----------
@@ -514,7 +522,7 @@ const teamSelect = createTeamSelect({
     teamSelect.hide();
     hidePreview();
     if (pendingMode === 'season') {
-      const season = newSeason(teamKey, FIELD_NAMES, shuffle);
+      const season = newSeason(teamKey, unlockedFieldNames(), shuffle);
       saveSeason(season);
       appState = 'season';
       seasonScreen.show(season);
@@ -527,7 +535,7 @@ const teamSelect = createTeamSelect({
 
 let fieldSelectMode = 'lobby'; // 'lobby' (browse from menu) | 'match' (pre-game step)
 const fieldSelect = createFieldSelect({
-  fields: FIELD_NAMES.map((key) => {
+  fields: unlockedFieldNames().map((key) => {
     const f = FIELDS[`../../fields/${key}.json`].default;
     return { key, name: f.name ?? key, tagline: f.tagline ?? '', palette: f.palette };
   }),
@@ -661,6 +669,11 @@ function showPostgame() {
   const rec = loadRecords();
   if (game.mode === 'derby') noteDerby(rec, game);
   else noteMatch(rec, game);
+
+  // feats: 5+ homers in one derby impresses the front office
+  if (game.mode === 'derby' && game.state.derby.homers >= 5 && unlock('commissioner')) {
+    flash(UNLOCKS.commissioner.flash);
+  }
 
   if (game.mode === 'derby') {
     const d = game.state.derby;
@@ -1516,6 +1529,18 @@ if (bootParams.get('play') === '1') {
   toMenu();
 }
 frame(performance.now());
+
+// the old ways still work: type it on the title screen
+let cheatBuf = '';
+addEventListener('keydown', (e) => {
+  if (appState !== 'menu' || e.key.length !== 1) return;
+  cheatBuf = (cheatBuf + e.key.toLowerCase()).slice(-5);
+  if (cheatBuf === 'worms') {
+    let earned = false;
+    for (const id of Object.keys(UNLOCKS)) earned = unlock(id) || earned;
+    if (earned) flash('THE WORMS PROVIDE — EVERYTHING UNLOCKED');
+  }
+});
 
 // debug handles for harness/devtools poking (not used by game code)
 Object.defineProperty(window, '__game', { get: () => game });

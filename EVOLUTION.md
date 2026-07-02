@@ -143,9 +143,12 @@ unchecked items — never build them mid-increment.
       rotation, W-L record, league leaders aggregated across games, campaign
       verdict (CHAMPIONS / RESPECTABLE HAUNTING / THE WORMS WON), CONTINUE
       SEASON from the postgame. The Commissioner no longer forbids it.
-- [ ] **E2. Unlockables.** Hidden mutants and fields earned by feats (win a
-      derby in the Undergut without a single splash-zone foul...). Griffey-era
-      cheat-code energy; store progress in localStorage.
+- [x] **E2. Unlockables.** ✅ Shipped: THE COMMISSIONER'S OFFICE — a hidden
+      fifth ballpark (giant desk, towering filing cabinets, fluorescent panel
+      moon, the red phone) earned by hitting 5+ homers in one derby, or by
+      typing WORMS on the title screen (the old ways still work). Hidden
+      fields self-gate via "hidden": true + src/render/unlocks.js.
+      ALL PHASES COMPLETE — the original backlog is finished.
 - [x] **E3. Stats & records.** ✅ Shipped: the groundskeeper's book
       (src/render/records.js, localStorage) — longest derby ball in graves,
       most homers in one game, career grave digger, games witnessed — shown as

@@ -47,10 +47,12 @@ a time via the `/evolve` command (`.claude/commands/evolve.md`). Prefer it over
 this roadmap for "what next" decisions — the roadmap below is the original
 sketch and is being absorbed into EVOLUTION.md phases.
 
-## Roadmap (in rough order)
-1. Fielding as a real system (fly balls can be caught, grounders beaten out)
-2. Player-controlled pitching (pick pitch type + location) with mutant pitch gimmicks
-3. Per-mutant chaos abilities (Wormfather summons worms, Split Twins swing twice...)
-4. More fields: Isotope Alley (toxic glow), The Abattoir Fairgrounds, The Flooded Chapel
-5. Sound: lofi crowd moans, organ stings, bat crack (Tone.js)
-6. Season mode with roster unlocks
+## Roadmap — COMPLETE (2026-07-02, via EVOLUTION.md phases A–E)
+1. ~~Fielding as a real system~~ ✅ C2 (errors/robs + visible fielders)
+2. ~~Player-controlled pitching~~ ✅ C1 (eyeball meter)
+3. ~~Per-mutant chaos abilities~~ ✅ C5 (all 12 mutants)
+4. ~~More fields~~ ✅ Undergut, Mortuary Drive-In, Widow's Web + hidden Commissioner's Office
+   (Isotope Alley / Abattoir Fairgrounds / Flooded Chapel remain open field-designer briefs)
+5. ~~Sound (Tone.js)~~ ✅ D1
+6. ~~Season mode~~ ✅ E1 (+ E2 unlockables, E3 records)
+New work: add fresh increments to EVOLUTION.md's parking lot and phases.

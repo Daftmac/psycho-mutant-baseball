@@ -1,0 +1,74 @@
+{
+  "name": "The Commissioner's Office",
+  "tagline": "You shouldn't be in here. The carpet remembers.",
+  "hidden": true,
+  "palette": {
+    "sky": "#141210",
+    "fog": "#26221c",
+    "grass": "#3a3428",
+    "dirt": "#4a4034",
+    "chalk": "#d8d2c0",
+    "carpet": "#3a3428",
+    "wood": "#4e3320",
+    "woodDark": "#332114",
+    "fluorescent": "#e8f0d8",
+    "paper": "#c8c0a8",
+    "redphone": "#c22418",
+    "ash": "#6a6458"
+  },
+  "fogDensity": 0.014,
+  "lights": {
+    "hemi": { "sky": "#b8b8a0", "ground": "#1a1610", "intensity": 0.55 },
+    "dir":  { "color": "#e8f0d8", "intensity": 0.6, "pos": [0, 120, -100] }
+  },
+  "announcer": {
+    "ambient": [
+      "Please keep it down, folks. He's on a call.",
+      "The carpet has not been cleaned since the incident.",
+      "Note the ashtray in deep center. Regulation size.",
+      "I've been told the ceiling light will be fixed 'soon.' It has always flickered."
+    ],
+    "homer": [
+      "RIGHT THROUGH THE FILING CABINETS! That was the 1987 season!",
+      "OFF THE DESK! He is going to be SO angry when he's off the phone!"
+    ]
+  },
+  "crowd": { "count": 60, "ring": [110, 150], "arc": [0.15, 0.85], "y": 0.8, "color": "paper" },
+  "props": [
+    { "shape": "plane", "size": [90, 44], "color": "fluorescent", "glow": true,
+      "place": "single", "pos": [0, 130, -140], "rot": [1.5708, 0, 0] },
+
+    { "shape": "box", "size": [130, 46, 30], "color": "woodDark",
+      "place": "single", "pos": [0, 23, -235],
+      "children": [
+        { "shape": "box", "size": [136, 5, 34], "color": "wood", "count": 1, "pos": [0, 25, 0] },
+        { "shape": "box", "size": [16, 10, 12], "color": "ash", "count": 1, "pos": [-38, 33, 2] },
+        { "shape": "box", "size": [12, 7, 9], "color": "redphone", "count": 1, "pos": [34, 31.5, 3] },
+        { "shape": "box", "size": [10, 14, 8], "color": "paper", "count": 3, "pos": [0, 35, 0], "posJitter": [12, 0, 3], "rotJitter": [0, 0.4, 0.05] }
+      ] },
+
+    { "shape": "box", "size": [16, 60, 12], "color": "ash",
+      "place": "ring", "count": 9, "radius": 190, "y": 30, "arc": [0.05, 0.95],
+      "lookCenter": true, "tiltJitter": 0.04, "scaleJitter": 0.15,
+      "children": [
+        { "shape": "box", "size": [13, 2, 1], "color": "paper", "count": 4, "pos": [0, -18, 6.2], "stack": 12 }
+      ] },
+
+    { "shape": "cylinder", "size": [5, 6, 22], "segments": 8, "color": "ash",
+      "place": "scatter", "count": 4, "ring": [115, 165], "arc": [0.2, 0.8],
+      "y": 11, "scaleJitter": 0.2,
+      "children": [
+        { "shape": "box", "size": [4, 1.5, 4], "color": "paper", "count": 2, "pos": [0, 10, 0], "posJitter": [2, 1, 2], "rotJitter": [0.3, 0.8, 0.3] }
+      ] },
+
+    { "shape": "box", "size": [22, 30, 2], "color": "wood",
+      "place": "scatter", "count": 3, "ring": [140, 180], "arc": [0.1, 0.35],
+      "y": 40, "yawJitter": 0.2, "tiltJitter": 0.08,
+      "children": [
+        { "shape": "plane", "size": [17, 23], "color": "paper", "count": 1, "pos": [0, 0, 1.2] }
+      ] },
+
+    { "shape": "sphere", "size": [12], "segments": 10, "color": "redphone", "glow": true,
+      "place": "single", "pos": [70, 95, -215] }
+  ]
+}

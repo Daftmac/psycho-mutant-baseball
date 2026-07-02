@@ -94,25 +94,31 @@ function propMaterial(spec) {
 // fans across the outfield and ring arc [0, 2] is a full circle.
 const A = (v) => Math.PI * v + Math.PI;
 
+// field JSONs are authored against a 60-unit diamond; the renderer stretches
+// horizontal distances to the current FIELD_SCALE so parks grow with the game
+const PROP_SCALE = C.FIELD_SCALE / C.FIELD_BASE_SCALE;
+
 function spawnProp(spec) {
   const geo = propGeometry(spec);
   const material = propMaterial(spec);
   const spots = [];
   const place = spec.place ?? 'single';
   if (place === 'single') {
-    spots.push(spec.pos ?? [0, 0, 0]);
+    const p = spec.pos ?? [0, 0, 0];
+    spots.push([p[0] * PROP_SCALE, p[1], p[2] * PROP_SCALE]);
   } else if (place === 'ring') {
     const [a0, a1] = spec.arc ?? [0, 2];
+    const radius = spec.radius * PROP_SCALE;
     for (let i = 0; i < spec.count; i++) {
       const a = A(a0 + ((a1 - a0) * i) / spec.count);
-      spots.push([Math.cos(a) * spec.radius, spec.y ?? 0, Math.sin(a) * spec.radius + (spec.zOff ?? 0)]);
+      spots.push([Math.cos(a) * radius, spec.y ?? 0, Math.sin(a) * radius + (spec.zOff ?? 0) * PROP_SCALE]);
     }
   } else { // scatter
     const [a0, a1] = spec.arc ?? [0.1, 0.9];
     for (let i = 0; i < spec.count; i++) {
       const a = A(a0 + rng() * (a1 - a0));
-      const r = spec.ring[0] + rng() * (spec.ring[1] - spec.ring[0]);
-      spots.push([Math.cos(a) * r, spec.y ?? 0, Math.sin(a) * r + (spec.zOff ?? 0)]);
+      const r = (spec.ring[0] + rng() * (spec.ring[1] - spec.ring[0])) * PROP_SCALE;
+      spots.push([Math.cos(a) * r, spec.y ?? 0, Math.sin(a) * r + (spec.zOff ?? 0) * PROP_SCALE]);
     }
   }
 
@@ -153,7 +159,7 @@ function spawnProp(spec) {
 // ---------- the diamond (built-in on every field) ----------
 const D = C.FIELD_SCALE; // mound->plate distance
 {
-  const ground = new THREE.Mesh(new THREE.CircleGeometry(300, 24), mat(pal('grass')));
+  const ground = new THREE.Mesh(new THREE.CircleGeometry(300 * PROP_SCALE, 24), mat(pal('grass')));
   ground.rotation.x = -Math.PI / 2;
   scene.add(ground);
 
@@ -164,16 +170,16 @@ const D = C.FIELD_SCALE; // mound->plate distance
 
   // foul lines
   for (const side of [-1, 1]) {
-    const line = new THREE.Mesh(new THREE.PlaneGeometry(0.6, 220), mat(pal('chalk')));
+    const line = new THREE.Mesh(new THREE.PlaneGeometry(0.6, 220 * PROP_SCALE), mat(pal('chalk')));
     line.rotation.x = -Math.PI / 2;
     line.rotation.z = side * Math.PI / 4;
-    line.position.set(side * 78, 0.04, -78);
+    line.position.set(side * 78 * PROP_SCALE, 0.04, -78 * PROP_SCALE);
     scene.add(line);
   }
 
   // bases
   window.__bases = [];
-  const basePos = [[16, -16], [0, -32], [-16, -16]];
+  const basePos = [[16, -16], [0, -32], [-16, -16]].map(([x, z]) => [x * PROP_SCALE, z * PROP_SCALE]);
   for (const [x, z] of basePos) {
     const b = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.3, 2.4), new THREE.MeshLambertMaterial({ color: new THREE.Color(pal('chalk')), flatShading: true }));
     b.position.set(x, 0.15, z - D * 0.15);
@@ -200,9 +206,9 @@ if (field.crowd) {
   const [a0, a1] = cs.arc ?? [0.1, 0.9];
   for (let i = 0; i < cs.count; i++) {
     const a = A(a0 + rng() * (a1 - a0));
-    const r = cs.ring[0] + rng() * (cs.ring[1] - cs.ring[0]);
+    const r = (cs.ring[0] + rng() * (cs.ring[1] - cs.ring[0])) * PROP_SCALE;
     base.push({
-      x: Math.cos(a) * r, y: cs.y ?? 1, z: Math.sin(a) * r + (cs.zOff ?? 0),
+      x: Math.cos(a) * r, y: cs.y ?? 1, z: Math.sin(a) * r + (cs.zOff ?? 0) * PROP_SCALE,
       s: 0.8 + rng() * 0.5, ry: rng() * Math.PI * 2, ph: rng() * Math.PI * 2,
     });
   }
@@ -278,8 +284,8 @@ const bat = new THREE.Group();
 const batMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.3, 4.4, 6), mat(0x7a5a33));
 batMesh.position.y = 2.2;
 bat.add(batMesh);
-bat.position.set(-2.0, 2.6, 0.6);
-bat.rotation.set(0.4, 0, -0.9);
+bat.position.set(-2.35, 3.05, 1.35); // cocked over the back shoulder, like a hitter
+bat.rotation.set(0.55, 0, 0.3);
 scene.add(bat);
 
 const pitcher = makeMutant({ skin: 0x8a6fb0, headScale: 1.5 }); // bulbous purple dome
@@ -290,7 +296,8 @@ const ball = new THREE.Mesh(new THREE.SphereGeometry(0.45, 8, 6), new THREE.Mesh
 scene.add(ball);
 
 // ---------- fielders: four gloves in the murk ----------
-const FIELDER_POSTS = [[-38, -95], [0, -112], [38, -95], [15, -52]]; // LF CF RF rover
+const FIELDER_POSTS = [[-38, -95], [0, -112], [38, -95], [15, -52]]
+  .map(([x, z]) => [x * PROP_SCALE, z * PROP_SCALE]); // LF CF RF rover
 const fielders = FIELDER_POSTS.map(([x, z]) => {
   const m = makeMutant({ skin: 0x4a5568 }); // drab away-grays; every mutant fields in gray
   m.position.set(x, 0, z);
@@ -298,6 +305,30 @@ const fielders = FIELDER_POSTS.map(([x, z]) => {
   scene.add(m);
   return { mesh: m, home: { x, z }, phase: Math.random() * Math.PI * 2 };
 });
+
+// first and third base coaches, living in their boxes
+const coaches = [0, 2].map((baseIdx) => {
+  const m = makeMutant({ skin: 0x4a4458 }); // league-issue coach's cardigan
+  const b = window.__bases[baseIdx].position;
+  const side = baseIdx === 0 ? 1 : -1;
+  m.position.set(b.x + side * 9, 0, b.z + 6);
+  m.rotation.y = Math.atan2(-m.position.x, -m.position.z); // eyes on home plate
+  scene.add(m);
+  return m;
+});
+
+function poseCoaches() {
+  const excited = crowd && crowd.excite > 0;
+  coaches.forEach((c, i) => {
+    c.position.y = Math.sin(game.tick * 0.06 + i * 2) * 0.05;
+    c.userData.parts.arms.forEach((a, j) => {
+      // windmill the runner around when something's happening
+      a.rotation.x = excited
+        ? Math.sin(game.tick * 0.45 + j * Math.PI) * 1.4
+        : a.rotation.x * 0.9;
+    });
+  });
+}
 
 // two nearest fielders converge on a struck ball; everyone else drifts home
 function updateFielders() {
@@ -311,7 +342,7 @@ function updateFielders() {
       Math.hypot(g.mesh.position.x - ball.position.x, g.mesh.position.z - ball.position.z));
     [a, b] = byDist;
   }
-  const step = 30 / C.TICKS_PER_SEC; // sprint speed, units/s
+  const step = 20 / C.TICKS_PER_SEC; // lope speed, units/s — mutants amble, they don't sprint
   for (const f of fielders) {
     const target = (f === a || f === b) ? { x: ball.position.x, z: ball.position.z } : f.home;
     const dx = target.x - f.mesh.position.x;
@@ -601,8 +632,8 @@ function startMatch() {
   hud.classList.remove('hidden');
   scorebugEl.classList.remove('hidden');
   controlsEl.classList.remove('hidden');
-  camera.position.set(0, 7.5, 14);
-  camera.lookAt(0, 2.5, -40);
+  camera.position.set(0.9, 4.7, 13.5);
+  camera.lookAt(0, 3.1, -40);
   camMode = 'none'; // force a fresh cut on the first frame
   resetReplay();
   announcer.show();
@@ -835,7 +866,7 @@ function positionBall() {
       const lp = s.lastPlay;
       // spray from contact timing (early = pulled), loft from where the bat met the ball
       const ang = THREE.MathUtils.clamp(-lp.spray * 0.55 + (Math.random() - 0.5) * 0.25, -0.68, 0.68);
-      const speed = 16 + lp.hitScore * 55;
+      const speed = (16 + lp.hitScore * 55) * PROP_SCALE;
       const grounder = lp.loft < -0.15;
       const vy = grounder ? 3 + lp.hitScore * 4 : 7 + Math.max(0, lp.loft) * 13 + lp.hitScore * 13;
       hitFly = {
@@ -934,24 +965,28 @@ function updateCamera() {
     want = s.phaseTicks > 22 ? 'duel' : 'batting'; // cut back just before release
   } else if (s.phase === 'resolve' && s.lastPlay) {
     if (s.lastPlay.kind === 'homer') want = 'homer';
-    else if (s.lastPlay.kind === 'hit' || s.lastPlay.kind === 'out') want = 'chase';
+    else if (s.lastPlay.kind === 'hit' || s.lastPlay.kind === 'out') want = 'iso';
     else if (s.lastPlay.kind === 'sideout') want = 'beauty';
   }
 
   if (want !== camMode) {
     camMode = want;
-    if (camMode === 'batting') camera.position.set(0, 7.5, 14);
+    if (camMode === 'batting') camera.position.set(0.9, 4.7, 13.5); // catcher's-eye low
+    else if (camMode === 'iso') camera.position.set(D * 0.72, D * 0.55, D * 0.30); // tabletop 3/4 view
+
     else if (camMode === 'duel') camera.position.set(6.5, 8.5, -D - 18); // CF broadcast cam
     else if (camMode === 'homer') camera.position.set(9, 1.3, -10);
     // chase starts wherever the last cut left it and swoops from there
   }
 
   if (camMode === 'batting') {
-    camera.lookAt(0, 2.5, -40);
+    camera.lookAt(0, 3.1, -40);
   } else if (camMode === 'duel') {
     camera.lookAt(-0.8, 2.6, 2);
   } else if (camMode === 'homer') {
     camera.lookAt(ball.position);
+  } else if (camMode === 'iso') {
+    camera.lookAt(8, 0, -D * 0.42); // frames the runner's line AND the outfield chase
   } else if (camMode === 'chase') {
     _camTarget.set(ball.position.x * 0.6, ball.position.y * 0.5 + 7, ball.position.z + 26);
     camera.position.lerp(_camTarget, 0.08);
@@ -1197,17 +1232,46 @@ function posePitcher() {
   }
 }
 
-// batter: idle sway -> coil as the ball comes -> stride into the swing
+// batter: idle sway -> coil -> swing -> DROP THE BAT AND RUN
 function poseBatter() {
   const parts = batter.userData.parts;
   const s = game.state;
+
+  const running = s.phase === 'resolve' && s.lastPlay &&
+    ['hit', 'homer', 'out'].includes(s.lastPlay.kind) && s.lastPlay.hitScore > 0.2;
+  if (running) {
+    bat.visible = false; // bat's in the dirt where it belongs
+    const first = window.__bases[0].position;
+    const dx = first.x - batter.position.x;
+    const dz = first.z - batter.position.z;
+    const d = Math.hypot(dx, dz);
+    if (d > 2.2) {
+      const step = 26 / C.TICKS_PER_SEC;
+      batter.position.x += (dx / d) * step;
+      batter.position.z += (dz / d) * step;
+      batter.rotation.y = Math.atan2(dx, dz);
+      batter.position.y = Math.abs(Math.sin(game.tick * 0.35)) * 0.5;
+      parts.arms.forEach((a, i) => { a.rotation.x = Math.sin(game.tick * 0.35 + i * Math.PI) * 0.9; });
+    } else {
+      batter.position.y *= 0.8; // safe at first (or close enough for the mutant leagues)
+    }
+    return;
+  }
+
+  // back in the box
+  if (batter.visible) bat.visible = true;
+  batter.position.z += (1.2 - batter.position.z) * 0.25;
+  parts.arms.forEach((a) => { a.rotation.x *= 0.85; });
+  parts.head.rotation.y *= 0.8;
   batter.position.y = Math.sin(game.tick * 0.08) * 0.06;
-  batter.position.x = -2.6 + aim.x * 0.12;
+  batter.position.x += ((-2.6 + aim.x * 0.12) - batter.position.x) * 0.25;
   if (swingAnim > 0) {
-    // follow through: hips fire
+    // follow through: the whole body uncoils through the swing
     const k = chunky(1 - swingAnim / SWING_TICKS, 4);
-    batter.rotation.y = Math.PI / 2 - k * 1.1;
-    parts.body.rotation.y = k * 0.5;
+    batter.rotation.y = Math.PI / 2 - k * 1.9;
+    parts.body.rotation.y = k * 0.9;
+    parts.legs.rotation.y = k * 0.45;
+    parts.head.rotation.y = -k * 0.55; // eyes stay on the ball
   } else if (s.phase === 'pitch' && s.pitch.t > 0.5) {
     // coil + stride, snapped to two keyframes
     const c = chunky((s.pitch.t - 0.5) / 0.5, 2);
@@ -1279,13 +1343,13 @@ function updateBat() {
     bat.rotation.x += (1.25 - bat.rotation.x) * 0.5; // bat levels out through the zone
     bat.rotation.z += (-0.2 - bat.rotation.z) * 0.5;
   } else {
-    // cocked over the shoulder, drifting with the aim
-    bat.position.x += ((-2.0 + aim.x * 0.18) - bat.position.x) * 0.2;
-    bat.position.y += ((2.4 + (aim.y - 2.9) * 0.3) - bat.position.y) * 0.2;
-    bat.position.z += (0.6 - bat.position.z) * 0.2;
-    bat.rotation.x += (0.4 - bat.rotation.x) * 0.25;
+    // held over the back shoulder, waggling slightly with the aim
+    bat.position.x += ((-2.35 + aim.x * 0.08) - bat.position.x) * 0.2;
+    bat.position.y += ((3.05 + (aim.y - 2.9) * 0.12) - bat.position.y) * 0.2;
+    bat.position.z += (1.35 - bat.position.z) * 0.2;
+    bat.rotation.x += ((0.55 + Math.sin(game.tick * 0.05) * 0.05) - bat.rotation.x) * 0.25; // waggle
     bat.rotation.y *= 0.8;
-    bat.rotation.z += (-0.9 - bat.rotation.z) * 0.25;
+    bat.rotation.z += (0.3 - bat.rotation.z) * 0.25;
   }
 }
 
@@ -1464,6 +1528,7 @@ function stepGame() {
 
   positionBall();
   updateFielders();
+  poseCoaches();
   recordFrame();
 }
 
@@ -1547,8 +1612,18 @@ Object.defineProperty(window, '__game', { get: () => game });
 window.__startMatch = startMatch; // debug: skip the menu
 window.__cam = camera;
 window.__camMode = () => camMode;
-window.__advance = (n = 1) => { for (let i = 0; i < n; i++) advanceOneTick(); }; // synchronous stepping
+window.__advance = (n = 1) => {
+  for (let i = 0; i < n; i++) {
+    advanceOneTick();
+    if (!replay && appState === 'playing' && game) updateCamera(); // keep the camera honest for tests
+  }
+};
 window.__swing = (x, y, type = 'contact') => { aim.x = x; aim.y = y; queueSwing(type); };
 window.__replayActive = () => !!replay;
 window.__pitchCall = () => pitchCall && { ...pitchCall };
 window.__aimAt = (x, y) => { aim.x = x; aim.y = y; };
+window.__actors = () => ({
+  batter: batter.position.toArray().map((v) => +v.toFixed(1)),
+  batVisible: bat.visible,
+  coaches: coaches.map((c) => c.position.toArray().map((v) => +v.toFixed(1))),
+});

@@ -10,26 +10,26 @@ export const C = {
   // pitch cycle (ticks)
   WINDUP_TICKS: 60,
   RESOLVE_TICKS: 45,          // balls / strikes / fouls
-  RESOLVE_TICKS_HIT: 85,      // contact — long enough to watch the ball fly
+  RESOLVE_TICKS_HIT: 105,     // contact — long enough to watch the ball carry the big park
 
   // Pitch flight: slower and floatier than real baseball, on purpose.
   // flightTicks = mound->plate time. breakAmt drives the lateral banana curve.
   // wobble = ectoplasmic sine drift. gravMult scales gravity (ectoplasm floats).
   PITCH_TYPES: {
-    fastball:  { flightTicks: 52, breakAmt: 0.10, wobble: 0,   gravMult: 0.6,  strikeProb: 0.62 },
-    curve:     { flightTicks: 66, breakAmt: 0.75, wobble: 0,   gravMult: 1.25, strikeProb: 0.55 },
-    ectoball:  { flightTicks: 82, breakAmt: 0.45, wobble: 1.0, gravMult: 0.5,  strikeProb: 0.48 }, // wobbling ectoplasm
+    fastball:  { flightTicks: 96,  breakAmt: 0.10, wobble: 0,   gravMult: 0.42, strikeProb: 0.62 },
+    curve:     { flightTicks: 120, breakAmt: 0.75, wobble: 0,   gravMult: 0.85, strikeProb: 0.55 },
+    ectoball:  { flightTicks: 142, breakAmt: 0.45, wobble: 1.0, gravMult: 0.28, strikeProb: 0.48 }, // wobbling ectoplasm
   },
 
   // pitch flight physics (world units, seconds via TICKS_PER_SEC)
   PITCH: {
     RELEASE_X: 0.8,           // pitcher releases slightly off centerline
     RELEASE_Y: 4.6,           // release height
-    GRAVITY: 13,              // units/s^2 — lofi gravity, scaled by gravMult
+    GRAVITY: 9,               // units/s^2 — mutant gravity is lazy; the ball floats
     BREAK_SCALE: 3.4,         // world units of lateral drift per unit breakAmt
     WOBBLE_AMP: 0.9,          // ectoball wobble amplitude
     WOBBLE_FREQ: 2.5,         // wobble cycles over the flight
-    DRIFT_EASE: 0.30,         // z eases: leaves the hand hot, floats in (drag illusion)
+    DRIFT_EASE: 0.38,         // z eases: leaves the hand hot, floats in (drag illusion)
     FLIGHT_JITTER: 0.12,      // +/- fraction of flightTicks variance per pitch
   },
 
@@ -148,7 +148,9 @@ export const C = {
   },
 
   // field dimensions (logical units for both sim flavor and renderer)
-  FIELD_SCALE: 60,            // distance mound -> plate
+  FIELD_SCALE: 100,           // distance mound -> plate (cavernous mutant ballparks)
+  FIELD_BASE_SCALE: 60,       // what the field JSONs were authored against —
+                              // the renderer scales prop distances by SCALE/BASE
 };
 
 // The mutant rosters. Stats 0..1: power, contact, chaos.

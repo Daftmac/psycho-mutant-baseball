@@ -155,6 +155,19 @@ unchecked items — never build them mid-increment.
       tombstone epitaph cards from a new RECORDS menu item; auto-noted from
       every match and derby postgame.
 
+## Phase F — live feel iterations (user-directed, 2026-07-02)
+- [x] **F1. Floaty ball + cavernous parks.** ✅ FIELD_SCALE 60→100 with renderer
+      PROP_SCALE stretching authored fields; flightTicks up ~80% (fastball
+      1.6s, ecto 2.4s), gravity softened (9 u/s², gentler gravMults), more
+      drift ease. Games now 4.5–6.4 min. Balance bands re-verified.
+- [x] **F2. Real batting stance + low camera.** ✅ Bat cocked over the back
+      shoulder with an idle waggle; batting cam dropped from y7.5 to
+      catcher's-eye 4.7.
+- [x] **F3. Broadcast QoL batch.** ✅ Outfielders lope (20 u/s), full-body swing
+      uncoil (hips, legs, counter-rotating head), hits cut to a tabletop
+      ISOMETRIC cam framing the runner's line, the batter drops the bat and
+      runs to first, and first/third base coaches windmill in their boxes.
+
 ## Parking lot (ideas noticed, not yet scheduled)
 - balance-analyst: the .250–.380 BA band is tighter than seed variance allows
   (~40 swings/game → ±.07 std). Build a multi-seed averaging harness mode and

@@ -28,8 +28,9 @@ export function newSeason(team, fieldNames, shuffle) {
 
 export function recordGame(season, game) {
   const s = game.state;
-  const mine = s.score[season.team];
-  const theirs = s.score[season.team === 'home' ? 'away' : 'home'];
+  const side = game.playerSide ?? 'home'; // the campaign team always hosts
+  const mine = s.score[side];
+  const theirs = s.score[side === 'home' ? 'away' : 'home'];
   if (mine > theirs) season.w++;
   else if (mine < theirs) season.l++;
   else season.t++;

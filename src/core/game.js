@@ -22,13 +22,20 @@ function makeRng(seed) {
 export class Game {
   // mode 'match' = full game; mode 'derby' = home run derby (one slugger,
   // grooved pitches, any swing that isn't a homer is an out)
-  constructor({ seed = 1, mode = 'match', derbyTeam = 'home', derbyPlayer = 0, difficulty = 'midnight', playerTeam = null } = {}) {
+  // homeKey/awayKey pick any two ROSTERS slugs for the matchup.
+  // playerSide ('home'|'away') enables the arcade rubber band.
+  constructor({ seed = 1, mode = 'match', homeKey = 'ghouls', awayKey = 'aberrations',
+                derbyTeam = 'ghouls', derbyPlayer = 0, difficulty = 'midnight', playerSide = null } = {}) {
     this.rng = makeRng(seed);
     this.mode = mode;
-    this.derbyTeam = derbyTeam;
+    this.teams = {
+      home: ROSTERS[homeKey] ? homeKey : 'ghouls',
+      away: ROSTERS[awayKey] ? awayKey : 'aberrations',
+    };
+    this.derbyTeam = ROSTERS[derbyTeam] ? derbyTeam : 'ghouls';
     this.derbyPlayer = derbyPlayer;
     this.diff = C.DIFFICULTY[difficulty] ?? C.DIFFICULTY.midnight;
-    this.playerTeam = playerTeam; // enables the arcade rubber band
+    this.playerSide = playerSide;
     this.tick = 0;
     this.state = {
       phase: 'windup',              // 'windup' | 'pitch' | 'resolve' | 'gameover'
@@ -63,7 +70,7 @@ export class Game {
       return roster[this.derbyPlayer % roster.length];
     }
     const team = this.battingTeam();
-    const roster = ROSTERS[team].players;
+    const roster = ROSTERS[this.teams[team]].players;
     return roster[this.state.batterIndex[team] % roster.length];
   }
 
@@ -297,9 +304,9 @@ export class Game {
     let chaos = false;
     let chaosMult = ability === 'halfLives' ? 2 : 1;
     // arcade rubber band: the player's mutants dig deep in a late deficit
-    if (this.playerTeam && this.battingTeam() === this.playerTeam && s.inning >= C.INNINGS) {
-      const other = this.playerTeam === 'home' ? 'away' : 'home';
-      if (s.score[other] - s.score[this.playerTeam] >= C.RUBBER_BAND.DEFICIT) {
+    if (this.playerSide && this.battingTeam() === this.playerSide && s.inning >= C.INNINGS) {
+      const other = this.playerSide === 'home' ? 'away' : 'home';
+      if (s.score[other] - s.score[this.playerSide] >= C.RUBBER_BAND.DEFICIT) {
         chaosMult *= C.RUBBER_BAND.CHAOS_MULT;
       }
     }
@@ -320,7 +327,8 @@ export class Game {
     const outVerb = loft > 0.35 ? 'skies out' : loft < -0.1 ? 'grounds out' : 'lines out';
     if (hitScore < C.HIT_OUT) {
       const fieldingTeam = this.battingTeam() === 'away' ? 'home' : 'away';
-      const chaosAvg = ROSTERS[fieldingTeam].players.reduce((a, p) => a + p.chaos, 0) / ROSTERS[fieldingTeam].players.length;
+      const fielders = ROSTERS[this.teams[fieldingTeam]].players;
+      const chaosAvg = fielders.reduce((a, p) => a + p.chaos, 0) / fielders.length;
       const wormMult = ability === 'wormfield' ? 2 : 1; // the infield squirms
       if (this.rng() < F.ERROR_CHANCE * (0.6 + chaosAvg * 2) * wormMult) {
         this._lastContact.fielded = 'error';
@@ -572,7 +580,9 @@ export class Game {
     if (s.inning > C.INNINGS) {
       s.phase = 'gameover';
       const { home, away } = s.score;
-      const winner = home > away ? ROSTERS.home.name : away > home ? ROSTERS.away.name : 'nobody — a tie in the mutant leagues stands';
+      const winner = home > away ? ROSTERS[this.teams.home].name
+        : away > home ? ROSTERS[this.teams.away].name
+        : 'nobody — a tie in the mutant leagues stands';
       s.lastPlay = { text: `FINAL: ${away}–${home}. Winner: ${winner}`, kind: 'final', hitScore: 0, tick: this.tick };
       return true;
     }

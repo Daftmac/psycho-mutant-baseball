@@ -559,7 +559,7 @@ const teamSelect = createTeamSelect({
       seasonScreen.show(season);
       return;
     }
-    openFieldSelect('match');
+    openFieldSelect('match', ROSTERS[teamKey]?.field); // default to your home park
   },
   onBack: () => { teamSelect.hide(); hidePreview(); toMenu(); },
 });
@@ -602,23 +602,29 @@ function openTeamSelect(mode = pendingMode) {
   teamSelect.show(pendingMode);
 }
 
-function openFieldSelect(mode) {
+function openFieldSelect(mode, preferKey = null) {
   fieldSelectMode = mode;
   appState = 'fieldselect';
   menu.hide();
   teamSelect.hide();
   hidePreview();
-  fieldSelect.show(fieldName);
+  fieldSelect.show(preferKey && unlockedFieldNames().includes(preferKey) ? preferKey : fieldName);
 }
 
 function startMatch() {
+  // the player's mutants host; a random rival comes to town
+  const allKeys = Object.keys(ROSTERS);
+  let opponent = allKeys[Math.floor(Math.random() * allKeys.length)];
+  if (opponent === (playerTeam ?? 'ghouls')) opponent = allKeys[(allKeys.indexOf(opponent) + 1) % allKeys.length];
   game = new Game({
     seed: Date.now() & 0xffff,
     mode: pendingMode,
-    derbyTeam: playerTeam ?? 'home',
+    homeKey: playerTeam ?? 'ghouls',
+    awayKey: opponent,
+    derbyTeam: playerTeam ?? 'ghouls',
     derbyPlayer: derbyPlayerIdx,
     difficulty: options.difficulty,
-    playerTeam,
+    playerSide: playerTeam ? 'home' : null,
   });
   appState = 'playing';
   swingQueued = false;
@@ -650,7 +656,7 @@ function startMatch() {
 
 function teamAgg(teamKey) {
   const agg = { hits: 0, homers: 0 };
-  for (const p of ROSTERS[teamKey].players) {
+  for (const p of ROSTERS[game.teams[teamKey]].players) {
     const st = game.state.playerStats[p.name];
     if (st) { agg.hits += st.hits; agg.homers += st.homers; }
   }
@@ -659,7 +665,8 @@ function teamAgg(teamKey) {
 
 function findMvp() {
   let best = null;
-  for (const [teamKey, ros] of Object.entries(ROSTERS)) {
+  for (const side of ['home', 'away']) {
+    const ros = ROSTERS[game.teams[side]];
     for (const p of ros.players) {
       const st = game.state.playerStats[p.name];
       if (st && st.ab > 0 && (!best || st.score > best.st.score)) best = { p, st, teamName: ros.name };
@@ -722,8 +729,8 @@ function showPostgame() {
 
   // ---- full ceremony: headline, box score, MVP on the podium ----
   const s = game.state;
-  if (playerTeam) {
-    const mine = s.score[playerTeam], theirs = s.score[playerTeam === 'home' ? 'away' : 'home'];
+  if (game.playerSide) {
+    const mine = s.score[game.playerSide], theirs = s.score[game.playerSide === 'home' ? 'away' : 'home'];
     headlineEl.textContent = mine > theirs ? 'VICTORY RISES FROM THE DIRT'
       : mine < theirs ? 'DEFEAT — THE WORMS FEAST TONIGHT'
       : 'A TIE. NOBODY REJOICES';
@@ -734,7 +741,7 @@ function showPostgame() {
   }
   postgameEl.querySelector('.final').textContent = s.lastPlay?.text ?? '';
 
-  const abbr = (teamKey) => ROSTERS[teamKey].name.split(' ').pop().slice(0, 6).toUpperCase();
+  const abbr = (side) => ROSTERS[game.teams[side]].name.split(' ').pop().slice(0, 6).toUpperCase();
   const cells = (teamKey) => {
     let row = `<td class="tm">${abbr(teamKey)}</td>`;
     for (let i = 0; i < C.INNINGS; i++) row += `<td>${s.lineScore[teamKey][i] ?? 0}</td>`;
@@ -1024,7 +1031,7 @@ const pcChipEls = PITCH_NAMES.map((name) => {
 });
 
 function playerFields() {
-  return !!game && game.mode === 'match' && !!playerTeam && game.battingTeam() !== playerTeam;
+  return !!game && game.mode === 'match' && !!game.playerSide && game.battingTeam() !== game.playerSide;
 }
 
 function renderPitchCall() {
@@ -1300,7 +1307,7 @@ function updateWalkup() {
     if (b.name !== lastBatterName) {
       lastBatterName = b.name;
       const teamName = game.mode === 'derby'
-        ? ROSTERS[game.derbyTeam].name : ROSTERS[game.battingTeam()].name;
+        ? ROSTERS[game.derbyTeam].name : ROSTERS[game.teams[game.battingTeam()]].name;
       walkupEl.innerHTML =
         `<div class="wu-team">NOW BATTING — ${teamName.toUpperCase()}</div>` +
         `<div class="wu-name">${b.name.toUpperCase()}</div>` +
@@ -1364,9 +1371,7 @@ const sb = {
   count: document.getElementById('sb-count'),
   bases: [document.getElementById('sb-b1'), document.getElementById('sb-b2'), document.getElementById('sb-b3')],
 };
-const teamAbbr = (key) => ROSTERS[key].name.split(' ').pop().slice(0, 3).toUpperCase();
-sb.awayAbbr.textContent = teamAbbr('away');
-sb.homeAbbr.textContent = teamAbbr('home');
+const teamAbbr = (side) => ROSTERS[game.teams[side]].name.split(' ').pop().slice(0, 3).toUpperCase();
 
 const flashEl = document.getElementById('flash');
 function flash(text, pitchStyle = false) {
@@ -1585,7 +1590,7 @@ function frame(now) {
 // boot: field-select reloads carry ?play=1&team= to jump straight into the match
 const bootParams = new URLSearchParams(location.search);
 if (bootParams.get('play') === '1') {
-  playerTeam = ['home', 'away'].includes(bootParams.get('team')) ? bootParams.get('team') : null;
+  playerTeam = ROSTERS[bootParams.get('team')] ? bootParams.get('team') : null;
   pendingMode = bootParams.get('mode') === 'derby' ? 'derby' : 'match';
   derbyPlayerIdx = Math.max(0, parseInt(bootParams.get('player') ?? '0', 10) || 0) % 6;
   seasonActive = bootParams.get('season') === '1' && !!loadSeason();

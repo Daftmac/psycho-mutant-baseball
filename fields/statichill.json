@@ -1,0 +1,89 @@
+{
+  "name": "Static Hill",
+  "tagline": "A thousand dead channels, and the game is on every one.",
+  "palette": {
+    "sky": "#05070c",
+    "fog": "#10141c",
+    "grass": "#1e242a",
+    "dirt": "#2c3034",
+    "chalk": "#ccd4da",
+    "casing": "#3a4148",
+    "screen": "#9fd8ff",
+    "static": "#cdd7e0",
+    "antenna": "#565e66",
+    "barcyan": "#4ae0e0",
+    "baryellow": "#e0d04a",
+    "barmagenta": "#d04ac0"
+  },
+  "fogDensity": 0.016,
+  "announcer": {
+    "ambient": [
+      "We are broadcasting live from Static Hill on every channel. Whether you like it or not.",
+      "If your set at home shows this game after you unplug it, that's normal here.",
+      "Channel 13 in left field has been showing tomorrow's game. Score's a secret.",
+      "Please stop adjusting your antenna. The antennas prefer to adjust you."
+    ],
+    "homer": [
+      "SIGNAL LOST! That ball just went off the air PERMANENTLY!",
+      "GONE! Right through the test pattern — please stand by FOREVER!"
+    ]
+  },
+  "lights": {
+    "hemi": { "sky": "#66788c", "ground": "#0a0e14", "intensity": 0.6 },
+    "dir":  { "color": "#a8c8f0", "intensity": 0.7, "pos": [55, 100, -240] }
+  },
+  "crowd": { "count": 85, "ring": [100, 138], "arc": [0.12, 0.88], "y": 0.9, "color": "antenna" },
+  "props": [
+    { "shape": "box", "size": [4, 3.4, 3.6], "color": "casing",
+      "place": "scatter", "count": 20, "ring": [115, 205], "arc": [0.12, 0.88],
+      "y": 1.7, "yawJitter": 0.5, "tiltJitter": 0.1, "scaleJitter": 0.3,
+      "children": [
+        { "shape": "box", "size": [2.6, 2, 0.2], "color": "screen", "glow": true,
+          "count": 1, "pos": [0, 0.1, 1.85] }
+      ] },
+
+    { "shape": "box", "size": [4, 3.4, 3.6], "color": "casing",
+      "place": "scatter", "count": 10, "ring": [130, 195], "arc": [0.25, 0.75],
+      "y": 5, "yawJitter": 0.8, "tiltJitter": 0.18, "scaleJitter": 0.3,
+      "children": [
+        { "shape": "box", "size": [2.6, 2, 0.2], "color": "static", "glow": true,
+          "count": 1, "pos": [0, 0.1, 1.85] }
+      ] },
+
+    { "shape": "cylinder", "size": [0.3, 0.55, 46], "segments": 5, "color": "antenna",
+      "place": "ring", "count": 6, "radius": 180, "y": 23, "arc": [0.1, 0.9],
+      "tiltJitter": 0.05, "scaleJitter": 0.2,
+      "children": [
+        { "shape": "box", "size": [7, 0.3, 0.3], "color": "antenna",
+          "count": 3, "pos": [0, 12, 0], "stack": 4.5, "rotJitter": [0, 0.8, 0] },
+        { "shape": "sphere", "size": [0.7], "segments": 5, "color": "barcyan", "glow": true,
+          "count": 1, "pos": [0, 23.5, 0] }
+      ] },
+
+    { "shape": "cylinder", "size": [17, 17, 1.4], "segments": 12, "color": "static", "glow": true,
+      "place": "single", "pos": [58, 104, -245], "rot": [1.5708, 0, 0],
+      "children": [
+        { "shape": "box", "size": [5, 26, 0.6], "color": "barcyan", "glow": true,
+          "count": 1, "pos": [-8, 0, 0], "rot": [1.5708, 0, 0] },
+        { "shape": "box", "size": [5, 26, 0.6], "color": "baryellow", "glow": true,
+          "count": 1, "pos": [0, 0, 0], "rot": [1.5708, 0, 0] },
+        { "shape": "box", "size": [5, 26, 0.6], "color": "barmagenta", "glow": true,
+          "count": 1, "pos": [8, 0, 0], "rot": [1.5708, 0, 0] }
+      ] },
+
+    { "shape": "box", "size": [9, 8, 8], "color": "casing",
+      "place": "single", "pos": [-72, 4, -230], "yawJitter": 0.2,
+      "children": [
+        { "shape": "box", "size": [6.4, 5, 0.4], "color": "screen", "glow": true,
+          "count": 1, "pos": [0, 0.2, 4.1] },
+        { "shape": "box", "size": [7.5, 6.8, 6.8], "color": "casing",
+          "count": 2, "pos": [0, 7.2, -0.5], "stack": 6.4, "rotJitter": [0, 0.3, 0.06] },
+        { "shape": "cylinder", "size": [0.14, 0.14, 12], "segments": 4, "color": "antenna",
+          "count": 2, "pos": [0, 24, 0], "rotJitter": [0, 0, 0.5] }
+      ] },
+
+    { "shape": "box", "size": [0.6, 0.5, 0.2], "color": "screen", "glow": true,
+      "place": "scatter", "count": 12, "ring": [120, 210], "arc": [0.1, 0.9],
+      "y": 0.7, "yawJitter": 1.2, "scaleJitter": 0.4 }
+  ]
+}

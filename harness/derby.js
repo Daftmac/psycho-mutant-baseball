@@ -7,7 +7,7 @@ import { C, ROSTERS } from '../src/core/constants.js';
 
 const seed = Number(process.argv[2] ?? 42);
 const derbyPlayer = seed % 6;
-const game = new Game({ seed, mode: 'derby', derbyTeam: 'home', derbyPlayer });
+const game = new Game({ seed, mode: 'derby', derbyTeam: 'ghouls', derbyPlayer });
 const rng = (() => { let a = seed ^ 0xD5B7; return () => { a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; })();
 
 // derby auto-slugger: swings hard at strikes, spits on junk
@@ -45,7 +45,7 @@ while (game.state.phase !== 'gameover' && ticks < MAX_TICKS) {
 const s = game.state;
 const report = {
   seed,
-  slugger: ROSTERS.home.players[derbyPlayer].name,
+  slugger: ROSTERS.ghouls.players[derbyPlayer].name,
   finished: s.phase === 'gameover',
   derbyMinutes: +(ticks / 3600).toFixed(1),
   homers: s.derby.homers,

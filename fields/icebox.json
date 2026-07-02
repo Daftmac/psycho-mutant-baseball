@@ -1,0 +1,78 @@
+{
+  "name": "The Icebox",
+  "tagline": "Cold storage for the game nobody thawed. Dress warm forever.",
+  "palette": {
+    "sky": "#0a1016",
+    "fog": "#1c2c38",
+    "grass": "#22333a",
+    "dirt": "#2e3c46",
+    "chalk": "#e8f2f8",
+    "wall": "#2c3e4a",
+    "slab": "#7a8ea0",
+    "ice": "#bfe4f2",
+    "frost": "#e8f4fa",
+    "chain": "#4a5560",
+    "porthole": "#d8f0fc"
+  },
+  "fogDensity": 0.021,
+  "announcer": {
+    "ambient": [
+      "A crisp minus forty in the cheap seats tonight. The expensive seats are colder.",
+      "The slabs above left field are swaying. There is no wind in here. Enjoy the game!",
+      "Lost and found now has eleven tongues stuck to the foul pole. Claim yours after the ninth.",
+      "My coffee froze mid-pour again, folks. It's hanging there. It's beautiful."
+    ],
+    "homer": [
+      "THAT BALL IS FLASH-FROZEN AND FLYING! Fresh out through the porthole!",
+      "CRACK! Cold air, hot bat — that one's in deep freeze delivery, next-day service!"
+    ]
+  },
+  "lights": {
+    "hemi": { "sky": "#7a9ab0", "ground": "#101c26", "intensity": 0.65 },
+    "dir":  { "color": "#cfeaff", "intensity": 0.6, "pos": [40, 100, -180] }
+  },
+  "crowd": { "count": 80, "ring": [100, 136], "arc": [0.12, 0.88], "y": 0.9, "color": "wall" },
+  "props": [
+    { "shape": "cylinder", "size": [225, 225, 140], "segments": 10, "color": "wall",
+      "inside": true, "open": true,
+      "place": "single", "pos": [0, 50, -90] },
+
+    { "shape": "box", "size": [4.5, 9, 1.6], "color": "slab",
+      "place": "ring", "count": 12, "radius": 145, "y": 30, "arc": [0.1, 0.9],
+      "yawJitter": 0.3, "tiltJitter": 0.08, "scaleJitter": 0.2,
+      "children": [
+        { "shape": "cylinder", "size": [0.15, 0.15, 11], "segments": 4, "color": "chain",
+          "count": 1, "pos": [0, 9.5, 0] },
+        { "shape": "box", "size": [3.2, 2.4, 0.3], "color": "frost", "glow": true,
+          "count": 1, "pos": [0, 1.5, 0.9], "posJitter": [0.8, 1.5, 0] }
+      ] },
+
+    { "shape": "cone", "size": [2.6, 3.8], "segments": 6, "color": "frost",
+      "place": "scatter", "count": 14, "ring": [112, 195], "arc": [0.12, 0.88],
+      "y": 1.8, "tiltJitter": 0.15, "scaleJitter": 0.45 },
+
+    { "shape": "cone", "size": [1.1, 7], "segments": 5, "color": "ice",
+      "place": "ring", "count": 10, "radius": 170, "y": 56, "arc": [0.1, 0.9],
+      "rot": [3.1416, 0, 0], "tiltJitter": 0.1, "scaleJitter": 0.35 },
+
+    { "shape": "cylinder", "size": [14, 14, 1.4], "segments": 12, "color": "porthole", "glow": true,
+      "place": "single", "pos": [52, 92, -235], "rot": [1.5708, 0, 0],
+      "children": [
+        { "shape": "cylinder", "size": [16.5, 16.5, 2.4], "segments": 12, "color": "chain", "open": true,
+          "count": 1, "pos": [0, 0, 0] },
+        { "shape": "box", "size": [30, 1.2, 0.8], "color": "chain",
+          "count": 1, "pos": [0, 0, 0.4], "rot": [1.5708, 0, 0.6] }
+      ] },
+
+    { "shape": "sphere", "size": [1.4], "segments": 5, "color": "frost", "glow": true,
+      "place": "scatter", "count": 8, "ring": [118, 185], "arc": [0.2, 0.8],
+      "y": 1.6, "scaleJitter": 0.5 },
+
+    { "shape": "box", "size": [10, 14, 8], "color": "slab",
+      "place": "single", "pos": [-64, 7, -228], "rot": [0, 0.4, 0.12],
+      "children": [
+        { "shape": "box", "size": [11, 2.5, 9], "color": "frost", "glow": true,
+          "count": 1, "pos": [0, 7.5, 0] }
+      ] }
+  ]
+}

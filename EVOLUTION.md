@@ -168,7 +168,20 @@ unchecked items — never build them mid-increment.
       ISOMETRIC cam framing the runner's line, the batter drops the bat and
       runs to first, and first/third base coaches windmill in their boxes.
 
+- [x] **F4. Twelve teams, twelve parks.** ✅ Core takes any two roster slugs
+      (homeKey/awayKey; playerSide drives the rubber band). ROSTERS expanded to
+      12 themed teams x 6 mutants, each with a home park (quick match defaults
+      to yours; a random rival visits). Seven new stadiums shipped: Isotope
+      Alley, Flooded Chapel, Abattoir Fairgrounds, Static Hill, Taxidermy
+      Hall, Icebox, Compost Colosseum — plus the original four and the hidden
+      Commissioner's Office = 12. New mutants have no signature abilities yet
+      (parked below).
+
 ## Parking lot (ideas noticed, not yet scheduled)
+- Signature abilities for the 60 new mutants (C.ABILITIES only covers the
+  original twelve)
+- Abattoir Fairgrounds reads dark in the lobby orbit — art-director pass on
+  its lights/palette contrast
 - balance-analyst: the .250–.380 BA band is tighter than seed variance allows
   (~40 swings/game → ±.07 std). Build a multi-seed averaging harness mode and
   re-express the target as a mean across ≥10 seeds.

@@ -1,0 +1,83 @@
+{
+  "name": "Isotope Alley",
+  "tagline": "Three innings of exposure is considered a full career.",
+  "palette": {
+    "sky": "#04120a",
+    "fog": "#0d2414",
+    "grass": "#1f3018",
+    "dirt": "#33301c",
+    "chalk": "#c8d8a0",
+    "glowgreen": "#4dff2e",
+    "coolant": "#3ee8d0",
+    "hazard": "#ffd53a",
+    "drum": "#3c4a3a",
+    "concrete": "#4a5248",
+    "sludgepool": "#2fbf24"
+  },
+  "fogDensity": 0.018,
+  "announcer": {
+    "ambient": [
+      "The pool is bubbling at a friendly rate tonight, folks. Very friendly.",
+      "Stadium management reminds you: the drums are decorative. Do not hug the drums.",
+      "My badge just turned a NEW color up here in the booth. Gorgeous.",
+      "Cooling Tower Two is humming the seventh-inning stretch a little early."
+    ],
+    "homer": [
+      "INTO THE POOL! That ball has a half-life now, and so does the outfield!",
+      "GONE! Straight past Tower Two — it'll glow all the way home!"
+    ]
+  },
+  "lights": {
+    "hemi": { "sky": "#4d8a52", "ground": "#0a1a0c", "intensity": 0.6 },
+    "dir":  { "color": "#7dffa0", "intensity": 0.7, "pos": [-45, 90, -170] }
+  },
+  "crowd": { "count": 85, "ring": [100, 135], "arc": [0.12, 0.88], "y": 0.9, "color": "concrete" },
+  "props": [
+    { "shape": "plane", "size": [440, 80], "color": "sludgepool", "glow": true,
+      "place": "single", "pos": [0, 0.15, -195], "rot": [-1.5708, 0, 0] },
+
+    { "shape": "cylinder", "size": [22, 34, 115], "segments": 10, "color": "concrete", "open": true,
+      "place": "single", "pos": [-70, 57, -245],
+      "children": [
+        { "shape": "sphere", "size": [16], "segments": 7, "color": "glowgreen", "glow": true,
+          "count": 1, "pos": [0, 62, 0] },
+        { "shape": "box", "size": [3, 8, 3], "color": "hazard", "glow": true,
+          "count": 2, "pos": [0, 30, 22], "posJitter": [16, 14, 2] }
+      ] },
+
+    { "shape": "cylinder", "size": [16, 26, 85], "segments": 8, "color": "concrete", "open": true,
+      "place": "single", "pos": [65, 42, -250],
+      "children": [
+        { "shape": "sphere", "size": [11], "segments": 6, "color": "coolant", "glow": true,
+          "count": 1, "pos": [0, 46, 0] }
+      ] },
+
+    { "shape": "cylinder", "size": [2.2, 2.2, 4.5], "segments": 8, "color": "drum",
+      "place": "ring", "count": 14, "radius": 150, "y": 2.2, "arc": [0.1, 0.9],
+      "yawJitter": 0.4, "tiltJitter": 0.06, "scaleJitter": 0.15,
+      "children": [
+        { "shape": "cylinder", "size": [2.3, 2.3, 0.7], "segments": 8, "color": "glowgreen", "glow": true,
+          "count": 1, "pos": [0, 0.6, 0] }
+      ] },
+
+    { "shape": "cylinder", "size": [2.2, 2.2, 4.5], "segments": 8, "color": "drum",
+      "place": "scatter", "count": 8, "ring": [115, 200], "arc": [0.15, 0.85],
+      "y": 1.4, "rot": [0, 0, 1.35], "yawJitter": 0.9, "scaleJitter": 0.2,
+      "children": [
+        { "shape": "sphere", "size": [1.6], "segments": 6, "color": "glowgreen", "glow": true,
+          "count": 1, "pos": [2.6, -0.9, 0], "posJitter": [1.2, 0, 1.2] }
+      ] },
+
+    { "shape": "box", "size": [0.5, 26, 0.5], "color": "drum",
+      "place": "ring", "count": 8, "radius": 185, "y": 13, "arc": [0.08, 0.92],
+      "tiltJitter": 0.05,
+      "children": [
+        { "shape": "box", "size": [1.6, 1.6, 1.6], "color": "hazard", "glow": true,
+          "count": 1, "pos": [0, 13.5, 0] }
+      ] },
+
+    { "shape": "sphere", "size": [1.1], "segments": 5, "color": "coolant", "glow": true,
+      "place": "scatter", "count": 9, "ring": [150, 210], "arc": [0.3, 0.7],
+      "y": 0.9, "scaleJitter": 0.45 }
+  ]
+}

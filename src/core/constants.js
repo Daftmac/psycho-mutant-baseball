@@ -153,12 +153,12 @@ export const C = {
                               // the renderer scales prop distances by SCALE/BASE
 };
 
-// The mutant rosters. Stats 0..1: power, contact, chaos.
+// The mutant rosters — twelve teams, keyed by slug. Stats 0..1: power,
+// contact, chaos, speed. gimmick = flavor tagline. field = home ballpark.
 // chaos = chance-based reality-warping (see CHAOS_PROC_CHANCE).
-// gimmick = flavor tagline (select screens, future walk-ups). Data only.
 export const ROSTERS = {
-  home: {
-    name: 'Gravemound Ghouls',
+  ghouls: {
+    name: 'Gravemound Ghouls', field: 'boneyard',
     players: [
       { name: 'Sluggo the Exhumed',   power: 0.85, contact: 0.45, chaos: 0.30, speed: 0.30, gimmick: 'Swings like the grave is still on him' },
       { name: 'Marrow Mary',          power: 0.55, contact: 0.75, chaos: 0.20, speed: 0.60, gimmick: "Reads pitches with someone else's eyes" },
@@ -168,8 +168,8 @@ export const ROSTERS = {
       { name: 'Old Gasper',           power: 0.90, contact: 0.35, chaos: 0.40, speed: 0.15, gimmick: 'Every homer costs him a lung' },
     ],
   },
-  away: {
-    name: 'Isotope Alley Aberrations',
+  aberrations: {
+    name: 'Isotope Alley Aberrations', field: 'isotope',
     players: [
       { name: 'Rad-Rat Rickey',       power: 0.50, contact: 0.80, chaos: 0.25, speed: 0.95, gimmick: 'First to the base, glows in the dark' },
       { name: 'Chernobyl Chuck',      power: 0.88, contact: 0.40, chaos: 0.35, speed: 0.35, gimmick: 'Half-life? He has two full ones' },
@@ -177,6 +177,116 @@ export const ROSTERS = {
       { name: 'Gilly the Gilled',     power: 0.55, contact: 0.70, chaos: 0.20, speed: 0.70, gimmick: 'Hits better when it rains. It always rains' },
       { name: 'Bessie Two-Heads',     power: 0.75, contact: 0.50, chaos: 0.30, speed: 0.40, gimmick: 'Four batting eyes are better than two' },
       { name: 'Mothlight Moe',        power: 0.45, contact: 0.75, chaos: 0.50, speed: 0.80, gimmick: 'Tragically distracted by stadium lights' },
+    ],
+  },
+  idols: {
+    name: 'Midnight Matinee Idols', field: 'drivein',
+    players: [
+      { name: 'Velvet Vlad',          power: 0.84, contact: 0.42, chaos: 0.35, speed: 0.40, gimmick: 'Bats only after sundown. It is always sundown' },
+      { name: 'Norma Doom',           power: 0.50, contact: 0.85, chaos: 0.20, speed: 0.55, gimmick: 'Ready for her close-up. It never ends' },
+      { name: 'Reel-to-Reel Rita',    power: 0.45, contact: 0.70, chaos: 0.25, speed: 0.92, gimmick: 'Runs at twenty-four frames a second, all fast' },
+      { name: 'The Usher',            power: 0.58, contact: 0.60, chaos: 0.62, speed: 0.50, gimmick: 'Shows every pitch to its seat' },
+      { name: 'Double-Feature Dan',   power: 0.68, contact: 0.62, chaos: 0.30, speed: 0.55, gimmick: 'Two shows nightly, no intermission' },
+      { name: 'Popcorn Golem',        power: 0.88, contact: 0.34, chaos: 0.38, speed: 0.25, gimmick: 'Butter in the veins, salt in the soul' },
+    ],
+  },
+  dwellers: {
+    name: 'Undergut Dwellers', field: 'undergut',
+    players: [
+      { name: 'Grease-Trap Greg',     power: 0.86, contact: 0.40, chaos: 0.32, speed: 0.30, gimmick: 'What the city flushes, he returns with interest' },
+      { name: 'Mama Mildew',          power: 0.52, contact: 0.83, chaos: 0.22, speed: 0.50, gimmick: 'She grows on you' },
+      { name: 'Scutter',              power: 0.44, contact: 0.68, chaos: 0.28, speed: 0.95, gimmick: 'You heard him before you saw him' },
+      { name: 'The Unflushable',      power: 0.60, contact: 0.58, chaos: 0.63, speed: 0.45, gimmick: 'He always comes back' },
+      { name: 'Pipe-Dream Pete',      power: 0.66, contact: 0.64, chaos: 0.30, speed: 0.55, gimmick: 'Dreams in brown' },
+      { name: 'Gator Gordo',          power: 0.80, contact: 0.48, chaos: 0.35, speed: 0.38, gimmick: 'The rumor was true, and it bats cleanup' },
+    ],
+  },
+  broodmothers: {
+    name: 'Silk Broodmothers', field: 'widowsweb',
+    players: [
+      { name: 'Madame Ocho',          power: 0.85, contact: 0.42, chaos: 0.33, speed: 0.35, gimmick: 'Eight arms, one swing, no survivors' },
+      { name: 'Gossamer Gwen',        power: 0.48, contact: 0.86, chaos: 0.18, speed: 0.58, gimmick: 'Soft hands. So many soft hands' },
+      { name: 'Skitters',             power: 0.42, contact: 0.66, chaos: 0.26, speed: 0.94, gimmick: 'First to first on six legs' },
+      { name: 'The Clutch',           power: 0.58, contact: 0.60, chaos: 0.65, speed: 0.48, gimmick: 'Ten thousand children watch from the rafters' },
+      { name: 'Webster',              power: 0.66, contact: 0.65, chaos: 0.28, speed: 0.52, gimmick: 'Well-read. Mostly flies' },
+      { name: 'Cocoona',              power: 0.78, contact: 0.50, chaos: 0.36, speed: 0.30, gimmick: 'Mid-metamorphosis and still slugging' },
+    ],
+  },
+  interns: {
+    name: 'Front Office Interns', field: 'commissioner',
+    players: [
+      { name: 'The Stapler',          power: 0.87, contact: 0.38, chaos: 0.30, speed: 0.35, gimmick: 'Attached to nothing, fastened to glory' },
+      { name: 'Clipboard Cassie',     power: 0.50, contact: 0.84, chaos: 0.18, speed: 0.55, gimmick: 'Tracks every pitch in triplicate' },
+      { name: 'Unpaid Ian',           power: 0.44, contact: 0.66, chaos: 0.24, speed: 0.90, gimmick: 'Runs everywhere. Has to' },
+      { name: 'Red-Tape Ray',         power: 0.58, contact: 0.58, chaos: 0.62, speed: 0.45, gimmick: 'Every rally dies in his committee' },
+      { name: 'Coffee Wraith',        power: 0.62, contact: 0.62, chaos: 0.40, speed: 0.75, gimmick: 'Fourteen cups deep and vibrating' },
+      { name: 'Middle-Manager Mel',   power: 0.74, contact: 0.52, chaos: 0.30, speed: 0.40, gimmick: 'Delegates the small stuff, crushes the big stuff' },
+    ],
+  },
+  choir: {
+    name: 'Flooded Chapel Choir', field: 'chapel',
+    players: [
+      { name: 'Baritone Bones',       power: 0.86, contact: 0.40, chaos: 0.32, speed: 0.30, gimmick: 'The low note loosens fillings' },
+      { name: 'Sister Cellophane',    power: 0.48, contact: 0.84, chaos: 0.20, speed: 0.55, gimmick: 'See-through, and sees through you' },
+      { name: 'Drowned Deacon Dee',   power: 0.46, contact: 0.66, chaos: 0.26, speed: 0.88, gimmick: 'Baptized at a dead sprint' },
+      { name: 'Wet Psalm Sam',        power: 0.58, contact: 0.60, chaos: 0.60, speed: 0.48, gimmick: 'Every hymn a rain delay' },
+      { name: 'The Organist',         power: 0.66, contact: 0.66, chaos: 0.28, speed: 0.50, gimmick: 'Has never missed a cue or a curveball' },
+      { name: 'Gargoyle Gus',         power: 0.80, contact: 0.42, chaos: 0.34, speed: 0.28, gimmick: 'Came down off the roof for this' },
+    ],
+  },
+  butchers: {
+    name: 'Fairground Butchers', field: 'abattoir',
+    players: [
+      { name: 'Cleaver Colette',      power: 0.90, contact: 0.34, chaos: 0.32, speed: 0.32, gimmick: 'Every cut is prime' },
+      { name: 'Tenderloin Tim',       power: 0.52, contact: 0.82, chaos: 0.20, speed: 0.52, gimmick: 'Knows exactly where the meat of the pitch is' },
+      { name: 'Links',                power: 0.44, contact: 0.64, chaos: 0.26, speed: 0.91, gimmick: 'One sausage. Technically several' },
+      { name: 'The Offal Oracle',     power: 0.58, contact: 0.58, chaos: 0.66, speed: 0.45, gimmick: 'Reads the future in the fifth inning' },
+      { name: 'Brisket Bruce',        power: 0.68, contact: 0.62, chaos: 0.28, speed: 0.42, gimmick: 'Low and slow' },
+      { name: 'Hambone Hank',         power: 0.78, contact: 0.48, chaos: 0.34, speed: 0.38, gimmick: 'Swings the family recipe' },
+    ],
+  },
+  antennas: {
+    name: 'Static Hill Antennas', field: 'statichill',
+    players: [
+      { name: 'UHF Ulysses',          power: 0.86, contact: 0.38, chaos: 0.34, speed: 0.34, gimmick: 'Broadcasts on all channels at once' },
+      { name: 'Test-Pattern Tess',    power: 0.50, contact: 0.85, chaos: 0.16, speed: 0.55, gimmick: 'Perfectly calibrated' },
+      { name: 'Rabbit-Ears Rae',      power: 0.44, contact: 0.66, chaos: 0.24, speed: 0.92, gimmick: 'Better reception on the run' },
+      { name: 'Dead-Channel Chad',    power: 0.58, contact: 0.58, chaos: 0.61, speed: 0.48, gimmick: 'Nothing on. Nothing ever on' },
+      { name: 'The Weatherman',       power: 0.66, contact: 0.64, chaos: 0.30, speed: 0.50, gimmick: 'One hundred percent chance of pain' },
+      { name: 'Vertical-Hold Vern',   power: 0.76, contact: 0.50, chaos: 0.32, speed: 0.40, gimmick: 'Keeps rolling. Cannot be stopped' },
+    ],
+  },
+  stitches: {
+    name: 'Sawdust Stitches', field: 'taxidermy',
+    players: [
+      { name: 'Mounted Mo',           power: 0.88, contact: 0.32, chaos: 0.34, speed: 0.30, gimmick: 'Came off the wall angry' },
+      { name: 'Glass-Eye Gladys',     power: 0.50, contact: 0.85, chaos: 0.18, speed: 0.52, gimmick: 'Sees everything. Blinks never' },
+      { name: 'Pose-able Paul',       power: 0.46, contact: 0.64, chaos: 0.26, speed: 0.89, gimmick: 'Every joint articulated for speed' },
+      { name: 'Loose-Thread Lou',     power: 0.58, contact: 0.58, chaos: 0.64, speed: 0.46, gimmick: 'Pull him and the whole team unravels' },
+      { name: 'Shellac Shelly',       power: 0.66, contact: 0.64, chaos: 0.28, speed: 0.50, gimmick: 'Preserved at her peak' },
+      { name: 'The Diorama',          power: 0.76, contact: 0.50, chaos: 0.36, speed: 0.42, gimmick: 'Three squirrels in a trench coat. At least' },
+    ],
+  },
+  frostbites: {
+    name: 'Icebox Frostbites', field: 'icebox',
+    players: [
+      { name: 'Hock',                 power: 0.89, contact: 0.33, chaos: 0.30, speed: 0.28, gimmick: 'Hangs heavy, swings heavier' },
+      { name: 'Freezer-Burn Fern',    power: 0.50, contact: 0.82, chaos: 0.20, speed: 0.54, gimmick: 'A little frost never hurt the average' },
+      { name: 'Slick',                power: 0.44, contact: 0.65, chaos: 0.24, speed: 0.94, gimmick: 'The basepaths are always iced' },
+      { name: 'Chilly Concepcion',    power: 0.58, contact: 0.60, chaos: 0.57, speed: 0.48, gimmick: 'Cold hands, colder blood' },
+      { name: 'The Leftover',         power: 0.66, contact: 0.63, chaos: 0.30, speed: 0.50, gimmick: "In the back since '09. Still good" },
+      { name: 'Icicle Ike',           power: 0.77, contact: 0.48, chaos: 0.34, speed: 0.40, gimmick: 'Drops in sharp from above' },
+    ],
+  },
+  darlings: {
+    name: 'Compost Heap Darlings', field: 'compost',
+    players: [
+      { name: 'Rotgut Rudy',          power: 0.87, contact: 0.36, chaos: 0.34, speed: 0.32, gimmick: 'Ferments on contact' },
+      { name: 'Banana Brown',         power: 0.50, contact: 0.81, chaos: 0.20, speed: 0.56, gimmick: 'Perfectly overripe' },
+      { name: 'Peelings Pearl',       power: 0.44, contact: 0.64, chaos: 0.26, speed: 0.90, gimmick: 'Slips herself into second' },
+      { name: 'The Mulch King',       power: 0.58, contact: 0.58, chaos: 0.64, speed: 0.44, gimmick: 'Everything returns to him eventually' },
+      { name: 'Eggshell Ed',          power: 0.64, contact: 0.66, chaos: 0.30, speed: 0.52, gimmick: 'Handle with care, pitch with fear' },
+      { name: 'Grub Mother',          power: 0.74, contact: 0.52, chaos: 0.38, speed: 0.36, gimmick: 'Her children aerate the infield' },
     ],
   },
 };

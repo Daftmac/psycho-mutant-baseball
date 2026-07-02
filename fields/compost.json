@@ -1,0 +1,87 @@
+{
+  "name": "The Compost Colosseum",
+  "tagline": "Everything here is coming back next season. Everything.",
+  "palette": {
+    "sky": "#0a0d06",
+    "fog": "#181c0e",
+    "grass": "#2a3316",
+    "dirt": "#3c2e1a",
+    "chalk": "#d4cfae",
+    "mound": "#4a3b20",
+    "moss": "#5a6b2a",
+    "stem": "#cbbf9a",
+    "cap": "#b0522e",
+    "spore": "#d8ff6a",
+    "firefly": "#ffe66a"
+  },
+  "fogDensity": 0.014,
+  "announcer": {
+    "ambient": [
+      "The outfield grew two inches during the anthem, folks. Groundskeeping has given up.",
+      "Tonight's air quality: rich, loamy, ALIVE. Take a big whiff for the folks at home.",
+      "That third-base mushroom wasn't there yesterday. It has season tickets now.",
+      "The fireflies are spelling something over center field. We choose not to read it."
+    ],
+    "homer": [
+      "BURIED IN THE BACK TIER! That ball will be soil by spring — CIRCLE OF DINGERS!",
+      "GONE INTO THE MUSHROOM GROVE! The caps are glowing their approval!"
+    ]
+  },
+  "lights": {
+    "hemi": { "sky": "#6a7a44", "ground": "#12160a", "intensity": 0.65 },
+    "dir":  { "color": "#c8e07a", "intensity": 0.65, "pos": [-50, 90, -200] }
+  },
+  "crowd": { "count": 90, "ring": [100, 140], "arc": [0.12, 0.88], "y": 0.9, "color": "mound" },
+  "props": [
+    { "shape": "cylinder", "size": [70, 88, 11], "segments": 10, "color": "mound",
+      "place": "single", "pos": [0, 5, -248],
+      "children": [
+        { "shape": "cylinder", "size": [48, 62, 10], "segments": 10, "color": "mound",
+          "count": 1, "pos": [0, 10, 0] },
+        { "shape": "cylinder", "size": [28, 40, 9], "segments": 9, "color": "moss",
+          "count": 1, "pos": [0, 19, 0] },
+        { "shape": "cylinder", "size": [1.8, 2.6, 14], "segments": 6, "color": "stem",
+          "count": 1, "pos": [0, 30, 0] },
+        { "shape": "cone", "size": [8, 6], "segments": 8, "color": "spore", "glow": true,
+          "count": 1, "pos": [0, 39, 0] }
+      ] },
+
+    { "shape": "cylinder", "size": [15, 20, 7], "segments": 8, "color": "mound",
+      "place": "ring", "count": 10, "radius": 190, "y": 3, "arc": [0.08, 0.92],
+      "yawJitter": 0.5, "scaleJitter": 0.3,
+      "children": [
+        { "shape": "cylinder", "size": [9, 13, 5], "segments": 7, "color": "moss",
+          "count": 1, "pos": [0, 5.5, 0] }
+      ] },
+
+    { "shape": "cylinder", "size": [1.1, 1.7, 9], "segments": 6, "color": "stem",
+      "place": "scatter", "count": 7, "ring": [118, 195], "arc": [0.12, 0.88],
+      "y": 4.5, "tiltJitter": 0.12, "scaleJitter": 0.35,
+      "children": [
+        { "shape": "cone", "size": [4.2, 3.2], "segments": 8, "color": "spore", "glow": true,
+          "count": 1, "pos": [0, 5.5, 0] }
+      ] },
+
+    { "shape": "cylinder", "size": [1.4, 2, 7], "segments": 6, "color": "stem",
+      "place": "scatter", "count": 5, "ring": [120, 180], "arc": [0.18, 0.82],
+      "y": 3.5, "tiltJitter": 0.18, "scaleJitter": 0.3,
+      "children": [
+        { "shape": "cone", "size": [5, 3.8], "segments": 8, "color": "cap",
+          "count": 1, "pos": [0, 4.8, 0] },
+        { "shape": "sphere", "size": [0.6], "segments": 4, "color": "spore", "glow": true,
+          "count": 2, "pos": [0, 7, 2], "posJitter": [3, 1.5, 2] }
+      ] },
+
+    { "shape": "box", "size": [0.3, 0.3, 0.3], "color": "firefly", "glow": true,
+      "place": "scatter", "count": 16, "ring": [115, 205], "arc": [0.1, 0.9],
+      "y": 4, "scaleJitter": 0.4,
+      "children": [
+        { "shape": "box", "size": [0.25, 0.25, 0.25], "color": "firefly",
+          "count": 1, "pos": [0, 1.5, 0], "posJitter": [2.5, 2.5, 2.5] }
+      ] },
+
+    { "shape": "cone", "size": [2.2, 8], "segments": 5, "color": "moss",
+      "place": "scatter", "count": 10, "ring": [125, 200], "arc": [0.1, 0.9],
+      "y": 4, "tiltJitter": 0.2, "scaleJitter": 0.4 }
+  ]
+}

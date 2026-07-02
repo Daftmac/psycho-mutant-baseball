@@ -1,0 +1,75 @@
+{
+  "name": "The Flooded Chapel",
+  "tagline": "The congregation never left. They just stopped needing air.",
+  "palette": {
+    "sky": "#050a14",
+    "fog": "#0d1a2a",
+    "grass": "#1a2a2c",
+    "dirt": "#2a3038",
+    "chalk": "#c6d2d8",
+    "water": "#0c2438",
+    "stone": "#5a6470",
+    "wood": "#33261a",
+    "jewelred": "#c0304a",
+    "jewelblue": "#3a6ae0",
+    "jewelgold": "#e0b83a",
+    "palemoon": "#d8e8e2"
+  },
+  "fogDensity": 0.014,
+  "announcer": {
+    "ambient": [
+      "Lovely acoustics tonight. The hymns are coming from UNDER the outfield again.",
+      "The bell rang itself in the third. Tradition, probably.",
+      "If your seat is damp, do not worry. If your seat is singing, notify an usher.",
+      "The stained glass is glowing with no light behind it. We've stopped asking."
+    ],
+    "homer": [
+      "THAT ONE'S BAPTIZED! Straight into the deep end of center field!",
+      "OVER THE BELL TOWER! Somebody down below just caught a souvenir!"
+    ]
+  },
+  "lights": {
+    "hemi": { "sky": "#5a7a94", "ground": "#0a1420", "intensity": 0.6 },
+    "dir":  { "color": "#a8c8dc", "intensity": 0.65, "pos": [50, 95, -230] }
+  },
+  "crowd": { "count": 80, "ring": [105, 145], "arc": [0.12, 0.88], "y": 0.9, "color": "stone" },
+  "props": [
+    { "shape": "plane", "size": [460, 130], "color": "water", "glow": true,
+      "place": "single", "pos": [0, 0.12, -185], "rot": [-1.5708, 0, 0] },
+
+    { "shape": "box", "size": [18, 92, 18], "color": "stone",
+      "place": "single", "pos": [-58, 44, -245],
+      "children": [
+        { "shape": "cone", "size": [14, 24], "segments": 4, "color": "wood",
+          "count": 1, "pos": [0, 58, 0] },
+        { "shape": "sphere", "size": [3.2], "segments": 6, "color": "jewelgold", "glow": true,
+          "count": 1, "pos": [0, 40, 9.5] },
+        { "shape": "plane", "size": [6, 12], "color": "jewelblue", "glow": true,
+          "count": 1, "pos": [0, 14, 9.2] }
+      ] },
+
+    { "shape": "plane", "size": [7, 14], "color": "jewelred", "glow": true,
+      "place": "ring", "count": 3, "radius": 170, "y": 20, "arc": [0.18, 0.45],
+      "lookCenter": true, "tiltJitter": 0.1, "scaleJitter": 0.2 },
+    { "shape": "plane", "size": [7, 14], "color": "jewelblue", "glow": true,
+      "place": "ring", "count": 3, "radius": 170, "y": 20, "arc": [0.55, 0.82],
+      "lookCenter": true, "tiltJitter": 0.1, "scaleJitter": 0.2 },
+    { "shape": "plane", "size": [9, 18], "color": "jewelgold", "glow": true,
+      "place": "single", "pos": [52, 26, -225], "rot": [0, 3.1416, 0] },
+
+    { "shape": "box", "size": [7, 1.2, 2.4], "color": "wood",
+      "place": "scatter", "count": 14, "ring": [115, 190], "arc": [0.15, 0.85],
+      "y": 0.9, "yawJitter": 0.9, "tiltJitter": 0.22, "scaleJitter": 0.2,
+      "children": [
+        { "shape": "box", "size": [7, 2.6, 0.5], "color": "wood",
+          "count": 1, "pos": [0, 1.6, -1] }
+      ] },
+
+    { "shape": "cylinder", "size": [2.6, 3.2, 34], "segments": 6, "color": "stone",
+      "place": "ring", "count": 8, "radius": 200, "y": 15, "arc": [0.08, 0.92],
+      "tiltJitter": 0.14, "scaleJitter": 0.25 },
+
+    { "shape": "sphere", "size": [18], "segments": 10, "color": "palemoon", "glow": true,
+      "place": "single", "pos": [62, 105, -255] }
+  ]
+}

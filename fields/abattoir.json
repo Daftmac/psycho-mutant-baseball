@@ -1,0 +1,96 @@
+{
+  "name": "The Abattoir Fairgrounds",
+  "tagline": "Fun for the whole herd. No refunds, no exits.",
+  "palette": {
+    "sky": "#160812",
+    "fog": "#2a1220",
+    "grass": "#26241c",
+    "dirt": "#3e2c22",
+    "chalk": "#d8ccc0",
+    "tentred": "#a8323a",
+    "cream": "#e8dcc0",
+    "bulb": "#ffd98a",
+    "iron": "#33302e",
+    "pigpink": "#f2a0b4",
+    "dusk": "#523048"
+  },
+  "fogDensity": 0.015,
+  "announcer": {
+    "ambient": [
+      "The ferris wheel is turning again, folks. Nobody is operating it. Wheee!",
+      "Tonight's mystery meat on a stick is... still a mystery! Get 'em hot!",
+      "Mr. Snickles the pig sign has been smiling at me for four innings straight.",
+      "Win a prize on the hook toss! The hooks toss back, so stay loose out there!"
+    ],
+    "homer": [
+      "RING THE BELL! THAT ONE WINS THE BIG PRIZE! Please don't open the big prize!",
+      "OVER THE WHEEL AND OUT OF THE FAIR! Mr. Snickles approves!"
+    ]
+  },
+  "lights": {
+    "hemi": { "sky": "#8a5a72", "ground": "#1a0c14", "intensity": 0.65 },
+    "dir":  { "color": "#ffb070", "intensity": 0.7, "pos": [60, 85, -200] }
+  },
+  "crowd": { "count": 90, "ring": [100, 138], "arc": [0.12, 0.88], "y": 0.9, "color": "dusk" },
+  "props": [
+    { "shape": "cylinder", "size": [52, 52, 3], "segments": 12, "color": "iron", "open": true,
+      "place": "single", "pos": [68, 62, -240], "rot": [1.5708, 0, 0],
+      "children": [
+        { "shape": "box", "size": [2, 100, 2], "color": "iron",
+          "count": 1, "pos": [0, 0, 0], "rot": [0, 0, 0] },
+        { "shape": "box", "size": [2, 100, 2], "color": "iron",
+          "count": 1, "pos": [0, 0, 0], "rot": [0, 0, 1.047] },
+        { "shape": "box", "size": [2, 100, 2], "color": "iron",
+          "count": 1, "pos": [0, 0, 0], "rot": [0, 0, 2.094] },
+        { "shape": "sphere", "size": [4.5], "segments": 6, "color": "bulb", "glow": true,
+          "count": 1, "pos": [0, 0, 0] },
+        { "shape": "box", "size": [3.4, 3, 3], "color": "tentred",
+          "count": 6, "pos": [0, -50, 0], "posJitter": [50, 46, 1] }
+      ] },
+    { "shape": "cone", "size": [10, 55], "segments": 4, "color": "iron",
+      "place": "single", "pos": [68, 22, -240] },
+
+    { "shape": "cone", "size": [11, 17], "segments": 8, "color": "tentred",
+      "place": "scatter", "count": 5, "ring": [122, 190], "arc": [0.15, 0.85],
+      "y": 8.5, "scaleJitter": 0.25,
+      "children": [
+        { "shape": "cone", "size": [4.5, 7.5], "segments": 8, "color": "cream",
+          "count": 1, "pos": [0, 7.5, 0] },
+        { "shape": "box", "size": [2.6, 1.4, 0.15], "color": "bulb", "glow": true,
+          "count": 1, "pos": [0, 12.5, 0], "rotJitter": [0, 3.1, 0] }
+      ] },
+
+    { "shape": "box", "size": [0.4, 13, 0.4], "color": "iron",
+      "place": "ring", "count": 8, "radius": 140, "y": 34, "arc": [0.12, 0.88],
+      "tiltJitter": 0.08, "scaleJitter": 0.15,
+      "children": [
+        { "shape": "box", "size": [0.4, 4, 0.4], "color": "cream",
+          "count": 1, "pos": [0, -8, 0.8], "rot": [0.6, 0, 0] }
+      ] },
+
+    { "shape": "sphere", "size": [0.9], "segments": 5, "color": "bulb", "glow": true,
+      "place": "ring", "count": 18, "radius": 124, "y": 25, "arc": [0.1, 0.9],
+      "scaleJitter": 0.3 },
+
+    { "shape": "box", "size": [16, 12, 1], "color": "pigpink", "glow": true,
+      "place": "single", "pos": [-68, 32, -222], "rot": [0, 0.35, 0],
+      "children": [
+        { "shape": "box", "size": [1.6, 1.6, 0.3], "color": "iron",
+          "count": 2, "pos": [-3, 2.4, 0.6], "posJitter": [0, 0, 0], "stack": 0 },
+        { "shape": "box", "size": [1.6, 1.6, 0.3], "color": "iron",
+          "count": 1, "pos": [3, 2.4, 0.6] },
+        { "shape": "box", "size": [7, 1.2, 0.3], "color": "iron",
+          "count": 1, "pos": [0, -2.6, 0.6] },
+        { "shape": "box", "size": [1.4, 14, 1.4], "color": "iron",
+          "count": 2, "pos": [0, -12, 0], "posJitter": [6, 0, 0] }
+      ] },
+
+    { "shape": "box", "size": [3.2, 3.2, 3.2], "color": "tentred",
+      "place": "scatter", "count": 6, "ring": [115, 175], "arc": [0.2, 0.8],
+      "y": 1.6, "yawJitter": 0.8, "scaleJitter": 0.35,
+      "children": [
+        { "shape": "sphere", "size": [0.8], "segments": 5, "color": "bulb", "glow": true,
+          "count": 1, "pos": [0, 2.6, 0] }
+      ] }
+  ]
+}

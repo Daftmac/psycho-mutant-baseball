@@ -9,7 +9,8 @@
     "test": "node harness/simulate.js 42 && node harness/simulate.js 7 && node harness/simulate.js 1234 && node harness/derby.js 42 && node harness/derby.js 7"
   },
   "dependencies": {
-    "three": "^0.170.0"
+    "three": "^0.170.0",
+    "tone": "^15.1.22"
   },
   "devDependencies": {
     "vite": "^6.0.0"

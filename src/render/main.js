@@ -10,6 +10,7 @@ import { createMenu } from './menu.js';
 import { createTeamSelect, createFieldSelect, statBlocks } from './select.js';
 import { createOptions } from './options.js';
 import { createAnnouncer } from './announcer.js';
+import { audio } from './audio.js';
 
 // ---------- field loading ----------
 // Fields are pure data (fields/*.json — schema in fields/README.md).
@@ -204,7 +205,10 @@ let crowdT = 0;
 function updateCrowd() {
   if (!crowd) return;
   crowdT++;
-  if (crowd.excite > 0) crowd.excite--;
+  if (crowd.excite > 0) {
+    crowd.excite--;
+    if (crowd.excite === 0) audio.crowdSwell(false);
+  }
   const roaring = crowd.excite > 0;
   const amp = roaring ? 1.0 : 0.16;
   const speed = roaring ? 0.28 : 0.06;
@@ -397,16 +401,26 @@ let derbyPlayerIdx = 0;
 // ---------- persisted options ----------
 const OPT_KEY = 'pmb-options';
 const PICTURES = { 480: [480, 300], 640: [640, 400], 320: [320, 200] }; // all 1.6:1
-let options = { difficulty: 'midnight', picture: '480', crt: 'off' };
+let options = { difficulty: 'midnight', picture: '480', crt: 'off', sound: 'on' };
 try { options = { ...options, ...JSON.parse(localStorage.getItem(OPT_KEY) ?? '{}') }; } catch { /* fresh TV */ }
 
 function applyOptions() {
   const [w, h] = PICTURES[options.picture] ?? PICTURES[480];
   renderer.setSize(w, h, false); // CSS still upscales, pixelated
   document.getElementById('crt').classList.toggle('hidden', options.crt !== 'on');
+  audio.setMuted(options.sound === 'off');
   localStorage.setItem(OPT_KEY, JSON.stringify(options));
 }
 applyOptions();
+
+// browsers only allow audio after a user gesture — unlock on the first one
+const unlockAudio = () => {
+  audio.unlock(fieldName).then(() => audio.setMuted(options.sound === 'off'));
+  removeEventListener('pointerdown', unlockAudio);
+  removeEventListener('keydown', unlockAudio);
+};
+addEventListener('pointerdown', unlockAudio);
+addEventListener('keydown', unlockAudio);
 
 const announcer = createAnnouncer();
 announcer.setField(field);
@@ -1003,6 +1017,7 @@ function updateWalkup() {
       walkupEl.classList.add('in');
       walkupHideAt = game.tick + 150; // ~2.5s on screen
       walkupFlourish = 60;
+      audio.organSting('walkup');
     }
   }
   if (walkupHideAt > 0 && game.tick >= walkupHideAt) {
@@ -1134,8 +1149,11 @@ function stepGame() {
   if (lp && lp.tick !== lastSeenPlay) {
     lastSeenPlay = lp.tick;
     announcer.onPlay(lp);
-    if (crowd && (lp.kind === 'homer' || lp.kind === 'hit')) crowd.excite = 130; // the roar
+    if (crowd && (lp.kind === 'homer' || lp.kind === 'hit')) { crowd.excite = 130; audio.crowdSwell(true); }
     if (lp.moonfire) moonfireTicks = 180; // Old Gasper lights the sky
+    if (['hit', 'homer', 'out'].includes(lp.kind) && lp.hitScore > 0.2) audio.batCrack(lp.hitScore);
+    if (lp.kind === 'homer') audio.organSting('homer');
+    else if (/strikes out/.test(lp.text)) audio.organSting('strikeout');
     if ((lp.kind === 'homer' || lp.kind === 'sideout') && replayWrite > 100) {
       replayArmed = { from: Math.max(0, replayWrite - 80) }; // a beat before contact
     }

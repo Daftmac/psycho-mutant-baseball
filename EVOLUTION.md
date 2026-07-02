@@ -109,9 +109,14 @@ unchecked items — never build them mid-increment.
       Phase C complete — the game now has hands.
 
 ## Phase D — Feel, audio & juice (Griffey's soul)
-- [ ] **D1. Audio pass 1 (roadmap #5, Tone.js).** Bat crack (pitched by
-      hitScore), organ stings on strikeouts/homers, lofi crowd moan bed,
-      UI blips. Per-field ambient loop (sewer drips, drive-in static, web wind).
+- [x] **D1. Audio pass 1 (roadmap #5, Tone.js).** ✅ Shipped: all-synthesized
+      lofi kit in src/render/audio.js — bat crack pitched by hitScore
+      (MembraneSynth), haunted organ stings (homer fanfare, diminished
+      strikeout dread, walk-up hits), brown-noise crowd bed that swells on the
+      roar, per-field ambient beds (sewer drip loop, drive-in static, web
+      wind), SOUND on/off in options. Unlocks on first user gesture per
+      browser policy. NOTE: synthesized sound needs human ears — headless
+      verification covered wiring + no-exceptions only.
 - [ ] **D2. Contact juice.** 2-tick hitstop on contact, screen shake scaled by
       hitScore, chunky particle puffs (infield dirt, ecto-splat on ectoball
       fouls), ball trail streak on 90+ mph exit velocity equivalents.

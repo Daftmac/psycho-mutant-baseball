@@ -16,6 +16,10 @@ const ROWS = [
     key: 'crt', label: 'CRT GHOSTING',
     values: [['off', 'OFF'], ['on', 'HAUNTED TV']],
   },
+  {
+    key: 'sound', label: 'SOUND',
+    values: [['on', 'ON'], ['off', 'OFF']],
+  },
 ];
 
 export function createOptions({ values, onChange, onBack }) {

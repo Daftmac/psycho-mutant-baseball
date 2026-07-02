@@ -11,6 +11,7 @@ export const C = {
   WINDUP_TICKS: 60,
   RESOLVE_TICKS: 45,          // balls / strikes / fouls
   RESOLVE_TICKS_HIT: 170,     // contact — the play develops: field it, fire to first, beat the runner
+  RESOLVE_TICKS_HR: 240,      // homers — long enough to chase the ball over the wall and watch it land
 
   // Pitch flight: slower and floatier than real baseball, on purpose.
   // flightTicks = mound->plate time. breakAmt drives the lateral banana curve.

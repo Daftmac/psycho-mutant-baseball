@@ -559,8 +559,9 @@ export class Game {
     };
     this._lastContact = null;
     s.phase = 'resolve';
-    // contact plays get a longer resolve so the ball flight reads on screen
-    s.phaseTicks = contact ? C.RESOLVE_TICKS_HIT : C.RESOLVE_TICKS;
+    // contact plays get a longer resolve so the ball flight reads on screen;
+    // homers get longer still so the camera can follow it out of the park
+    s.phaseTicks = kind === 'homer' ? C.RESOLVE_TICKS_HR : contact ? C.RESOLVE_TICKS_HIT : C.RESOLVE_TICKS;
   }
 
   _checkGameOver() {

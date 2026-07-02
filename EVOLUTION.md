@@ -250,9 +250,24 @@ unchecked items — never build them mid-increment.
       barely spins — that's the horror); and a 34-panel outfield wall ringed
       with glowing ads: GRAVE DANGER INSURANCE, ISOTOPE COLA, WORM & SONS...
 
+- [x] **F14. Baseball logic + spectacle.** ✅ Smaller ball (0.32). Double-deck
+      grandstands with a facade, fans waving pennant flags and hoisting
+      hand-painted signs (BOO! / DIG! / ☠ 4EVER). Derby strips to batter and
+      pitcher only. Homer cam chases the ball over the wall and shows the
+      landing (homers carry harder + fly on compressed movie-time so they land
+      inside the resolve — verified 427-unit blast, wall at 236, lands tick
+      225). New effects: fireworks volleys over the wall on homers, lamp
+      surges, a light dip when someone strikes out, glove-pop dust on gathers,
+      dirt spray on slides. REAL fielding logic researched and implemented:
+      one chaser picked per play (no mind-changing), 1B takes the bag for the
+      throw, free middle infielder covers second, 3B holds his corner, SS
+      lines up the cutoff, outfielders back up the play from depth.
+
 ## Parking lot (ideas noticed, not yet scheduled)
 - Signature abilities for the 60 new mutants (C.ABILITIES only covers the
   original twelve)
+- Deeper rules sim in core: double plays, tag-ups on flies, force-out chains
+  (the positioning layer is ready for it)
 - balance-analyst: the .250–.380 BA band is tighter than seed variance allows
   (~40 swings/game → ±.07 std). Build a multi-seed averaging harness mode and
   re-express the target as a mean across ≥10 seeds.

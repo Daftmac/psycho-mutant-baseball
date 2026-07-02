@@ -289,26 +289,32 @@ for (const spec of field.props ?? []) spawnProp(spec);
 
 // ---------- grandstands: tiered bleachers down both foul lines ----------
 // Four stepped rows per side; the crowd sits ON them like a real park.
-const STAND_ROWS = 4;
-const standRowInfo = []; // { cx, cz, dirX, dirZ, topY } per (side, row)
+const standRowInfo = []; // { cx, cz, dirX, dirZ, topY } per (side, deck, row)
 {
   const standMat = new THREE.MeshLambertMaterial({ color: 0x332f3d, flatShading: true });
+  const facadeMat = new THREE.MeshLambertMaterial({ color: 0x241f2e, flatShading: true });
   const rowGeo = new THREE.BoxGeometry(120, 1.8, 3.6);
   for (const side of [1, -1]) {
-    for (let r = 0; r < STAND_ROWS; r++) {
-      const off = 17 + r * 3.6;
-      const cx = side * (84 + off * 0.707);
-      const cz = -84 + off * 0.707;
-      const y = 0.9 + r * 1.8;
-      const row = new THREE.Mesh(rowGeo, standMat);
-      row.position.set(cx, y, cz);
-      row.rotation.y = Math.PI / 2 - side * Math.PI / 4;
-      scene.add(row);
-      standRowInfo.push({
-        cx, cz, topY: y + 0.9,
-        dirX: side * 0.707, dirZ: -0.707,
-      });
+    // two decks of four rows each, upper deck set back and stacked high
+    for (let deck = 0; deck < 2; deck++) {
+      for (let r = 0; r < 4; r++) {
+        const off = 17 + deck * 17 + r * 3.6;
+        const cx = side * (84 + off * 0.707);
+        const cz = -84 + off * 0.707;
+        const y = 0.9 + r * 1.8 + deck * 9.5;
+        const row = new THREE.Mesh(rowGeo, standMat);
+        row.position.set(cx, y, cz);
+        row.rotation.y = Math.PI / 2 - side * Math.PI / 4;
+        scene.add(row);
+        standRowInfo.push({ cx, cz, topY: y + 0.9, dirX: side * 0.707, dirZ: -0.707 });
+      }
     }
+    // facade between the decks
+    const off = 30.5;
+    const facade = new THREE.Mesh(new THREE.BoxGeometry(120, 4.4, 1.6), facadeMat);
+    facade.position.set(side * (84 + off * 0.707), 7.4, -84 + off * 0.707);
+    facade.rotation.y = Math.PI / 2 - side * Math.PI / 4;
+    scene.add(facade);
   }
 }
 
@@ -333,7 +339,46 @@ if (field.crowd) {
     });
   }
   scene.add(mesh);
-  crowd = { mesh, base, excite: 0 };
+  crowd = { mesh, base, excite: 0, accessories: [] };
+
+  // fan accessories: hand-painted signs and waving pennant flags
+  const signText = (text, bg, fg) => {
+    const cv = document.createElement('canvas');
+    cv.width = 64; cv.height = 32;
+    const cx = cv.getContext('2d');
+    cx.fillStyle = bg; cx.fillRect(0, 0, 64, 32);
+    cx.fillStyle = fg;
+    cx.font = 'bold 11px monospace';
+    cx.textAlign = 'center'; cx.textBaseline = 'middle';
+    cx.fillText(text, 32, 17);
+    const tex = new THREE.CanvasTexture(cv);
+    tex.magFilter = THREE.NearestFilter; tex.minFilter = THREE.NearestFilter;
+    return tex;
+  };
+  const SIGNS = [['BOO!', '#e8e2d0', '#a41f2b'], ['DIG!', '#1a2438', '#8fb8ff'], ['☠ 4EVER', '#241226', '#c77dff']];
+  SIGNS.forEach(([text, bg, fg], si) => {
+    const count = 4;
+    const im = new THREE.InstancedMesh(
+      new THREE.PlaneGeometry(2.6, 1.4),
+      new THREE.MeshBasicMaterial({ map: signText(text, bg, fg), side: THREE.DoubleSide }),
+      count,
+    );
+    scene.add(im);
+    for (let k = 0; k < count; k++) {
+      crowd.accessories.push({ mesh: im, idx: k, fan: Math.floor(rng() * cs.count), kind: 'sign', ph: rng() * 6 });
+    }
+  });
+  {
+    const count = 12;
+    const flagMat = new THREE.MeshBasicMaterial({
+      color: new THREE.Color(pal(field.palette.diamond ? 'diamond' : 'chalk')), side: THREE.DoubleSide,
+    });
+    const im = new THREE.InstancedMesh(new THREE.PlaneGeometry(1.8, 1.0), flagMat, count);
+    scene.add(im);
+    for (let k = 0; k < count; k++) {
+      crowd.accessories.push({ mesh: im, idx: k, fan: Math.floor(rng() * cs.count), kind: 'flag', ph: rng() * 6 });
+    }
+  }
 }
 
 // ---------- the outfield wall, sold to the highest mutant bidder ----------
@@ -417,10 +462,32 @@ const parkGlow = new THREE.PointLight(0xfff2cc, 18, 220);
 parkGlow.position.set(0, 48, -70);
 scene.add(parkGlow);
 
+let glowSurge = 0;   // homer: the lamps flare
+let lightDip = 0;    // strikeout: the park darkens for a beat
+let fireworksLeft = 0;
+
 function updateAtmosphere(t) {
-  keyLight.intensity = keyLightBase * (1 + Math.sin(t * 0.008) * 0.14); // slow lunar breathing
-  parkGlow.intensity = 16 + Math.sin(t * 0.05) * 2.5 + Math.sin(t * 0.013) * 3; // humming lamps
+  if (glowSurge > 0) glowSurge--;
+  if (lightDip > 0) lightDip--;
+  const dip = lightDip > 0 ? 0.55 + 0.45 * (1 - lightDip / 45) : 1;
+  keyLight.intensity = keyLightBase * (1 + Math.sin(t * 0.008) * 0.14) * dip;
+  parkGlow.intensity = (16 + Math.sin(t * 0.05) * 2.5 + Math.sin(t * 0.013) * 3) *
+    (glowSurge > 0 ? 1 + (glowSurge / 50) * 1.6 : 1) * dip;
   if (cloudMesh) cloudMesh.rotation.y += 0.00009; // the weather crawls
+
+  // fireworks over the wall while a homer is being savored
+  if (fireworksLeft > 0) {
+    fireworksLeft--;
+    if (fireworksLeft % 42 === 0) {
+      const colors = [0xffd24a, 0xff5555, 0xc77dff, 0x7dff3a, 0x8fb8ff];
+      burstParticles(
+        (Math.random() * 2 - 1) * 150,
+        70 + Math.random() * 40,
+        -240 - Math.random() * 60,
+        colors[Math.floor(Math.random() * colors.length)],
+      );
+    }
+  }
 }
 
 const _crowdDummy = new THREE.Object3D();
@@ -444,6 +511,23 @@ function updateCrowd() {
     crowd.mesh.setMatrixAt(i, _crowdDummy.matrix);
   }
   crowd.mesh.instanceMatrix.needsUpdate = true;
+
+  // signs bob with their owners; flags never stop waving
+  for (const acc of crowd.accessories) {
+    const b = crowd.base[acc.fan];
+    const bob = Math.abs(Math.sin(crowdT * speed + b.ph)) * amp;
+    if (acc.kind === 'sign') {
+      _crowdDummy.position.set(b.x, b.y + 2.6 + bob * 1.4, b.z);
+      _crowdDummy.rotation.set(0, b.ry, Math.sin(crowdT * 0.04 + acc.ph) * 0.1);
+    } else {
+      _crowdDummy.position.set(b.x + 0.8, b.y + 3.1 + bob, b.z);
+      _crowdDummy.rotation.set(0, b.ry, Math.sin(crowdT * (roaring ? 0.5 : 0.12) + acc.ph) * 0.45);
+    }
+    _crowdDummy.scale.setScalar(1);
+    _crowdDummy.updateMatrix();
+    acc.mesh.setMatrixAt(acc.idx, _crowdDummy.matrix);
+    acc.mesh.instanceMatrix.needsUpdate = true;
+  }
 }
 
 // ---------- mutants ----------
@@ -525,7 +609,7 @@ function baseballTexture() {
   return tex;
 }
 const ball = new THREE.Mesh(
-  new THREE.SphereGeometry(0.45, 8, 6),
+  new THREE.SphereGeometry(0.32, 8, 6),
   new THREE.MeshLambertMaterial({ map: baseballTexture(), emissive: 0x4a463e }), // never fades to black
 );
 scene.add(ball);
@@ -600,21 +684,58 @@ function poseCoaches() {
   });
 }
 
-// two nearest fielders converge on a struck ball; everyone else drifts home
+// Real baseball: ONE fielder goes for the ball. Everyone else has a job —
+// 1B covers his bag (he takes the throw), the free middle infielder covers
+// second, 3B covers third, the shortstop lines up the cutoff, and the
+// outfielders back up the play from depth.
+// Roles by index: 0=1B, 1=2B, 2=SS, 3=3B, 4=LF, 5=CF, 6=RF.
+let fieldPlayTick = -1;
+let chaserIdx = -1;
+
 function updateFielders() {
+  if (game.mode === 'derby') return; // nobody out there tonight
   const s = game.state;
-  const chasing = s.phase === 'resolve' && s.lastPlay &&
-    ['hit', 'homer', 'out'].includes(s.lastPlay.kind) && ball.visible;
-  let a = null, b = null;
-  if (chasing) {
-    const byDist = [...fielders].sort((f, g) =>
-      Math.hypot(f.mesh.position.x - ball.position.x, f.mesh.position.z - ball.position.z) -
-      Math.hypot(g.mesh.position.x - ball.position.x, g.mesh.position.z - ball.position.z));
-    [a, b] = byDist;
+  const live = s.phase === 'resolve' && s.lastPlay &&
+    ['hit', 'homer', 'out'].includes(s.lastPlay.kind) && ball.visible && s.lastPlay.hitScore > 0.2;
+
+  const targets = fielders.map((f) => f.home);
+  if (live) {
+    // pick the chaser ONCE per play (no mid-play mind-changing)
+    if (s.lastPlay.tick !== fieldPlayTick) {
+      fieldPlayTick = s.lastPlay.tick;
+      let cd = 1e9;
+      fielders.forEach((f, i) => {
+        const d = Math.hypot(f.home.x - ball.position.x, f.home.z - ball.position.z);
+        if (d < cd) { cd = d; chaserIdx = i; }
+      });
+    }
+    const B = window.__bases;
+    targets[chaserIdx] = { x: ball.position.x, z: ball.position.z };
+    if (chaserIdx !== 0) targets[0] = { x: B[0].position.x - 2, z: B[0].position.z + 2 }; // 1B takes the bag
+    if (chaserIdx !== 3) targets[3] = { x: B[2].position.x + 2, z: B[2].position.z + 2 }; // 3B holds his corner
+    if (chaserIdx === 1) targets[2] = { x: B[1].position.x, z: B[1].position.z + 3 };     // SS covers 2nd for 2B
+    else if (chaserIdx === 2) targets[1] = { x: B[1].position.x, z: B[1].position.z + 3 }; // 2B covers 2nd for SS
+    else {
+      targets[1] = { x: B[1].position.x, z: B[1].position.z + 3 };                         // 2B covers second...
+      targets[2] = { x: ball.position.x * 0.55, z: ball.position.z * 0.55 };               // ...SS lines up the cutoff
+    }
+    // outfielders near the play back up the chaser from depth
+    for (const oi of [4, 5, 6]) {
+      if (oi === chaserIdx) continue;
+      const bd = Math.hypot(fielders[oi].home.x - ball.position.x, fielders[oi].home.z - ball.position.z);
+      if (bd < 110) {
+        const len = Math.hypot(ball.position.x, ball.position.z) || 1;
+        targets[oi] = {
+          x: ball.position.x + (ball.position.x / len) * 16,
+          z: ball.position.z + (ball.position.z / len) * 16,
+        };
+      }
+    }
   }
-  const step = 20 / C.TICKS_PER_SEC; // lope speed, units/s — mutants amble, they don't sprint
-  for (const f of fielders) {
-    const target = (f === a || f === b) ? { x: ball.position.x, z: ball.position.z } : f.home;
+
+  const step = 20 / C.TICKS_PER_SEC; // lope speed — mutants amble, they don't sprint
+  fielders.forEach((f, i) => {
+    const target = targets[i];
     const dx = target.x - f.mesh.position.x;
     const dz = target.z - f.mesh.position.z;
     const d = Math.hypot(dx, dz);
@@ -624,13 +745,13 @@ function updateFielders() {
       f.mesh.position.z += (dz / d) * step;
       f.mesh.rotation.y = Math.atan2(dx, dz);
       f.mesh.position.y = Math.abs(Math.sin(game.tick * 0.35 + f.phase)) * 0.5; // chunky run bob
-      parts.arms.forEach((a, i) => { a.rotation.x = Math.sin(game.tick * 0.35 + f.phase + i * Math.PI) * 0.9; }); // arm pump
+      parts.arms.forEach((a, j) => { a.rotation.x = Math.sin(game.tick * 0.35 + f.phase + j * Math.PI) * 0.9; });
     } else {
       f.mesh.position.y *= 0.8;
       parts.arms.forEach((a) => { a.rotation.x *= 0.8; });
       if (target === f.home) f.mesh.rotation.y = Math.PI;
     }
-  }
+  });
 }
 
 // ---------- strike zone + aim reticle ----------
@@ -957,6 +1078,13 @@ function startMatch() {
   camera.position.set(0.9, 4.7, 13.5);
   camera.lookAt(0, 3.1, -40);
   camMode = 'none'; // force a fresh cut on the first frame
+  // the derby is a private affair: just the batter and the arm
+  const derbyMode = pendingMode === 'derby';
+  fielders.forEach((f) => { f.mesh.visible = !derbyMode; });
+  coaches.forEach((c) => { c.visible = !derbyMode; });
+  baseUmps.forEach((u) => { u.visible = !derbyMode; });
+  catcher.visible = !derbyMode;
+  umpire.visible = !derbyMode;
   resumeGame();
   resetReplay();
   announcer.show();
@@ -1209,10 +1337,11 @@ function positionBall() {
       const ang = THREE.MathUtils.clamp(-lp.spray * 0.55 + (Math.random() - 0.5) * 0.25, -0.68, 0.68);
       const launchDeg = -8 + ((THREE.MathUtils.clamp(lp.loft, -1, 1) + 1) / 2) * 80;
       const launch = THREE.MathUtils.degToRad(launchDeg);
-      const exit = (26 + lp.hitScore * 58) * (0.7 + PROP_SCALE * 0.3);
+      // homers carry: the outcome promised the wall, the physics delivers it
+      const exit = (26 + lp.hitScore * 58) * (0.7 + PROP_SCALE * 0.3) * (lp.kind === 'homer' ? 1.5 : 1);
       const horiz = Math.cos(launch) * exit;
       const vy = Math.sin(launch) * exit;
-      const contact = lp.hitScore > 0.2;
+      const contact = lp.hitScore > 0.2 && game.mode !== 'derby'; // derby balls just fly free
       hitFly = {
         tick: lp.tick,
         pos: new THREE.Vector3(0, 2.0, 0),
@@ -1220,6 +1349,7 @@ function positionBall() {
         // the play that unfolds: outs get fielded and fired to first ahead of
         // the runner; hits get gathered too slowly to matter
         stage: 'fly',
+        timeScale: lp.kind === 'homer' ? 1.9 : 1, // homers fly on movie time — lands before the trot ends
         flyCatch: lp.kind === 'out' && lp.loft > 0.35 && contact,
         groundOut: lp.kind === 'out' && lp.loft <= 0.35 && contact,
         safeHit: lp.kind === 'hit' && contact,
@@ -1231,9 +1361,10 @@ function positionBall() {
     ball.rotation.x += 0.45; // tumbling leather
     if (hitFly.stage === 'fly') {
       // real aerodynamics: gravity + air drag — screams off the bat, dies late
-      hitFly.vel.y -= HIT_GRAVITY * dt;
-      hitFly.vel.multiplyScalar(1 - BALL_DRAG * dt);
-      hitFly.pos.addScaledVector(hitFly.vel, dt);
+      const fdt = dt * (hitFly.timeScale ?? 1);
+      hitFly.vel.y -= HIT_GRAVITY * fdt;
+      hitFly.vel.multiplyScalar(1 - BALL_DRAG * fdt);
+      hitFly.pos.addScaledVector(hitFly.vel, fdt);
       if (hitFly.pos.y < BALL_REST_Y && hitFly.vel.y < 0) {
         hitFly.pos.y = BALL_REST_Y;
         hitFly.vel.y *= -0.42;
@@ -1253,6 +1384,7 @@ function positionBall() {
         hitFly.carrier = nearest.f ?? fielders[3];
         hitFly.stage = 'carried';
         hitFly.gather = hitFly.groundOut ? 10 : 26; // outs come out of the glove HOT
+        burstParticles(hitFly.pos.x, Math.max(1, hitFly.pos.y), hitFly.pos.z, pal('dirt')); // leather pop
       }
     } else if (hitFly.stage === 'carried') {
       const c = hitFly.carrier.mesh.position;
@@ -1390,6 +1522,13 @@ function updateCamera() {
   } else if (camMode === 'duel') {
     camera.lookAt(-0.8, 2.6, 2);
   } else if (camMode === 'homer') {
+    // chase the blast: trail behind and below, watch it clear the wall and land
+    _camTarget.set(
+      ball.position.x * 0.82,
+      Math.max(5, ball.position.y * 0.5 + 6),
+      ball.position.z + 46,
+    );
+    camera.position.lerp(_camTarget, 0.055);
     camera.lookAt(ball.position);
   } else if (camMode === 'iso') {
     camera.lookAt(8, 0, -D * 0.42); // frames the runner's line AND the outfield chase
@@ -1950,8 +2089,19 @@ function stepGame() {
     if (crowd && (lp.kind === 'homer' || lp.kind === 'hit')) { crowd.excite = 130; audio.crowdSwell(true); }
     if (lp.moonfire) moonfireTicks = 180; // Old Gasper lights the sky
     if (['hit', 'homer', 'out'].includes(lp.kind) && lp.hitScore > 0.2) audio.batCrack(lp.hitScore);
-    if (lp.kind === 'homer') audio.organSting('homer');
-    else if (/strikes out/.test(lp.text)) audio.organSting('strikeout');
+    if (lp.kind === 'homer') {
+      audio.organSting('homer');
+      fireworksLeft = C.RESOLVE_TICKS_HR - 30; // light up the sky
+      glowSurge = 50;
+    } else if (/strikes out/.test(lp.text)) {
+      audio.organSting('strikeout');
+      lightDip = 45; // the park holds its breath
+    }
+    if (lp.kind === 'steal' || lp.kind === 'caught') {
+      // dirt sprays at the bag on the slide
+      const bag = window.__bases[lp.kind === 'steal' ? 1 : 1].position;
+      burstParticles(bag.x, 1.2, bag.z, pal('dirt'));
+    }
     // broadcast stamp callouts
     if (lp.kind === 'homer') flash(lp.moonfire ? 'MOONFIRE!' : 'GRAVE DIGGER!');
     else if (/triple/.test(lp.text)) flash('BONE RATTLER!');

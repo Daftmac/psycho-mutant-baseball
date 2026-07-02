@@ -20,8 +20,13 @@ function makeRng(seed) {
 }
 
 export class Game {
-  constructor({ seed = 1 } = {}) {
+  // mode 'match' = full game; mode 'derby' = home run derby (one slugger,
+  // grooved pitches, any swing that isn't a homer is an out)
+  constructor({ seed = 1, mode = 'match', derbyTeam = 'home', derbyPlayer = 0 } = {}) {
     this.rng = makeRng(seed);
+    this.mode = mode;
+    this.derbyTeam = derbyTeam;
+    this.derbyPlayer = derbyPlayer;
     this.tick = 0;
     this.state = {
       phase: 'windup',              // 'windup' | 'pitch' | 'resolve' | 'gameover'
@@ -40,11 +45,18 @@ export class Game {
       stats: { pitches: 0, swings: 0, hits: 0, homers: 0, strikeouts: 0, walks: 0, chaosProcs: 0 },
       errors: [],
     };
+    if (mode === 'derby') {
+      this.state.derby = { homers: 0, outs: 0, longest: 0, totalGraves: 0 };
+    }
   }
 
   battingTeam() { return this.state.half === 'top' ? 'away' : 'home'; }
 
   currentBatter() {
+    if (this.mode === 'derby') {
+      const roster = ROSTERS[this.derbyTeam].players;
+      return roster[this.derbyPlayer % roster.length];
+    }
     const team = this.battingTeam();
     const roster = ROSTERS[team].players;
     return roster[this.state.batterIndex[team] % roster.length];
@@ -102,8 +114,10 @@ export class Game {
     const Z = C.ZONE, P = C.PITCH;
 
     // pitcher picks a real crossing point: in the zone, or just off an edge
+    // (derby pitchers groove far more strikes)
+    const strikeProb = this.mode === 'derby' ? Math.max(def.strikeProb, C.DERBY.STRIKE_PROB) : def.strikeProb;
     let tx, ty;
-    if (this.rng() < def.strikeProb) {
+    if (this.rng() < strikeProb) {
       tx = (this.rng() * 2 - 1) * (Z.HALF_W * 0.85);
       ty = Z.BOT + 0.15 + this.rng() * (Z.TOP - Z.BOT - 0.3);
     } else {
@@ -182,6 +196,8 @@ export class Game {
       loft: Math.max(-1, Math.min(1, -dy / reach)),
     };
 
+    if (this.mode === 'derby') return this._resolveDerbySwing(quality, batter);
+
     if (quality < C.WHIFF_THRESHOLD) return this._strike('swinging strike');
     if (quality < C.FOUL_THRESHOLD) return this._foul();
 
@@ -203,8 +219,39 @@ export class Game {
     return this._advance(4, `${batter.name} CRUSHES A HOME RUN${chaos ? ' — CHAOS!' : ''}`, hitScore);
   }
 
+  // Derby: only swings count. Homer or out, nothing in between.
+  _resolveDerbySwing(quality, batter) {
+    const s = this.state;
+    const d = s.derby;
+    let hitScore = 0;
+    if (quality >= C.FOUL_THRESHOLD) {
+      hitScore = quality * (0.5 + batter.power * 0.7) * (0.7 + this.rng() * 0.6) + C.DERBY.POWER_BOOST;
+      if (this.rng() < C.CHAOS_PROC_CHANCE * (batter.chaos * 2)) {
+        hitScore += C.CHAOS_BOOST;
+        s.stats.chaosProcs++;
+      }
+    }
+    if (hitScore >= C.DERBY.HR_THRESHOLD) {
+      const feet = C.DERBY.FEET_BASE + (hitScore - C.DERBY.HR_THRESHOLD) * C.DERBY.FEET_SPREAD;
+      const graves = Math.round(feet / C.DERBY.GRAVE_FT);
+      const newBest = graves > d.longest;
+      d.homers++;
+      d.totalGraves += graves;
+      d.longest = Math.max(d.longest, graves);
+      s.stats.homers++;
+      s.stats.hits++;
+      return this._endPitch(`${batter.name} LAUNCHES ONE ${graves} GRAVES DEEP${newBest ? ' — NEW LONGEST!' : '!'}`, 'homer', hitScore);
+    }
+    d.outs++;
+    const text = quality < C.WHIFF_THRESHOLD ? 'swings at a ghost — OUT'
+      : quality < C.FOUL_THRESHOLD ? 'hacks it foul — OUT'
+      : 'not enough meat on it — OUT';
+    return this._endPitch(`${text} (${d.outs}/${C.DERBY.OUTS})`, 'out', hitScore);
+  }
+
   _resolveTake() {
     const s = this.state;
+    if (this.mode === 'derby') return this._endPitch('takes it — the graveyard moans', 'take');
     if (s.pitch.isStrike) return this._strike('called strike');
     s.balls++;
     if (s.balls >= 4) {
@@ -296,6 +343,17 @@ export class Game {
 
   _checkGameOver() {
     const s = this.state;
+    if (this.mode === 'derby') {
+      if (s.derby.outs >= C.DERBY.OUTS) {
+        s.phase = 'gameover';
+        s.lastPlay = {
+          text: `DERBY OVER: ${s.derby.homers} HOMER${s.derby.homers === 1 ? '' : 'S'} — LONGEST ${s.derby.longest} GRAVES`,
+          kind: 'final', hitScore: 0, spray: 0, loft: 0, tick: this.tick,
+        };
+        return true;
+      }
+      return false;
+    }
     const over =
       (s.inning > C.INNINGS) ||
       (s.inning === C.INNINGS && s.half === 'bottom' && s.score.home > s.score.away && s.outs === 0 && s.balls === 0 && s.strikes === 0 && s.lastPlay?.kind === 'sideout');

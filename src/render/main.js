@@ -306,16 +306,21 @@ function hidePreview() {
   bat.visible = true;
 }
 
+let pendingMode = 'match'; // 'match' | 'derby' — what the select flow launches
+let derbyPlayerIdx = 0;
+
 const menu = createMenu({
-  onQuickMatch: openTeamSelect,
+  onQuickMatch: () => openTeamSelect('match'),
+  onDerby: () => openTeamSelect('derby'),
   onFieldSelect: () => openFieldSelect('lobby'),
 });
 
 const teamSelect = createTeamSelect({
   rosters: ROSTERS,
   onBrowse: showMutantPreview,
-  onConfirm: (teamKey) => {
+  onConfirm: (teamKey, playerIdx) => {
     playerTeam = teamKey;
+    derbyPlayerIdx = playerIdx;
     teamSelect.hide();
     hidePreview();
     openFieldSelect('match');
@@ -332,7 +337,7 @@ const fieldSelect = createFieldSelect({
   onConfirm: (key) => {
     if (fieldSelectMode === 'match') {
       if (key === fieldName) { fieldSelect.hide(); startMatch(); }
-      else reloadTo(`?field=${key}&team=${playerTeam}&play=1`);
+      else reloadTo(`?field=${key}&team=${playerTeam}&play=1&mode=${pendingMode}&player=${derbyPlayerIdx}`);
     } else {
       if (key === fieldName) { fieldSelect.hide(); toMenu(); }
       else reloadTo(`?field=${key}`);
@@ -345,7 +350,8 @@ const fieldSelect = createFieldSelect({
   },
 });
 
-function openTeamSelect() {
+function openTeamSelect(mode = pendingMode) {
+  pendingMode = mode;
   appState = 'teamselect';
   menu.hide();
   fieldSelect.hide();
@@ -356,7 +362,7 @@ function openTeamSelect() {
   // subject sits left-of-center; the DOM roster panel owns the right half
   camera.position.set(PODIUM_POS.x + 4.4, PODIUM_POS.y + 3.4, PODIUM_POS.z + 7.2);
   camera.lookAt(PODIUM_POS.x + 1.9, PODIUM_POS.y + 2.5, PODIUM_POS.z);
-  teamSelect.show();
+  teamSelect.show(pendingMode);
 }
 
 function openFieldSelect(mode) {
@@ -369,7 +375,12 @@ function openFieldSelect(mode) {
 }
 
 function startMatch() {
-  game = new Game({ seed: Date.now() & 0xffff });
+  game = new Game({
+    seed: Date.now() & 0xffff,
+    mode: pendingMode,
+    derbyTeam: playerTeam ?? 'home',
+    derbyPlayer: derbyPlayerIdx,
+  });
   appState = 'playing';
   swingQueued = false;
   menu.hide();
@@ -386,6 +397,16 @@ function startMatch() {
 function showPostgame() {
   appState = 'postgame';
   const headlineEl = postgameEl.querySelector('.headline');
+  if (game.mode === 'derby') {
+    const d = game.state.derby;
+    headlineEl.textContent = `${d.homers} HOMER${d.homers === 1 ? '' : 'S'} — LONGEST ${d.longest} GRAVES`;
+    headlineEl.className = 'headline' + (d.homers === 0 ? ' lose' : '');
+    postgameEl.querySelector('.final').textContent =
+      `${game.currentBatter().name} did ${d.totalGraves} total graves of damage`;
+    postgameEl.classList.remove('hidden');
+    controlsEl.classList.add('hidden');
+    return;
+  }
   if (playerTeam) {
     const s = game.state.score;
     const mine = s[playerTeam], theirs = s[playerTeam === 'home' ? 'away' : 'home'];
@@ -404,6 +425,7 @@ function showPostgame() {
 function toMenu() {
   game = null;
   appState = 'menu';
+  pendingMode = 'match';
   ball.visible = false;
   zone.visible = false;
   reticle.visible = false;
@@ -521,6 +543,14 @@ function drawHud() {
   if (!game) return;
   const s = game.state;
   const batterNow = game.currentBatter();
+  if (game.mode === 'derby') {
+    const d = s.derby;
+    hud.innerHTML =
+      `<div class="line score">HOME RUN DERBY — ${batterNow.name.toUpperCase()}</div>` +
+      `<div class="line">HOMERS ${d.homers}  •  OUTS ${d.outs}/${C.DERBY.OUTS}  •  LONGEST ${d.longest} GRAVES</div>` +
+      (s.lastPlay ? `<div class="line play">${s.lastPlay.text}</div>` : '');
+    return;
+  }
   const half = s.half === 'top' ? '▲' : '▼';
   const basesTxt = s.bases.map((b) => (b ? '◆' : '◇')).join(' ');
   const teams = `${ROSTERS.away.name} ${s.score.away} — ${s.score.home} ${ROSTERS.home.name}`;
@@ -597,6 +627,8 @@ function frame(now) {
 const bootParams = new URLSearchParams(location.search);
 if (bootParams.get('play') === '1') {
   playerTeam = ['home', 'away'].includes(bootParams.get('team')) ? bootParams.get('team') : null;
+  pendingMode = bootParams.get('mode') === 'derby' ? 'derby' : 'match';
+  derbyPlayerIdx = Math.max(0, parseInt(bootParams.get('player') ?? '0', 10) || 0) % 6;
   startMatch();
 } else {
   toMenu();

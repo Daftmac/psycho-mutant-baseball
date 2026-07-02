@@ -55,6 +55,17 @@ export const C = {
   CHAOS_PROC_CHANCE: 0.12,    // per swing: batter's chaos stat can warp the result
   CHAOS_BOOST: 0.18,          // hitScore bonus when chaos procs
 
+  // home run derby (distance is measured in graves; a grave is six feet under)
+  DERBY: {
+    OUTS: 10,                 // any swing that isn't a homer is an out
+    STRIKE_PROB: 0.85,        // derby pitchers groove it
+    POWER_BOOST: 0.16,        // batting-practice adrenaline on the hitScore
+    HR_THRESHOLD: 0.86,       // derby fences are friendlier than game HRs (0.92)
+    FEET_BASE: 290,           // homer distance at the derby threshold
+    FEET_SPREAD: 420,         // extra feet across the hitScore range above it
+    GRAVE_FT: 6,
+  },
+
   // field dimensions (logical units for both sim flavor and renderer)
   FIELD_SCALE: 60,            // distance mound -> plate
 };

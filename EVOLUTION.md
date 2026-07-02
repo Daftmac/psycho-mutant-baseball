@@ -17,10 +17,11 @@ unchecked items — never build them mid-increment.
       choosing a team personalizes the postgame (VICTORY/DEFEAT headline).
       Fixed a same-keydown-tunneling bug across stacked screens (defaultPrevented
       guard). New src/render/select.js.
-- [ ] **A3. Home Run Derby.** Solo batting on any field: 10 outs, only homers
-      count, distance measured in graves (1 grave = 6 ft). Longest-blast
-      tracker, grave-count milestones, final tally screen. Derby rules in core,
-      verified by a new harness scenario.
+- [x] **A3. Home Run Derby.** ✅ Shipped: derby mode in core (10 outs, grooved
+      pitches, derby-only HR threshold + power boost, distance in graves with
+      NEW LONGEST callouts), team select reused as slugger select, derby HUD +
+      tally screen, harness/derby.js wired into npm test (2 seeds). Auto-batter
+      gets 0-3 HR; near-perfect play ~29 — big skill ceiling, arcade-correct.
 - [ ] **A4. Options screen.** Difficulty (scales pitch speed + timing window +
       auto-aim assist), pitch-speed preview, CRT filter toggle, internal
       resolution (480x300 / 640x400 "remaster" / 320x200 "haunted"), controls

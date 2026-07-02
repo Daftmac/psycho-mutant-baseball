@@ -3,7 +3,7 @@
 // Pure renderer UI: no game rules, no Three.js. The menu owns its own input
 // while visible; main.js decides what the items actually do.
 
-export function createMenu({ onQuickMatch, onFieldSelect }) {
+export function createMenu({ onQuickMatch, onDerby, onFieldSelect }) {
   const root = document.getElementById('menu');
   const list = document.getElementById('menu-items');
   const flash = document.getElementById('menu-flash');
@@ -14,7 +14,7 @@ export function createMenu({ onQuickMatch, onFieldSelect }) {
 
   const items = [
     { label: () => 'QUICK MATCH', run: () => onQuickMatch() },
-    { label: () => 'HOME RUN DERBY', locked: 'STILL DIGGING THE LONG-BALL PIT' },
+    { label: () => 'HOME RUN DERBY', run: () => onDerby() },
     { label: () => 'FIELD SELECT', run: () => onFieldSelect() },
     { label: () => 'OPTIONS', locked: 'THE COMMISSIONER IS SLEEPING' },
     { label: () => 'SEASON', locked: 'THE COMMISSIONER FORBIDS IT... FOR NOW' },

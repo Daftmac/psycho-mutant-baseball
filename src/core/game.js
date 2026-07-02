@@ -22,11 +22,12 @@ function makeRng(seed) {
 export class Game {
   // mode 'match' = full game; mode 'derby' = home run derby (one slugger,
   // grooved pitches, any swing that isn't a homer is an out)
-  constructor({ seed = 1, mode = 'match', derbyTeam = 'home', derbyPlayer = 0 } = {}) {
+  constructor({ seed = 1, mode = 'match', derbyTeam = 'home', derbyPlayer = 0, difficulty = 'midnight' } = {}) {
     this.rng = makeRng(seed);
     this.mode = mode;
     this.derbyTeam = derbyTeam;
     this.derbyPlayer = derbyPlayer;
+    this.diff = C.DIFFICULTY[difficulty] ?? C.DIFFICULTY.midnight;
     this.tick = 0;
     this.state = {
       phase: 'windup',              // 'windup' | 'pitch' | 'resolve' | 'gameover'
@@ -131,7 +132,7 @@ export class Game {
     s.pitch = {
       type,
       t: 0,
-      flightTicks: Math.round(def.flightTicks * (1 + (this.rng() * 2 - 1) * P.FLIGHT_JITTER)),
+      flightTicks: Math.round(def.flightTicks * this.diff.flightMult * (1 + (this.rng() * 2 - 1) * P.FLIGHT_JITTER)),
       breakAmt: def.breakAmt,
       breakDir: this.rng() < 0.5 ? -1 : 1,
       wobble: def.wobble,
@@ -175,7 +176,7 @@ export class Game {
 
     // timing: how close to the ideal contact moment
     const timingError = Math.abs(s.swing.atT - C.CONTACT_POINT);
-    const window = C.TIMING_WINDOW * (0.6 + batter.contact * 0.8);
+    const window = C.TIMING_WINDOW * this.diff.windowMult * (0.6 + batter.contact * 0.8);
     const difficulty = 1 + s.pitch.breakAmt * 0.25; // breaking stuff still bites a little
     const timingQ = Math.max(0, 1 - (timingError * difficulty) / window);
 

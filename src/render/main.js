@@ -8,6 +8,7 @@ import { Game } from '../core/game.js';
 import { C, ROSTERS } from '../core/constants.js';
 import { createMenu } from './menu.js';
 import { createTeamSelect, createFieldSelect } from './select.js';
+import { createOptions } from './options.js';
 
 // ---------- field loading ----------
 // Fields are pure data (fields/*.json — schema in fields/README.md).
@@ -309,10 +310,37 @@ function hidePreview() {
 let pendingMode = 'match'; // 'match' | 'derby' — what the select flow launches
 let derbyPlayerIdx = 0;
 
+// ---------- persisted options ----------
+const OPT_KEY = 'pmb-options';
+const PICTURES = { 480: [480, 300], 640: [640, 400], 320: [320, 200] }; // all 1.6:1
+let options = { difficulty: 'midnight', picture: '480', crt: 'off' };
+try { options = { ...options, ...JSON.parse(localStorage.getItem(OPT_KEY) ?? '{}') }; } catch { /* fresh TV */ }
+
+function applyOptions() {
+  const [w, h] = PICTURES[options.picture] ?? PICTURES[480];
+  renderer.setSize(w, h, false); // CSS still upscales, pixelated
+  document.getElementById('crt').classList.toggle('hidden', options.crt !== 'on');
+  localStorage.setItem(OPT_KEY, JSON.stringify(options));
+}
+applyOptions();
+
+const optionsScreen = createOptions({
+  values: options,
+  onChange: (key, value) => { options[key] = value; applyOptions(); },
+  onBack: () => { optionsScreen.hide(); toMenu(); },
+});
+
+function openOptions() {
+  appState = 'options';
+  menu.hide();
+  optionsScreen.show();
+}
+
 const menu = createMenu({
   onQuickMatch: () => openTeamSelect('match'),
   onDerby: () => openTeamSelect('derby'),
   onFieldSelect: () => openFieldSelect('lobby'),
+  onOptions: openOptions,
 });
 
 const teamSelect = createTeamSelect({
@@ -380,12 +408,14 @@ function startMatch() {
     mode: pendingMode,
     derbyTeam: playerTeam ?? 'home',
     derbyPlayer: derbyPlayerIdx,
+    difficulty: options.difficulty,
   });
   appState = 'playing';
   swingQueued = false;
   menu.hide();
   teamSelect.hide();
   fieldSelect.hide();
+  optionsScreen.hide();
   hidePreview();
   postgameEl.classList.add('hidden');
   hud.classList.remove('hidden');
@@ -431,6 +461,7 @@ function toMenu() {
   reticle.visible = false;
   teamSelect.hide();
   fieldSelect.hide();
+  optionsScreen.hide();
   hidePreview();
   postgameEl.classList.add('hidden');
   hud.classList.add('hidden');

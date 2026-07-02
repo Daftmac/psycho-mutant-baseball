@@ -116,6 +116,25 @@
     #postgame .headline { font-size: 34px; font-weight: bold; letter-spacing: 4px; color: #9fe870;
       text-shadow: 3px 3px 0 #3a145e, 6px 6px 0 #000; }
     #postgame .headline.lose { color: #ff6a5e; text-shadow: 3px 3px 0 #5e1414, 6px 6px 0 #000; }
+    #options {
+      position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 24px; font-family: 'Courier New', monospace; text-align: center;
+      background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.6) 100%);
+    }
+    .opt-row { font-size: 19px; letter-spacing: 2px; margin: 8px 0; color: #b8b0cc;
+      text-shadow: 2px 2px 0 #000; cursor: pointer; white-space: pre; }
+    .opt-row.sel { color: #ffd24a; }
+    #opt-controls { font-size: 13px; color: #9a8fb8; text-shadow: 1px 1px 0 #000; line-height: 1.7; }
+    #opt-controls .ctl-title { color: #9fe870; font-weight: bold; letter-spacing: 2px; margin-bottom: 2px; }
+    #crt {
+      position: fixed; inset: 0; pointer-events: none; z-index: 50;
+      background: repeating-linear-gradient(0deg,
+        rgba(0,0,0,0.22) 0px, rgba(0,0,0,0.22) 1px, transparent 1px, transparent 3px);
+    }
+    #crt::after {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.38) 100%);
+    }
   </style>
 </head>
 <body>
@@ -130,6 +149,8 @@
   </div>
   <div id="teamselect" class="hidden"></div>
   <div id="fieldselect" class="hidden"></div>
+  <div id="options" class="hidden"></div>
+  <div id="crt" class="hidden"></div>
   <div id="postgame" class="hidden">
     <div class="headline"></div>
     <div class="final"></div>

@@ -55,6 +55,13 @@ export const C = {
   CHAOS_PROC_CHANCE: 0.12,    // per swing: batter's chaos stat can warp the result
   CHAOS_BOOST: 0.18,          // hitScore bonus when chaos procs
 
+  // difficulty presets (renderer options screen picks one; harness uses midnight)
+  DIFFICULTY: {
+    pushover:  { flightMult: 1.18, windowMult: 1.30 }, // slower pitches, fatter timing
+    midnight:  { flightMult: 1.00, windowMult: 1.00 }, // the balanced default
+    nightmare: { flightMult: 0.86, windowMult: 0.78 }, // heat and a needle-thin window
+  },
+
   // home run derby (distance is measured in graves; a grave is six feet under)
   DERBY: {
     OUTS: 10,                 // any swing that isn't a homer is an out

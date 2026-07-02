@@ -22,10 +22,11 @@ unchecked items — never build them mid-increment.
       NEW LONGEST callouts), team select reused as slugger select, derby HUD +
       tally screen, harness/derby.js wired into npm test (2 seeds). Auto-batter
       gets 0-3 HR; near-perfect play ~29 — big skill ceiling, arcade-correct.
-- [ ] **A4. Options screen.** Difficulty (scales pitch speed + timing window +
-      auto-aim assist), pitch-speed preview, CRT filter toggle, internal
-      resolution (480x300 / 640x400 "remaster" / 320x200 "haunted"), controls
-      reference. Persist to localStorage (renderer-only).
+- [x] **A4. Options screen.** ✅ Shipped: difficulty presets (PUSHOVER/MIDNIGHT
+      LEAGUE/NIGHTMARE — flight + timing-window multipliers in core constants,
+      picked at Game construction), picture sizes (480/640/320 internal res),
+      HAUNTED TV CRT overlay (CSS scanlines + vignette), controls reference,
+      localStorage persistence. New src/render/options.js.
 - [ ] **A5. Post-game ceremony.** Box score by inning, team stat lines, "MVP
       Mutant" (best hitScore aggregate) with a slow rotating portrait against
       the field's landmark, rematch / derby / menu buttons.
